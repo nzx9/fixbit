@@ -16,7 +16,7 @@ const Home = () => {
   return (
     <div>
       <h1>Welcome {firstname}!</h1>
-      <code>{"    "}Info</code>
+      <code>Info</code>
       <ul>
         <li>User Id : {uid}</li>
         <li>First Name: {firstname}</li>

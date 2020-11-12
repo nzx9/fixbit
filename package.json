@@ -24,7 +24,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build-copy": "react-scripts build && cp -r build/* /var/www/html/"
+    "build-copy": "react-scripts build && cp -r build/* /var/www/html/",
+    "production-build": "react-scripts build && mkdir production_build && cp -r build/* production_build/ && cp -r api production_build/"
   },
   "eslintConfig": {
     "extends": [
