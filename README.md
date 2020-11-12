@@ -2,12 +2,12 @@
 
 ## REQUIREMENTS BEFORE BUILD
 
-Markup : 1. -[] Node.js (Download from [nodejs.org](nodejs.org))  
- 2. -[] Then download this repo  
- 3. -[] Install yarn. (Run `npm install -g yarn`)  
- 4. -[] Open **cmd in this folder** & Run `yarn install`  
- 5. -[] Run `yarn production-build`  
- 6. -[] Copy files _prodcution_build_ folder into _www_ folder(production_build/_ -> www/_)
+    1.  -[] Node.js (Download from [nodejs.org](nodejs.org))
+    2.  -[] Then download this repo
+    3.  -[] Install yarn. (Run `npm install -g yarn`)
+    4.  -[] Open **cmd in this folder** & Run `yarn install`
+    5.  -[] Run `yarn production-build`
+    6.  -[] Copy files _prodcution_build_ folder into _www_ folder(production*build/* -> www/\_)
 
 ## Available Scripts
 
