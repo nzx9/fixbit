@@ -4,10 +4,10 @@
 
     1.  -[] Node.js (Download from [nodejs.org](nodejs.org))
     2.  -[] Then download this repo
-    3.  -[] Install yarn. (Run `npm install -g yarn`)
-    4.  -[] Open **cmd in this folder** & Run `yarn install`
-    5.  -[] Run `yarn production-build`
-    6.  -[] Copy files _prodcution_build_ folder into _www_ folder(production*build/* -> www/\_)
+    3.  -[] Install yarn. (Run ```npm install -g yarn```)
+    4.  -[] Open **cmd in this folder** & Run ```yarn install```
+    5.  -[] Run ```yarn production-build```
+    6.  -[] Copy files prodcution_build folder into www folder(production*build/* -> www/*)
 
 ## Available Scripts
 
