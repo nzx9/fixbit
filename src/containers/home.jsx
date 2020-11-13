@@ -6,7 +6,6 @@ import {
   getEmail,
 } from "../reducers/userDataTracker";
 import { useSelector } from "react-redux";
-// import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const Home = () => {
   const uid = useSelector(getUId);

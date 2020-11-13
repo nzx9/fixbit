@@ -76,7 +76,7 @@ const Register = () => {
             c_password: _confirmPassword,
           })
             .then((res) => {
-              console.log(res);
+              // console.log(res);
               if (res.success) {
                 goToLogin();
                 enqueueSnackbar("Registration Success! Please Login.", {

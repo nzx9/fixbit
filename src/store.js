@@ -11,7 +11,7 @@ const rootReducer = createRootReducer(history);
 const router = routerMiddleware(history);
 const middleware = [...getDefaultMiddleware(), router];
 
-const shouldIncludeLogger = true;
+const shouldIncludeLogger = false;
 
 if (shouldIncludeLogger) {
   const logger = createLogger({

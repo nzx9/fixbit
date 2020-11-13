@@ -65,7 +65,7 @@ const Login = () => {
           password: _password,
         })
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             if (res.success) {
               enqueueSnackbar("Success", {
                 variant: "success",
