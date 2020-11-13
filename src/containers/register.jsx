@@ -12,6 +12,7 @@ import { useSnackbar } from "notistack";
 import { httpPOST } from "../components/httpRequest";
 import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
+import { DEBUG_PRINT } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,7 +77,7 @@ const Register = () => {
             c_password: _confirmPassword,
           })
             .then((res) => {
-              // console.log(res);
+              DEBUG_PRINT(res);
               if (res.success) {
                 goToLogin();
                 enqueueSnackbar("Registration Success! Please Login.", {

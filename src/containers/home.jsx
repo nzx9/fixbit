@@ -15,12 +15,15 @@ const Home = () => {
   return (
     <div>
       <h1>Welcome {firstname}!</h1>
-      <code>Info</code>
+      <code>
+        <span>{"-->"}</span>Info
+      </code>
       <ul>
         <li>User Id : {uid}</li>
         <li>First Name: {firstname}</li>
         <li>Last Name : {lastname}</li>
         <li>Email : {email}</li>
+        <li>Build type: {process.env.NODE_ENV}</li>
       </ul>
     </div>
   );

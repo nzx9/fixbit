@@ -20,6 +20,7 @@ import {
   setLastName,
   setEmail,
 } from "../reducers/userDataTracker";
+import { DEBUG_PRINT } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,7 +66,7 @@ const Login = () => {
           password: _password,
         })
           .then((res) => {
-            // console.log(res);
+            DEBUG_PRINT(res);
             if (res.success) {
               enqueueSnackbar("Success", {
                 variant: "success",

@@ -11,9 +11,7 @@ const rootReducer = createRootReducer(history);
 const router = routerMiddleware(history);
 const middleware = [...getDefaultMiddleware(), router];
 
-const shouldIncludeLogger = false;
-
-if (shouldIncludeLogger) {
+if (process.env.NODE_ENV === "development") {
   const logger = createLogger({
     level: "info",
     collapsed: true,
