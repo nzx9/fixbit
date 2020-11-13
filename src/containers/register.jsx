@@ -69,13 +69,16 @@ const Register = () => {
       autoComplete="on"
       onSubmit={(e) => {
         if (_password === _confirmPassword) {
-          httpPOST("http://127.0.0.1/api/users/register.php", {
-            firstname: _firstName,
-            lastname: _lastName,
-            email: _email,
-            password: _password,
-            c_password: _confirmPassword,
-          })
+          httpPOST(
+            `${window.location.protocol}//${window.location.hostname}/api/users/register.php`,
+            {
+              firstname: _firstName,
+              lastname: _lastName,
+              email: _email,
+              password: _password,
+              c_password: _confirmPassword,
+            }
+          )
             .then((res) => {
               DEBUG_PRINT(res);
               if (res.success) {

@@ -61,10 +61,13 @@ const Login = () => {
       validate="true"
       autoComplete="on"
       onSubmit={(e) => {
-        httpPOST("http://localhost/api/users/login.php", {
-          email: _email,
-          password: _password,
-        })
+        httpPOST(
+          `${window.location.protocol}//${window.location.hostname}/api/users/login.php`,
+          {
+            email: _email,
+            password: _password,
+          }
+        )
           .then((res) => {
             DEBUG_PRINT(res);
             if (res.success) {
