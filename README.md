@@ -14,7 +14,7 @@
 4.  -[x] Unzip the downloaded `bug_tracker` file.
 5.  -[x] Open cmd inside the bug_tracker
 6.  -[x] Run `yarn production-build`
-7.  -[x] Copy files inside prodcution_build folder into www folder
+7.  -[x] Copy files inside production_build folder into www folder
 8.  -[x] Open browser and goto localhost
 
 ## IF YOU DON'T WANT TO BUILD FROM SOURCE
