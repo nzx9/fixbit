@@ -1,13 +1,12 @@
 # Bug Tracker
 
-## REQUIREMENTS BEFORE BUILD
+## REQUIREMENTS FOR BUILD
 
 1.  -[x] [Node.js](https://nodejs.org)
 2.  -[x] [Yarn](https://yarnpkg.com/g)
 3.  -[x] [bug_tracker](https://github.com/krypto-i9/bug-tracker/archive/main.zip) (copy of this repo)
-4.  -[x] [AppServ](appserv.org)
 
-## HOW TO BUILD
+## BUILD FROM SOURCE
 
 1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
 2.  -[x] Download and Install Node.js
