@@ -2,12 +2,27 @@
 
 ## REQUIREMENTS BEFORE BUILD
 
-1.  -[x] Node.js (Download from [nodejs.org](nodejs.org))
-2.  -[x] Then download this repo
-3.  -[x] Install yarn. (Run `npm install -g yarn`)
-4.  -[x] Open **cmd in this folder** & Run `yarn install`
-5.  -[x] Run `yarn production-build`
-6.  -[x] Copy files prodcution_build folder into www folder(production*build/* -> www/\*)
+1.  -[x] [Node.js](https://nodejs.org)
+2.  -[x] [Yarn](https://yarnpkg.com/g)
+3.  -[x] [bug_tracker](https://github.com/krypto-i9/bug-tracker/archive/main.zip) Copy of this repo
+4.  -[x] [AppServ](appserv.org)
+
+## HOW TO BUILD
+
+1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
+2.  -[x] Download and Install Node.js
+3.  -[x] Install `yarn` using `npm install -g yarn` commond in cmd
+4.  -[x] Unzip the downloaded `bug_tracker` file.
+5.  -[x] Open cmd inside the bug_tracker
+6.  -[x] Run `yarn production-build`
+7.  -[x] Copy files prodcution_build folder into www folder
+8.  -[x] Open browser and goto localhost
+
+## IF YOU DON'T WANT TO BUILD FROM SOURCE
+
+1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
+2.  -[x] Open folder `pre_build` and copy folder `bug_tracker` to `www`
+3.  -[x] Open browser and goto `localhost/bug_tracker`
 
 ## Available Scripts
 
@@ -15,7 +30,7 @@ In the project directory, you can run:
 
 ### `yarn production-build` (USE THIS TO BUILD)
 
-This run `yarn build`. Then copy build files and api into production_build folder. Open this folder and copy all files inside it to Appserv's www folder.
+This run `yarn build`. Then copy build files and api into production_build folder.
 
 ### `yarn start`
 
