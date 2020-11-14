@@ -4,7 +4,7 @@
 
 1.  -[x] [Node.js](https://nodejs.org)
 2.  -[x] [Yarn](https://yarnpkg.com/g)
-3.  -[x] [bug_tracker](https://github.com/krypto-i9/bug-tracker/archive/main.zip) Copy of this repo
+3.  -[x] [bug_tracker](https://github.com/krypto-i9/bug-tracker/archive/main.zip) (copy of this repo)
 4.  -[x] [AppServ](appserv.org)
 
 ## HOW TO BUILD
@@ -23,7 +23,7 @@
 1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
 2.  -[x] Open `pre_build` folder
 3.  -[x] Extract `bug_tracker.zip`
-4.  -[x] Copy extracted folder `bug_tracker` to `www`
+4.  -[x] Copy files inside extracted folder `bug_tracker` to `www`
 5.  -[x] Open browser and goto `localhost/bug_tracker`
 
 ## Available Scripts
