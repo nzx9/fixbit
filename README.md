@@ -24,7 +24,7 @@
 2.  -[x] Open `pre_build` folder
 3.  -[x] Extract `bug_tracker.zip`
 4.  -[x] Copy files inside extracted folder `bug_tracker` to `www`
-5.  -[x] Open browser and goto `localhost/bug_tracker`
+5.  -[x] Open browser and goto `localhost`
 
 ## Available Scripts
 
