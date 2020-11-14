@@ -21,8 +21,10 @@
 ## IF YOU DON'T WANT TO BUILD FROM SOURCE
 
 1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
-2.  -[x] Open folder `pre_build` and copy folder `bug_tracker` to `www`
-3.  -[x] Open browser and goto `localhost/bug_tracker`
+2.  -[x] Open `pre_build` folder
+3.  -[x] Extract `bug_tracker.zip`
+4.  -[x] Copy extracted folder `bug_tracker` to `www`
+5.  -[x] Open browser and goto `localhost/bug_tracker`
 
 ## Available Scripts
 
