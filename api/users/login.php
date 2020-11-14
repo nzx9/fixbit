@@ -26,10 +26,8 @@ if($isLoginCredentialsValid) {
                        "firstname" => $user -> getFirstName(), 
                        "lastname" => $user -> getLastName(), 
                        "email" => $user -> getEmail());
-    echo json_encode(array(success => true, msg => "Valid Login Credintials.", user_data => $user_data));
+    echo json_encode(array("success" => true, "msg" => "Valid Login Credintials.", "user_data" => $user_data));
 } else {
     http_response_code(200);
-    echo json_encode(array(success => false, msg => "Invalid Login Credintails.", user_data => null));
+    echo json_encode(array("success" => false, "msg" => "Invalid Login Credintails.", "user_data" => null));
 }
-
-?>

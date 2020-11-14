@@ -32,15 +32,12 @@ if($isEmailNotExist && $isPasswordAndCPasswordMatch) {
 
     if($isCreated) {
         http_response_code(200);
-        echo json_encode(array(success => true, msg => "User Registed Successfully."));
+        echo json_encode(array("success" => true, "msg" => "User Registed Successfully."));
     } else {
         http_response_code(200);
-        echo json_encode(array(success => false, msg => "User Registration Falied"));
+        echo json_encode(array("success" => false, "msg" => "User Registration Falied"));
     }
 } else {
     http_response_code(200);
-    echo json_encode(array(success => false, msg => "Email already Exist. Please login."));
+    echo json_encode(array("success" => false, "msg" => "Email already Exist. Please login."));
 }
-
-
-?>
