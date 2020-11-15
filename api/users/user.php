@@ -7,8 +7,8 @@ class User
     private $table = "users";
 
     private $uid;
-    private $firstname;
-    private $lastname;
+    private $username;
+    private $fullname;
     private $email;
     private $password;
 
@@ -22,14 +22,14 @@ class User
         $this->uid = $uid;
     }
 
-    public function setFirstName($firstname)
+    public function setUserName($username)
     {
-        $this->firstname = $firstname;
+        $this->username = $username;
     }
 
-    public function setLastName($lastname)
+    public function setFullName($fullname)
     {
-        $this->lastname = $lastname;
+        $this->fullname = $fullname;
     }
 
     public function setEmail($email)
@@ -47,14 +47,14 @@ class User
         return $this->uid;
     }
 
-    public function getFirstName()
+    public function getUserName()
     {
-        return $this->firstname;
+        return $this->username;
     }
 
-    public function getLastName()
+    public function getFullName()
     {
-        return $this->lastname;
+        return $this->fullname;
     }
 
     public function getEmail()
@@ -80,25 +80,25 @@ class User
     public function create()
     {
         if (
-            !empty($this->firstname) &&
-            !empty($this->lastname) &&
+            !empty($this->username) &&
+            !empty($this->fullname) &&
             !empty($this->email) &&
             !empty($this->password) &&
             $this->emailNotExist()
         ) {
 
-            $query = "INSERT INTO " . $this->table . "(firstname, lastname, email, password) VALUES (:firstname, :lastname, :email, :password)";
+            $query = "INSERT INTO " . $this->table . "(username, fullname, email, password) VALUES (:username, :fullname, :email, :password)";
 
             $stmt = $this->connection->prepare($query);
 
-            $this->firstname = htmlspecialchars(strip_tags($this->firstname));
-            $this->lastname = htmlspecialchars(strip_tags($this->lastname));
+            $this->username = htmlspecialchars(strip_tags($this->username));
+            $this->fullname = htmlspecialchars(strip_tags($this->fullname));
             $this->email = htmlspecialchars(strip_tags($this->email));
             $this->password = htmlspecialchars(strip_tags($this->password));
             $password_hash = password_hash($this->password, PASSWORD_BCRYPT);
 
-            $stmt->bindParam(":firstname", $this->firstname);
-            $stmt->bindParam(":lastname", $this->lastname);
+            $stmt->bindParam(":username", $this->username);
+            $stmt->bindParam(":fullname", $this->fullname);
             $stmt->bindParam(":email", $this->email);
             $stmt->bindParam(":password", $password_hash);
 
@@ -128,8 +128,8 @@ class User
                 $password_ok = password_verify($password, $row['password']);
                 if ($password_ok) {
                     $this->uid = $row['uid'];
-                    $this->firstname = $row['firstname'];
-                    $this->lastname = $row['lastname'];
+                    $this->username = $row['username'];
+                    $this->fullname = $row['fullname'];
                     $this->email = $row['email'];
                     return true;
                 }
@@ -149,8 +149,8 @@ class User
 
             if ($stmt->rowCount() == 1) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $this->firstname = $row['firstname'];
-                $this->lastname = $row['lastname'];
+                $this->username = $row['username'];
+                $this->fullname = $row['fullname'];
                 $this->email = $row['email'];
                 return true;
             }
@@ -170,8 +170,8 @@ class User
             if ($stmt->rowCount() == 1) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $this->uid = $row['uid'];
-                $this->firstname = $row['firstname'];
-                $this->lastname = $row['lastname'];
+                $this->username = $row['username'];
+                $this->fullname = $row['fullname'];
                 return true;
             }
         }
@@ -180,18 +180,18 @@ class User
 
     // public function updateUserDetailsById($uid)
     // {
-    //     if (!empty($uid) && !empty($this->firstname) && !empty($this->lastname)) {
+    //     if (!empty($uid) && !empty($this->username) && !empty($this->fullname)) {
     //         $query = "UPDATE " . $this->table . "SET
-    //                     firstname = :firstname,
-    //                     lastname = :lastname
+    //                     username = :username,
+    //                     fullname = :fullname
     //                     WHERE uid = :uid LIMIT 0,1";
     //         $stmt = $this->connection->prepare($query);
     //         $uid = htmlspecialchars(strip_tags($uid));
-    //         $this->firstname = htmlspecialchars(strip_tags($this->firstname));
-    //         $this->lastname = htmlspecialchars(strip_tags($this->lastname));
+    //         $this->username = htmlspecialchars(strip_tags($this->username));
+    //         $this->fullname = htmlspecialchars(strip_tags($this->fullname));
 
-    //         $stmt->bindParam(":firstname", $this->firstname);
-    //         $stmt->bindParam(":lastname", $this->lastname);
+    //         $stmt->bindParam(":username", $this->username);
+    //         $stmt->bindParam(":fullname", $this->fullname);
     //         $stmt->bindParam(":uid", $uid);
 
     //         if ($stmt->execute()) {

@@ -16,6 +16,8 @@ import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { DEBUG_PRINT } from "../components/debugTools";
 
+const settings = require("../components/settings.json");
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -41,8 +43,8 @@ const useStyles = makeStyles((theme) => ({
 const Register = () => {
   const classes = useStyles();
 
-  const [_firstName, _setFirstName] = React.useState(null);
-  const [_lastName, _setLastName] = React.useState(null);
+  const [_userName, _setUserName] = React.useState(null);
+  const [_fullName, _setFullName] = React.useState(null);
   const [_email, _setEmail] = React.useState(null);
   const [_password, _setPassword] = React.useState(null);
   const [_confirmPassword, _setConfimPassword] = React.useState(null);
@@ -50,11 +52,11 @@ const Register = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const firstNameInputHandler = (e) => {
-    _setFirstName(e.target.value);
+  const userNameInputHandler = (e) => {
+    _setUserName(e.target.value);
   };
-  const lastNameInputHandler = (e) => {
-    _setLastName(e.target.value);
+  const fullNameInputHandler = (e) => {
+    _setFullName(e.target.value);
   };
   const emailInputHandler = (e) => {
     _setEmail(e.target.value);
@@ -80,8 +82,8 @@ const Register = () => {
           httpPOST(
             `${window.location.protocol}//${window.location.hostname}/api/users/register.php`,
             {
-              firstname: _firstName,
-              lastname: _lastName,
+              username: _userName,
+              fullname: _fullName,
               email: _email,
               password: _password,
               c_password: _confirmPassword,
@@ -94,19 +96,13 @@ const Register = () => {
                 goToLogin();
                 enqueueSnackbar("Registration Success! Please Login.", {
                   variant: "success",
-                  anchorOrigin: {
-                    vertical: "bottom",
-                    horizontal: "right",
-                  },
+                  anchorOrigin: settings.snackbar.anchorOrigin,
                 });
               } else {
                 _setOpenBackdrop(false);
                 enqueueSnackbar(res.msg, {
                   variant: "error",
-                  anchorOrigin: {
-                    vertical: "bottom",
-                    horizontal: "right",
-                  },
+                  anchorOrigin: settings.snackbar.anchorOrigin,
                 });
               }
             })
@@ -118,10 +114,7 @@ const Register = () => {
           _setOpenBackdrop(false);
           enqueueSnackbar("Password and Confirm Password not match", {
             variant: "error",
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "right",
-            },
+            anchorOrigin: settings.snackbar.anchorOrigin,
           });
         }
         e.preventDefault();
@@ -139,16 +132,16 @@ const Register = () => {
             fullWidth
             type="text"
             variant="outlined"
-            label="First Name"
-            onChange={firstNameInputHandler}
+            label="User Name"
+            onChange={userNameInputHandler}
           />
           <TextField
             required
             fullWidth
             type="text"
             variant="outlined"
-            label="Last Name"
-            onChange={lastNameInputHandler}
+            label="Full Name"
+            onChange={fullNameInputHandler}
           />
           <TextField
             required

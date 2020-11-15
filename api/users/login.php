@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -11,21 +11,23 @@ include_once "../config/db.php";
 include_once "./user.php";
 
 $_db = new Database();
-$db = $_db -> connect();
+$db = $_db->connect();
 
 $user = new User($db);
 
 $data = json_decode(file_get_contents('php://input'));
 
-$isLoginCredentialsValid = $user -> validateLoginCredentials($data -> email, $data -> password);
+$isLoginCredentialsValid = $user->validateLoginCredentials($data->email, $data->password);
 
 
-if($isLoginCredentialsValid) {
+if ($isLoginCredentialsValid) {
     http_response_code(200);
-    $user_data = array("uid" => $user -> getId(), 
-                       "firstname" => $user -> getFirstName(), 
-                       "lastname" => $user -> getLastName(), 
-                       "email" => $user -> getEmail());
+    $user_data = array(
+        "uid" => $user->getId(),
+        "username" => $user->getUserName(),
+        "fullname" => $user->getFullName(),
+        "email" => $user->getEmail()
+    );
     echo json_encode(array("success" => true, "msg" => "Valid Login Credintials.", "user_data" => $user_data));
 } else {
     http_response_code(200);

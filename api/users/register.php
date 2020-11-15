@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -11,26 +11,27 @@ include_once "../config/db.php";
 include_once "./user.php";
 
 $_db = new Database();
-$db = $_db -> connect();
+$db = $_db->connect();
 
 $user = new User($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
-$user -> setEmail($data -> email);
+$user->setEmail($data->email);
 
-$isEmailNotExist = $user -> emailNotExist();
+$isEmailNotExist = $user->emailNotExist();
 
-$isPasswordAndCPasswordMatch = (!empty($data -> c_password) && $data -> password == $data -> c_password) ? true: false;
 
-if($isEmailNotExist && $isPasswordAndCPasswordMatch) {
-    $user -> setFirstName($data -> firstname);
-    $user -> setLastName($data -> lastname);
-    $user -> setEmail($data -> email);
-    $user -> setPassword($data -> password);
-    $isCreated = $user -> create();
+$isPasswordAndCPasswordMatch = (!empty($data->c_password) && $data->password == $data->c_password) ? true : false;
 
-    if($isCreated) {
+if ($isEmailNotExist && $isPasswordAndCPasswordMatch) {
+    $user->setUserName($data->username);
+    $user->setFullName($data->fullname);
+    $user->setEmail($data->email);
+    $user->setPassword($data->password);
+    $isCreated = $user->create();
+
+    if ($isCreated) {
         http_response_code(200);
         echo json_encode(array("success" => true, "msg" => "User Registed Successfully."));
     } else {

@@ -18,11 +18,13 @@ import { useDispatch } from "react-redux";
 import { login } from "../reducers/loginTracker";
 import {
   setUId,
-  setFirstName,
-  setLastName,
+  setUserName,
+  setFullName,
   setEmail,
 } from "../reducers/userDataTracker";
 import { DEBUG_PRINT } from "../components/debugTools";
+
+const settings = require("../components/settings.json");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,9 +51,10 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [_email, _setEmail] = React.useState(null);
   const [_password, _setPassword] = React.useState(null);
-  const { enqueueSnackbar } = useSnackbar();
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const emailInputHandler = (e) => {
@@ -61,9 +64,6 @@ const Login = () => {
     _setPassword(e.target.value);
   };
 
-  // const handleBackdrop = () => {
-  //   _setOpenBackdrop(!_openBackdrop);
-  // };
   const history = useHistory();
   const goToHome = useCallback(() => history.push(routes.HOME), [history]);
 
@@ -87,14 +87,11 @@ const Login = () => {
             if (res.success) {
               enqueueSnackbar("Success", {
                 variant: "success",
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "right",
-                },
+                anchorOrigin: settings.snackbar.anchorOrigin,
               });
               dispatch(setUId(res.user_data.uid));
-              dispatch(setFirstName(res.user_data.firstname));
-              dispatch(setLastName(res.user_data.lastname));
+              dispatch(setUserName(res.user_data.username));
+              dispatch(setFullName(res.user_data.fullname));
               dispatch(setEmail(res.user_data.email));
               goToHome();
               dispatch(login());
@@ -102,10 +99,7 @@ const Login = () => {
               _setOpenBackdrop(false);
               enqueueSnackbar(res.msg, {
                 variant: "error",
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "right",
-                },
+                anchorOrigin: settings.snackbar.anchorOrigin,
               });
             }
           })

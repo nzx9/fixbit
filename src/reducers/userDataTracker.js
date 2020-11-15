@@ -3,17 +3,17 @@ import { createSlice } from "@reduxjs/toolkit";
 const userDataSlice = createSlice({
   name: "userData",
   initialState: {
-    value: { uid: null, firstname: null, lastname: null, email: null },
+    value: { uid: null, username: null, fullname: null, email: null },
   },
   reducers: {
     setUId: (state, action) => {
       state.value.uid = action.payload;
     },
-    setFirstName: (state, action) => {
-      state.value.firstname = action.payload;
+    setUserName: (state, action) => {
+      state.value.username = action.payload;
     },
-    setLastName: (state, action) => {
-      state.value.lastname = action.payload;
+    setFullName: (state, action) => {
+      state.value.fullname = action.payload;
     },
     setEmail: (state, action) => {
       state.value.email = action.payload;
@@ -22,13 +22,13 @@ const userDataSlice = createSlice({
 });
 
 export const getUId = (state) => state.userData.value.uid;
-export const getFirstName = (state) => state.userData.value.firstname;
-export const getLastName = (state) => state.userData.value.lastname;
+export const getUserName = (state) => state.userData.value.username;
+export const getFullName = (state) => state.userData.value.fullname;
 export const getEmail = (state) => state.userData.value.email;
 export const {
   setUId,
-  setFirstName,
-  setLastName,
+  setUserName,
+  setFullName,
   setEmail,
 } = userDataSlice.actions;
 
