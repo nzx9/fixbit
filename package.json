@@ -24,6 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "copy-api": "cp -r api /var/www/html/",
     "build-copy": "react-scripts build && cp -r build/* /var/www/html/",
     "pre-build": "react-scripts build && cd pre_build && mkdir bug_tracker && cd ../ && cp -r build/* pre_build/bug_tracker/ && cp -r api pre_build/bug_tracker/ && cd pre_build && zip -r bug_tracker.zip bug_tracker/ && rm -r -f bug_tracker && cd ../",
     "production-build": "react-scripts build && mkdir production_build && cp -r build/* production_build/ && cp -r api production_build/"
