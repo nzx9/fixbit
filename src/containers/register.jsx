@@ -6,6 +6,8 @@ import {
   TextField,
   Container,
   CssBaseline,
+  Backdrop,
+  CircularProgress,
   makeStyles,
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
@@ -30,6 +32,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.primary.main,
+  },
 }));
 
 const Register = () => {
@@ -40,6 +46,7 @@ const Register = () => {
   const [_email, _setEmail] = React.useState(null);
   const [_password, _setPassword] = React.useState(null);
   const [_confirmPassword, _setConfimPassword] = React.useState(null);
+  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -68,6 +75,7 @@ const Register = () => {
       validate
       autoComplete="on"
       onSubmit={(e) => {
+        _setOpenBackdrop(true);
         if (_password === _confirmPassword) {
           httpPOST(
             `${window.location.protocol}//${window.location.hostname}/api/users/register.php`,
@@ -81,6 +89,7 @@ const Register = () => {
           )
             .then((res) => {
               DEBUG_PRINT(res);
+              _setOpenBackdrop(false);
               if (res.success) {
                 goToLogin();
                 enqueueSnackbar("Registration Success! Please Login.", {
@@ -91,6 +100,7 @@ const Register = () => {
                   },
                 });
               } else {
+                _setOpenBackdrop(false);
                 enqueueSnackbar(res.msg, {
                   variant: "error",
                   anchorOrigin: {
@@ -101,9 +111,11 @@ const Register = () => {
               }
             })
             .catch((err) => {
+              _setOpenBackdrop(false);
               alert(err);
             });
         } else {
+          _setOpenBackdrop(false);
           enqueueSnackbar("Password and Confirm Password not match", {
             variant: "error",
             anchorOrigin: {
@@ -117,6 +129,9 @@ const Register = () => {
     >
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <Backdrop className={classes.backdrop} open={_openBackdrop}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <Paper className={classes.paper}>
           <h1>Register</h1>
           <TextField

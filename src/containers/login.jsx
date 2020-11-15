@@ -6,6 +6,8 @@ import {
   TextField,
   Container,
   CssBaseline,
+  Backdrop,
+  CircularProgress,
   makeStyles,
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
@@ -38,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.primary.main,
+  },
 }));
 
 const Login = () => {
@@ -46,12 +52,18 @@ const Login = () => {
   const [_email, _setEmail] = React.useState(null);
   const [_password, _setPassword] = React.useState(null);
   const { enqueueSnackbar } = useSnackbar();
+  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
+
   const emailInputHandler = (e) => {
     _setEmail(e.target.value);
   };
   const passwordInputHandler = (e) => {
     _setPassword(e.target.value);
   };
+
+  // const handleBackdrop = () => {
+  //   _setOpenBackdrop(!_openBackdrop);
+  // };
   const history = useHistory();
   const goToHome = useCallback(() => history.push(routes.HOME), [history]);
 
@@ -61,6 +73,7 @@ const Login = () => {
       validate="true"
       autoComplete="on"
       onSubmit={(e) => {
+        _setOpenBackdrop(true);
         httpPOST(
           `${window.location.protocol}//${window.location.hostname}/api/users/login.php`,
           {
@@ -70,6 +83,7 @@ const Login = () => {
         )
           .then((res) => {
             DEBUG_PRINT(res);
+            _setOpenBackdrop(false);
             if (res.success) {
               enqueueSnackbar("Success", {
                 variant: "success",
@@ -85,6 +99,7 @@ const Login = () => {
               goToHome();
               dispatch(login());
             } else {
+              _setOpenBackdrop(false);
               enqueueSnackbar(res.msg, {
                 variant: "error",
                 anchorOrigin: {
@@ -95,6 +110,7 @@ const Login = () => {
             }
           })
           .catch((err) => {
+            _setOpenBackdrop(false);
             alert(err);
           });
         e.preventDefault();
@@ -102,6 +118,9 @@ const Login = () => {
     >
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <Backdrop className={classes.backdrop} open={_openBackdrop}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <Paper className={classes.paper}>
           <h1>Login</h1>
           <TextField
