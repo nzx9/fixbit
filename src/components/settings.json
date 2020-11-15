@@ -1,0 +1,8 @@
+{
+  "snackbar": {
+    "anchorOrigin": {
+      "vertical": "bottom",
+      "horizontal": "right"
+    }
+  }
+}
