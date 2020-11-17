@@ -9,11 +9,13 @@ header("Access-Control-Allow-Headers: Origin, Content-Type, Access-Control-Allow
 
 include_once "../config/db.php";
 include_once "./user.php";
+include_once "./token_validation.php";
 
 $_db = new Database();
 $db = $_db->connect();
 
 $user = new User($db);
+$token = new Token();
 
 $data = json_decode(file_get_contents('php://input'));
 
@@ -26,7 +28,8 @@ if ($isLoginCredentialsValid) {
         "uid" => $user->getId(),
         "username" => $user->getUserName(),
         "fullname" => $user->getFullName(),
-        "email" => $user->getEmail()
+        "email" => $user->getEmail(),
+        "token" => $token->generate($user->getId())
     );
     echo json_encode(array("success" => true, "msg" => "Valid Login Credintials.", "user_data" => $user_data));
 } else {
