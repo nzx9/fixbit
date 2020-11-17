@@ -8,7 +8,13 @@ export const httpPOST = (url, data) => {
       body: JSON.stringify(data),
     };
     fetch(url, options)
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error(response.statusText);
+        }
+      })
       .then((result) => {
         resolve(result);
       })
@@ -21,7 +27,13 @@ export const httpPOST = (url, data) => {
 export const httpGET = (url) => {
   return new Promise((resolve, reject) => {
     fetch(url)
-      .then((json_result) => json_result.json())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error(response.statusText);
+        }
+      })
       .then((result) => {
         resolve(result);
       })
