@@ -18,8 +18,11 @@ import {
   getUserName,
   getFullName,
   getEmail,
+  setUserName,
+  setFullName,
+  setEmail,
 } from "../reducers/userDataTracker";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { httpPOST } from "../components/httpRequest";
 
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = () => {
   const classes = useStyles();
-
+  const uId = useSelector(getUId);
   const username = useSelector(getUserName);
   const fullname = useSelector(getFullName);
   const email = useSelector(getEmail);
@@ -90,7 +93,7 @@ const Profile = () => {
   const emailInputHandler = (e) => {
     _setEmail(e.target.value);
   };
-
+  const dispatch = useDispatch();
   return (
     <Container component="main" maxWidth="xl">
       <Paper className={classes.paper}>
@@ -103,7 +106,7 @@ const Profile = () => {
                   httpPOST(
                     `${window.location.protocol}//${window.location.hostname}/api/users/update.php`,
                     {
-                      uid: useSelector(getUId),
+                      uid: uId,
                       username: _userName,
                       fullname: _fullName,
                       email: _email,
