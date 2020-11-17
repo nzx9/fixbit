@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   getUId,
   getUserName,
@@ -9,6 +9,8 @@ import { Button, Container, Paper, makeStyles, Grid } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../reducers/loginTracker";
 import { useSnackbar } from "notistack";
+import { useHistory } from "react-router-dom";
+import routes from "../routes/routes.json";
 
 const settings = require("../components/settings.json");
 
@@ -30,7 +32,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     color: theme.palette.grey[100],
     backgroundColor: theme.palette.grey[900],
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -38,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
   button: {
     backgroundColor: theme.palette.warning.main,
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     "&:hover": {
       backgroundColor: theme.palette.warning.dark,
     },
@@ -53,15 +56,28 @@ const Home = () => {
   const classes = useStyles();
   const dispath = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory();
+  const goToProfile = useCallback(() => history.push(routes.PROFILE), [
+    history,
+  ]);
+
   return (
     <div>
       <Container component="main" maxWidth="xl">
         <Paper className={classes.paper}>
           <h1>Welcome {username}!</h1>
           <Button
+            variant="outlined"
+            color="primary"
+            style={{ marginBottom: 10 }}
+            onClick={goToProfile}
+          >
+            Profile
+          </Button>
+          <Button
             className={classes.button}
             onClick={() => {
-              enqueueSnackbar("Logout", {
+              enqueueSnackbar("Logged out", {
                 variant: "warning",
                 anchorOrigin: settings.snackbar.anchorOrigin,
               });
