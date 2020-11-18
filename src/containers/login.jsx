@@ -22,6 +22,7 @@ import {
   setFullName,
   setEmail,
 } from "../reducers/userDataTracker";
+import { setToken } from "../reducers/tokenTracker";
 import { DEBUG_PRINT } from "../components/debugTools";
 
 const settings = require("../components/settings.json");
@@ -93,6 +94,7 @@ const Login = () => {
               dispatch(setUserName(res.user_data.username));
               dispatch(setFullName(res.user_data.fullname));
               dispatch(setEmail(res.user_data.email));
+              dispatch(setToken(res.user_data.token));
               goToHome();
               dispatch(login());
             } else {
