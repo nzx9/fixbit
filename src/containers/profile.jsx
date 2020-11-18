@@ -4,13 +4,8 @@ import {
   Paper,
   makeStyles,
   TextField,
-  InputAdornment,
   Grid,
   Button,
-  IconButton,
-  Avatar,
-  Hidden,
-  CssBaseline,
   Typography,
 } from "@material-ui/core";
 import {
@@ -22,8 +17,12 @@ import {
   setFullName,
   setEmail,
 } from "../reducers/userDataTracker";
+import { getToken } from "../reducers/tokenTracker";
 import { useSelector, useDispatch } from "react-redux";
 import { httpPOST } from "../components/httpRequest";
+import { DEBUG_PRINT } from "../components/debugTools";
+import { useSnackbar } from "notistack";
+import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,25 +48,24 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
   },
-  updateBtn: {
+  updateBtnDisbled: {
     backgroundColor: theme.palette.warning.main,
     color: theme.palette.grey[100],
     "&:hover": {
       backgroundColor: theme.palette.warning.dark,
     },
   },
+  updateBtnActive: {
+    backgroundColor: theme.palette.info.main,
+    color: theme.palette.grey[100],
+    "&:hover": {
+      backgroundColor: theme.palette.info.dark,
+    },
+  },
   updateBtnGrid: {
     display: "flex",
     flexDirection: "column",
     alignItems: "right",
-  },
-  avatarLg: {
-    width: theme.spacing(24),
-    height: theme.spacing(24),
-  },
-  avatarSm: {
-    width: theme.spacing(12),
-    height: theme.spacing(12),
   },
 }));
 
@@ -77,12 +75,22 @@ const Profile = () => {
   const username = useSelector(getUserName);
   const fullname = useSelector(getFullName);
   const email = useSelector(getEmail);
+  const token = useSelector(getToken);
 
-  const [isInputDisabled, setIsInputDisabled] = React.useState(true);
+  const [isUserInputDisabled, setIsUserInputDisabled] = React.useState(true);
+  const [isPasswordInputDisabled, setIsPasswordInputDisabled] = React.useState(
+    true
+  );
 
   const [_userName, _setUserName] = React.useState(username);
   const [_fullName, _setFullName] = React.useState(fullname);
   const [_email, _setEmail] = React.useState(email);
+
+  const [_currentPassword, _setCurrentPassword] = React.useState("");
+  const [_newPassword, _setNewPassword] = React.useState("");
+  const [_retypeNewPassowrd, _setRetypeNewPassword] = React.useState("");
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const userNameInputHandler = (e) => {
     _setUserName(e.target.value);
@@ -93,16 +101,27 @@ const Profile = () => {
   const emailInputHandler = (e) => {
     _setEmail(e.target.value);
   };
+  const currentPasswordInputHandler = (e) => {
+    _setCurrentPassword(e.target.value);
+  };
+  const newPasswordInputHandler = (e) => {
+    _setNewPassword(e.target.value);
+  };
+  const retypeNewPasswordInputHandler = (e) => {
+    _setRetypeNewPassword(e.target.value);
+  };
   const dispatch = useDispatch();
   return (
     <Container component="main" maxWidth="xl">
       <Paper className={classes.paper}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={6}>
             <form
               className={classes.root}
+              validate="true"
+              autoComplete="on"
               onSubmit={(e) => {
-                if (!isInputDisabled) {
+                if (!isUserInputDisabled) {
                   httpPOST(
                     `${window.location.protocol}//${window.location.hostname}/api/users/update.php`,
                     {
@@ -110,36 +129,52 @@ const Profile = () => {
                       username: _userName,
                       fullname: _fullName,
                       email: _email,
+                      token: token,
                     }
                   )
                     .then((res) => {
+                      DEBUG_PRINT(res);
                       if (res.success) {
                         dispatch(setUserName(res.user_data.username));
                         dispatch(setFullName(res.user_data.fullname));
                         dispatch(setEmail(res.user_data.email));
+                        enqueueSnackbar(res.msg, {
+                          variant: "success",
+                          anchorOrigin: settings.snackbar.anchorOrigin,
+                        });
+                      } else {
+                        _setUserName(username);
+                        _setFullName(fullname);
+                        _setEmail(email);
+                        enqueueSnackbar(res.msg, {
+                          variant: res.type,
+                          anchorOrigin: settings.snackbar.anchorOrigin,
+                        });
                       }
                     })
                     .catch((err) => alert(err));
                 }
+                setIsUserInputDisabled(!isUserInputDisabled);
                 e.preventDefault();
               }}
             >
               <Grid container>
-                <Grid item xs={9} justify="flex-start">
+                <Grid item xs={10} justify="flex-start">
                   <Typography key="profile-header" variant="h6">
                     Profile
                   </Typography>
                 </Grid>
-                <Grid item xs={3} className={classes.updateBtnGrid}>
+                <Grid item xs={2} className={classes.updateBtnGrid}>
                   <Button
-                    className={classes.updateBtn}
+                    className={
+                      isUserInputDisabled
+                        ? classes.updateBtnActive
+                        : classes.updateBtnDisbled
+                    }
                     variant="contained"
-                    type={isInputDisabled ? "button" : "submit"}
-                    onClick={() => {
-                      setIsInputDisabled(!isInputDisabled);
-                    }}
+                    type="submit"
                   >
-                    {isInputDisabled ? "Edit" : "Update"}
+                    {isUserInputDisabled ? "Edit" : "Update"}
                   </Button>
                 </Grid>
               </Grid>
@@ -148,37 +183,147 @@ const Profile = () => {
                 variant="outlined"
                 fullWidth
                 required
-                disabled={isInputDisabled}
+                disabled={isUserInputDisabled}
                 type="text"
                 lable="User Name"
-                defaultValue={username}
+                value={_userName}
                 onChange={userNameInputHandler}
               />
               <TextField
                 variant="outlined"
                 fullWidth
                 required
-                disabled={isInputDisabled}
+                disabled={isUserInputDisabled}
                 type="text"
                 lable="Full Name"
-                defaultValue={fullname}
+                value={_fullName}
                 onChange={fullNameInputHandler}
               />
               <TextField
                 variant="outlined"
                 fullWidth
                 required
-                disabled={isInputDisabled}
-                type="text"
+                disabled={isUserInputDisabled}
+                type="email"
                 lable="Email"
-                defaultValue={email}
+                value={_email}
                 onChange={emailInputHandler}
               />
             </form>
           </Grid>
-          <Grid item xs={12} sm={12} md={8}>
-            <h3>Teams</h3>
-            <hr />
+          <Grid item xs={12} sm={12} md={6}>
+            <form
+              className={classes.root}
+              validate="true"
+              autoComplete="on"
+              onSubmit={(e) => {
+                DEBUG_PRINT({
+                  uid: uId,
+                  currentPassword: _currentPassword,
+                  newPassword: _newPassword,
+                  confirmNewPassword: _retypeNewPassowrd,
+                  token: token,
+                });
+                if (!isPasswordInputDisabled) {
+                  if (
+                    _currentPassword !== null &&
+                    _newPassword !== null &&
+                    _retypeNewPassowrd !== null
+                  ) {
+                    httpPOST(
+                      `${window.location.protocol}//${window.location.hostname}/api/users/changepassword.php`,
+                      {
+                        uid: uId,
+                        currentPassword: _currentPassword,
+                        newPassword: _newPassword,
+                        confirmNewPassword: _retypeNewPassowrd,
+                        token: token,
+                      }
+                    )
+                      .then((res) => {
+                        DEBUG_PRINT(res);
+                        if (res.success) {
+                          enqueueSnackbar(res.msg, {
+                            variant: "success",
+                            anchorOrigin: settings.snackbar.anchorOrigin,
+                          });
+                        } else {
+                          enqueueSnackbar(res.msg, {
+                            variant: res.type,
+                            anchorOrigin: settings.snackbar.anchorOrigin,
+                          });
+                        }
+                      })
+                      .catch((err) => alert(err));
+                  } else {
+                    enqueueSnackbar("All fields are required", {
+                      variant: "error",
+                      anchorOrigin: settings.snackbar.anchorOrigin,
+                    });
+                  }
+                }
+                _setCurrentPassword("");
+                _setNewPassword("");
+                _setRetypeNewPassword("");
+                setIsPasswordInputDisabled(!isPasswordInputDisabled);
+                e.preventDefault();
+              }}
+            >
+              <Grid container>
+                <Grid item xs={10} justify="flex-start">
+                  <Typography key="profile-header" variant="h6">
+                    Passwords
+                  </Typography>
+                </Grid>
+                <Grid item xs={2} className={classes.updateBtnGrid}>
+                  <Button
+                    className={
+                      isPasswordInputDisabled
+                        ? classes.updateBtnActive
+                        : classes.updateBtnDisbled
+                    }
+                    variant="contained"
+                    type="submit"
+                  >
+                    {isPasswordInputDisabled ? "Edit" : "Update"}
+                  </Button>
+                </Grid>
+              </Grid>
+              <hr />
+              <TextField
+                variant="outlined"
+                fullWidth
+                required
+                lable="Current Password"
+                disabled={isPasswordInputDisabled}
+                type="password"
+                value={_currentPassword}
+                placeholder="Current Password"
+                onChange={currentPasswordInputHandler}
+              />
+              <TextField
+                variant="outlined"
+                fullWidth
+                required
+                lable="New Password"
+                disabled={isPasswordInputDisabled}
+                type="password"
+                value={_newPassword}
+                placeholder="New Password"
+                onChange={newPasswordInputHandler}
+              />
+              <TextField
+                variant="outlined"
+                lable="Retype New Password"
+                fullWidth
+                required
+                disabled={isPasswordInputDisabled}
+                type="password"
+                placeholder="Retype New Password"
+                value={_retypeNewPassowrd}
+                onChange={retypeNewPasswordInputHandler}
+              />
+            </form>
           </Grid>
         </Grid>
       </Paper>
