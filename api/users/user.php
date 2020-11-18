@@ -70,7 +70,6 @@ class User
         $this->email = htmlspecialchars(strip_tags($this->email));
         $stmt->bindParam(1, $this->email);
         $stmt->execute();
-
         if ($stmt->rowCount() > 0) {
             return false;
         }
@@ -121,8 +120,6 @@ class User
             $stmt->bindParam(1, $email);
             $stmt->execute();
 
-
-
             if ($stmt->rowCount() == 1) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $password_ok = password_verify($password, $row['password']);
@@ -137,25 +134,21 @@ class User
         }
         return false;
     }
-
-    public function getUserDetailsById($uid)
+    public function getEmailById($uid)
     {
         if (!empty($uid)) {
-            $query = "SELECT * FROM " . $this->table . " WHERE uid = ? LIMIT 0,1";
+            $query = "SELECT email FROM " . $this->table . " WHERE uid = ? LIMIT 0,1";
             $stmt = $this->connection->prepare($query);
-            $this->uid = htmlspecialchars(strip_tags($uid));
+            $uid = htmlspecialchars(strip_tags($uid));
             $stmt->bindParam(1, $uid);
             $stmt->execute();
 
             if ($stmt->rowCount() == 1) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $this->username = $row['username'];
-                $this->fullname = $row['fullname'];
-                $this->email = $row['email'];
-                return true;
+                return $row['email'];
             }
         }
-        return false;
+        return null;
     }
 
     public function getUserDetailsByEmail($email)
@@ -178,26 +171,71 @@ class User
         return false;
     }
 
-    // public function updateUserDetailsById($uid)
-    // {
-    //     if (!empty($uid) && !empty($this->username) && !empty($this->fullname)) {
-    //         $query = "UPDATE " . $this->table . "SET
-    //                     username = :username,
-    //                     fullname = :fullname
-    //                     WHERE uid = :uid LIMIT 0,1";
-    //         $stmt = $this->connection->prepare($query);
-    //         $uid = htmlspecialchars(strip_tags($uid));
-    //         $this->username = htmlspecialchars(strip_tags($this->username));
-    //         $this->fullname = htmlspecialchars(strip_tags($this->fullname));
+    public function verifyEmailById($uid, $email)
+    {
+        if (!empty($uid) && !empty($email)) {
+            $query = "SELECT uid FROM " . $this->table . " WHERE email = ? AND uid = ? LIMIT 0,1";
+            $stmt = $this->connection->prepare($query);
+            $uid = htmlspecialchars(strip_tags($uid));
+            $stmt->bindParam(1, $email);
+            $stmt->bindParam(2, $uid);
+            $stmt->execute();
 
-    //         $stmt->bindParam(":username", $this->username);
-    //         $stmt->bindParam(":fullname", $this->fullname);
-    //         $stmt->bindParam(":uid", $uid);
+            if ($stmt->rowCount() == 1) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $uid_db = $row['uid'];
+                if ($uid_db === $uid) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-    //         if ($stmt->execute()) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
+    public function updateUserDetails($uid, $username, $fullname, $email)
+    {
+        if (!empty($uid) && !empty($username) && !empty($fullname) && !empty($email)) {
+            $query = "UPDATE " . $this->table . " SET username = :username, fullname = :fullname, email = :email WHERE uid = :uid";
+            $stmt = $this->connection->prepare($query);
+            $uid = htmlspecialchars(strip_tags($uid));
+            $username = htmlspecialchars(strip_tags($username));
+            $fullname = htmlspecialchars(strip_tags($fullname));
+            $email = htmlspecialchars(strip_tags($email));
+
+            $stmt->bindParam(":username", $username);
+            $stmt->bindParam(":fullname", $fullname);
+            $stmt->bindParam(":email", $email);
+            $stmt->bindParam(":uid", $uid);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $this->setId($uid);
+                $this->setUserName($username);
+                $this->setFullName($fullname);
+                $this->setEmail($email);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function changePassword($uid, $newPassword)
+    {
+        if (!empty($uid) && !empty($newPassword)) {
+            $query = "UPDATE " . $this->table . " SET password = :hash_password WHERE uid = :uid";
+            $stmt = $this->connection->prepare($query);
+            $uid = htmlspecialchars(strip_tags($uid));
+            $newPassword = htmlspecialchars(strip_tags($newPassword));
+
+            $stmt->bindParam(":hash_password", password_hash($newPassword, PASSWORD_BCRYPT));
+            $stmt->bindParam(":uid", $uid);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $this->setId($uid);
+                return true;
+            }
+        }
+        return false;
+    }
 }
