@@ -53,9 +53,11 @@ const Home = () => {
   const username = useSelector(getUserName);
   const fullname = useSelector(getFullName);
   const email = useSelector(getEmail);
+
   const classes = useStyles();
-  const dispath = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  const dispath = useDispatch();
   const history = useHistory();
   const goToProfile = useCallback(() => history.push(routes.PROFILE), [
     history,
