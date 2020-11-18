@@ -7,6 +7,8 @@ import {
   Grid,
   Button,
   Typography,
+  Backdrop,
+  CircularProgress,
 } from "@material-ui/core";
 import {
   getUId,
@@ -67,6 +69,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "right",
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.primary.main,
+  },
 }));
 
 const Profile = () => {
@@ -92,6 +98,8 @@ const Profile = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
+
   const userNameInputHandler = (e) => {
     _setUserName(e.target.value);
   };
@@ -113,6 +121,9 @@ const Profile = () => {
   const dispatch = useDispatch();
   return (
     <Container component="main" maxWidth="xl">
+      <Backdrop className={classes.backdrop} open={_openBackdrop}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Paper className={classes.paper}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={6}>
@@ -122,6 +133,7 @@ const Profile = () => {
               autoComplete="on"
               onSubmit={(e) => {
                 if (!isUserInputDisabled) {
+                  _setOpenBackdrop(true);
                   httpPOST(
                     `${window.location.protocol}//${window.location.hostname}/api/users/update.php`,
                     {
@@ -134,6 +146,7 @@ const Profile = () => {
                   )
                     .then((res) => {
                       DEBUG_PRINT(res);
+                      _setOpenBackdrop(false);
                       if (res.success) {
                         dispatch(setUserName(res.user_data.username));
                         dispatch(setFullName(res.user_data.fullname));
@@ -152,7 +165,10 @@ const Profile = () => {
                         });
                       }
                     })
-                    .catch((err) => alert(err));
+                    .catch((err) => {
+                      _setOpenBackdrop(false);
+                      alert(err);
+                    });
                 }
                 setIsUserInputDisabled(!isUserInputDisabled);
                 e.preventDefault();
@@ -230,6 +246,7 @@ const Profile = () => {
                     _newPassword !== null &&
                     _retypeNewPassowrd !== null
                   ) {
+                    _setOpenBackdrop(true);
                     httpPOST(
                       `${window.location.protocol}//${window.location.hostname}/api/users/changepassword.php`,
                       {
@@ -241,6 +258,7 @@ const Profile = () => {
                       }
                     )
                       .then((res) => {
+                        _setOpenBackdrop(false);
                         DEBUG_PRINT(res);
                         if (res.success) {
                           enqueueSnackbar(res.msg, {
@@ -254,7 +272,10 @@ const Profile = () => {
                           });
                         }
                       })
-                      .catch((err) => alert(err));
+                      .catch((err) => {
+                        _setOpenBackdrop(true);
+                        alert(err);
+                      });
                   } else {
                     enqueueSnackbar("All fields are required", {
                       variant: "error",
