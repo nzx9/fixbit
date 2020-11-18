@@ -19,8 +19,9 @@ class Token
         $payload = array(
             "iss" => $this->site_url,
             "uid" => $uid,
-            "iat" => time() + (60 * 60),
-            "nbf" => time(),
+            "iat" => time(),
+            "exp" => time() + (60 * 60 * 24), // 1 day
+            "nbf" => 1605603296,  // 2020-11-17T14.25+05.30
         );
         $jwt = JWT::encode($payload, $this->key);
         return $jwt;
@@ -28,7 +29,11 @@ class Token
 
     public function decode($jwt)
     {
-        $decoded_data = JWT::decode($jwt, $this->key, array($this->v_algo));
-        return $decoded_data;
+        try {
+            $decoded_data = JWT::decode($jwt, $this->key, array('HS256'));;
+            return $decoded_data;
+        } catch (\Exception $error) {
+            echo "$error";
+        }
     }
 }
