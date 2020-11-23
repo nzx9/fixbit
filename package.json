@@ -24,8 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "copy-api": "cp -r api/users/* /var/www/html/api/users/",
-    "copy-proj": "cp -r api/projects/* /var/www/html/api/projects/",
+    "copy": "cp -r api/* /var/www/html/api/",
     "build-copy": "react-scripts build && cp -r build/* /var/www/html/",
     "pre-build": "react-scripts build && cd pre_build && mkdir hyperv && cd ../ && cp -r build/* pre_build/hyperv/ && cp -r api pre_build/hyperv/ && cd pre_build && zip -r hyperv.zip hyperv/ && rm -r -f hyperv && cd ../",
     "production-build": "react-scripts build && mkdir production_build && cp -r build/* production_build/ && cp -r api production_build/"
