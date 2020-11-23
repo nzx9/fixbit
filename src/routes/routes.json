@@ -2,5 +2,8 @@
     "HOME": "/",
     "LOGIN": "/login",
     "REGISTER": "/register",
-    "PROFILE": "/profile"
+    "PROFILE": "/profile",
+    "PROJECTS":"/projects",
+    "PROJECTS-VIEW": "projects/view",
+    "PROJECTS-CREATE": "projects/create"
 }
