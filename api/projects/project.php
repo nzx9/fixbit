@@ -11,6 +11,7 @@ class Project
     private $creatorId;
     private $adminId;
     private $teamId;
+    private $dateCreated;
 
     public function __construct($db)
     {
@@ -24,6 +25,10 @@ class Project
     {
         return $this->name;
     }
+    public function getDescription()
+    {
+        return $this->description;
+    }
     public function getCreatorId()
     {
         return $this->creatorId;
@@ -35,6 +40,30 @@ class Project
     public function getTeamId()
     {
         return $this->teamId;
+    }
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
+    }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+    public function setCreatorId($creatorId)
+    {
+        $this->creatorId = $creatorId;
+    }
+    public function setAdminId($adminId)
+    {
+        $this->adminId = $adminId;
+    }
+    public function setTeamId($teamId)
+    {
+        $this->teamId = $teamId;
     }
 
     // public function getCreatorInfo($creatorId)
@@ -115,6 +144,22 @@ class Project
     //     }
     // }
 
+    public function projectNameOk($name)
+    {
+        if (!empty($name)) {
+            $query = "SELECT pid FROM " . $this->table . " WHERE name = ? LIMIT 0,1";
+            $stmt = $this->connection->prepare($query);
+
+            $name = htmlspecialchars(strip_tags($name));
+            $stmt->bindParam(1, $name);
+            $stmt->execute();
+            if ($stmt->rowCount() > 0) {
+                return false;
+            }
+            return true;
+        }
+    }
+
     public function create()
     {
         if (!empty($this->name) && !empty($this->description)) {
@@ -131,14 +176,14 @@ class Project
             $stmt->bindParam(":description", $this->description);
             $stmt->bindParam(":creator_id", $this->creatorId);
 
-            if ($stmt->execute()) {
+            if ($stmt->execute() && $stmt->rowCount() > 0) {
                 return true;
             }
         }
         return false;
     }
 
-    public function getProjectById($pid)
+    public function getProjectBypid($pid)
     {
         if (!empty($pid)) {
             $query = "SELECT * FROM " . $this->table . " WHERE pid = ?";
@@ -154,6 +199,98 @@ class Project
                 $this->creatorId = $row['creator_id'];
                 $this->adminId = $row['admin_id'];
                 $this->teamId = $row['team_id'];
+                $this->dateCreated = $row['date_created'];
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getProjectByName($name)
+    {
+        if (!empty($name)) {
+            $query = "SELECT * FROM " . $this->table . " WHERE name = ? LIMIT 0, 1";
+            $stmt = $this->connection->prepare($query);
+            $name = htmlspecialchars(strip_tags($name));
+            $stmt->bindParam(1, $name);
+            $stmt->execute();
+
+            if ($stmt->rowCount() == 1) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->pid = $row['pid'];
+                $this->name = $row['name'];
+                $this->creatorId = $row['creator_id'];
+                $this->adminId = $row['admin_id'];
+                $this->teamId = $row['team_id'];
+                $this->dateCreated = $row['date_created'];
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function updateProjectById($pid, $name)
+    {
+        if (!empty($pid) && !empty($name)) {
+            $query = "UPDATE " . $this->table . " SET name = :name WHERE pid = :pid";
+            $stmt = $this->connection->prepare($query);
+            $pid = htmlspecialchars(strip_tags($pid));
+            $name = htmlspecialchars(strip_tags($name));
+
+            $stmt->bindParam(":name", $name);
+            $stmt->bindParam(":pid", $pid);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->pid = $row['pid'];
+                $this->name = $row['name'];
+                $this->creatorId = $row['creator_id'];
+                $this->adminId = $row['admin_id'];
+                $this->teamId = $row['team_id'];
+                $this->dateCreated = $row['date_created'];
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function changeAdmin($pid, $new_admin_id)
+    {
+        if (!empty($pid) && !empty($new_admin_id)) {
+            $query = "UPDATE " . $this->table . " SET admin_id = :new_admin WHERE pid = :pid";
+            $stmt = $this->connection->prepare($query);
+            $pid = htmlspecialchars(strip_tags($pid));
+            $new_admin_id = htmlspecialchars(strip_tags($new_admin_id));
+
+            $stmt->bindParam(":new_admin", $new_admin_id);
+            $stmt->bindParam(":pid", $pid);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->pid = $row['pid'];
+                $this->name = $row['name'];
+                $this->creatorId = $row['creator_id'];
+                $this->adminId = $row['admin_id'];
+                $this->teamId = $row['team_id'];
+                $this->dateCreated = $row['date_created'];
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function deleteProjectById($pid)
+    {
+        if (!empty($pid)) {
+            $query = "DELETE FROM " . $this->table . " WHERE pid = ?";
+            $stmt = $this->connection->prepare($query);
+            $pid = htmlspecialchars(strip_tags($pid));
+            $stmt->bindParam(1, $pid);
+            $stmt->execute();
+
+            if ($stmt->rowCount() == 1) {
                 return true;
             }
         }
