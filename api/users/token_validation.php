@@ -6,7 +6,6 @@ use \Firebase\JWT\JWT;
 class Token
 {
     private $key = "hello_world";
-    private $v_algo = 'HS256';
     private $site_url = "http://localhost";
 
     public function __construct($time = 60)
@@ -20,7 +19,7 @@ class Token
             "iss" => $this->site_url,
             "uid" => $uid,
             "iat" => time(),
-            "exp" => time() + (60 * 60 * 24), // 1 day
+            "exp" => time() + (60 * 60), // 1 hour
             "nbf" => 1605603296,  // 2020-11-17T14.25+05.30
         );
         $jwt = JWT::encode($payload, $this->key);
@@ -34,6 +33,24 @@ class Token
             return $decoded_data;
         } catch (\Exception $error) {
             echo "$error";
+        }
+    }
+
+    public function validJWT($uid, $jwt)
+    {
+        try {
+            $decoded_data = JWT::decode($jwt, $this->key, array('HS256'));
+            if (
+                $decoded_data->exp >= time() &&
+                $decoded_data->iss == $this->site_url &&
+                $decoded_data->uid == $uid
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $error) {
+            return false;
         }
     }
 }
