@@ -5,7 +5,7 @@ class Database
     private $host = "127.0.0.1";
     private $dbname = "test_db";
     private $user = "root";
-    private $passwd = "";
+    private $passwd = "OTEJMqynZoqwLv4b";
 
     public $connection;
 
