@@ -114,13 +114,14 @@ class Project
                     "( iid INT NOT NULL AUTO_INCREMENT , 
                     title VARCHAR(50) NOT NULL , 
                     description VARCHAR(500) NOT NULL , 
-                    attachments JSON NOT NULL , 
+                    attachments JSON NULL , 
                     createdBy INT NOT NULL , 
-                    assignedTo INT NOT NULL , 
-                    priority INT NOT NULL , 
-                    isOpen BOOLEAN NOT NULL , 
+                    assignedTo INT NULL , 
+                    priority TINYINT NOT NULL , 
+                    type TINYINT NOT NULL , 
+                    isOpen TINYINT NOT NULL , 
                     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-                    comments JSON NOT NULL , 
+                    comments JSON NULL ,
                     PRIMARY KEY (iid)) ENGINE = InnoDB";
                 $this->connection->exec($query);
                 return true;
