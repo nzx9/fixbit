@@ -66,84 +66,6 @@ class Project
         $this->teamId = $teamId;
     }
 
-    // public function getCreatorInfo($creatorId)
-    // {
-    //     if (!empty($creatorId)) {
-    //         $query = "SELECT uid, firstname, lastname, email FROM users WHERE uid = ? LIMIT 0,1";
-    //         $stmt = $this->connection->prepare($query);
-    //         $creatorId = htmlspecialchars(strip_tags($creatorId));
-    //         $stmt->bindParam(1, $creatorId);
-    //         $stmt->execute();
-
-    //         if ($stmt->rowCount() == 1) {
-    //             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    //             $uid = $row['uid'];
-    //             $firstname = $row['firstname'];
-    //             $lastname = $row['lastname'];
-    //             $email = $row['email'];
-    //             $user_data = array(
-    //                 "uid" => $uid,
-    //                 "firstname" => $firstname,
-    //                 "lastname" => $lastname,
-    //                 "email" => $email
-    //             );
-    //             return $user_data;
-    //         }
-    //     }
-    // }
-
-    // public function getAdminInfo($adminId)
-    // {
-    //     if (!empty($adminId)) {
-    //         $query = "SELECT uid, firstname, lastname, email FROM users WHERE uid = ? LIMIT 0,1";
-    //         $stmt = $this->connection->prepare($query);
-    //         $adminId = htmlspecialchars(strip_tags($adminId));
-    //         $stmt->bindParam(1, $adminId);
-    //         $stmt->execute();
-
-    //         if ($stmt->rowCount() == 1) {
-    //             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    //             $uid = $row['uid'];
-    //             $firstname = $row['firstname'];
-    //             $lastname = $row['lastname'];
-    //             $email = $row['email'];
-    //             $user_data = array(
-    //                 "uid" => $uid,
-    //                 "firstname" => $firstname,
-    //                 "lastname" => $lastname,
-    //                 "email" => $email
-    //             );
-    //             return $user_data;
-    //         }
-    //     }
-    // }
-
-    // public function getTeamInfo($teamId)
-    // {
-    //     if (!empty($teamId)) {
-    //         $query = "SELECT tid, uid, role, date_added FROM teams WHERE tid = ?";
-    //         $stmt = $this->connection->prepare($query);
-    //         $adminId = htmlspecialchars(strip_tags($teamId));
-    //         $stmt->bindParam(1, $teamId);
-    //         $stmt->execute();
-
-    //         if ($stmt->rowCount() == 1) {  // fix for multiple
-    //             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    //             $tid = $row['tid'];
-    //             $uid = $row['uid'];
-    //             $role = $row['role'];
-    //             $date_added = $row['date_added'];
-    //             $data = array(
-    //                 "tid" => $tid,
-    //                 "uid" => $uid,
-    //                 "role" => $role,
-    //                 "date_added" => $date_added
-    //             );
-    //             return $data;
-    //         }
-    //     }
-    // }
-
     public function projectNameOk($name)
     {
         if (!empty($name)) {
@@ -163,7 +85,8 @@ class Project
     public function create()
     {
         if (!empty($this->name) && !empty($this->description)) {
-            $query = "INSERT INTO " . $this->table . "(name, description, creator_id, admin_id) VALUES (:name, :description, :creator_id, :creator_id)";
+            $query = "INSERT INTO " . $this->table . "(name, description, creator_id, admin_id) 
+                                               VALUES (:name, :description, :creator_id, :creator_id)";
 
             $stmt = $this->connection->prepare($query);
 
@@ -178,6 +101,31 @@ class Project
 
             if ($stmt->execute() && $stmt->rowCount() > 0) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public function createTableForProject($pid)
+    {
+        if (!empty($pid)) {
+            try {
+                $query = "CREATE TABLE " . "project_" . $pid .
+                    "( iid INT NOT NULL AUTO_INCREMENT , 
+                    title VARCHAR(50) NOT NULL , 
+                    description VARCHAR(500) NOT NULL , 
+                    attachments JSON NOT NULL , 
+                    createdBy INT NOT NULL , 
+                    assignedTo INT NOT NULL , 
+                    priority INT NOT NULL , 
+                    isOpen BOOLEAN NOT NULL , 
+                    date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+                    comments JSON NOT NULL , 
+                    PRIMARY KEY (iid)) ENGINE = InnoDB";
+                $this->connection->exec($query);
+                return true;
+            } catch (PDOException $e) {
+                echo "error: " .  $e->getMessage();
             }
         }
         return false;
@@ -292,6 +240,22 @@ class Project
 
             if ($stmt->rowCount() == 1) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public function deleteProjectWithTable($pid)
+    {
+        if (!empty($pid)) {
+            try {
+                if ($this->deleteProjectById($pid)) {
+                    $sql = "DROP TABLE " . "project_" . $pid;
+                    $this->connection->exec($sql);
+                    return true;
+                }
+            } catch (PDOException $e) {
+                echo "error: " . $e->getMessage();
             }
         }
         return false;
