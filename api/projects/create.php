@@ -41,18 +41,25 @@ if (
                     "creatorId" => $project->getCreatorId(),
                     "adminId" => $project->getAdminId()
                 );
-                echo json_encode(array("success" => true, "msg" => "Project Created Successfully", "project_data" => $project_data, "type" => "success"));
+
+                if ($project->createTableForProject($project->getId())) {
+                    echo json_encode(array("success" => true, "msg" => "Project Created Successfully", "project_data" => $project_data, "type" => "success"));
+                } else {
+                    http_response_code(200);
+                    $project->deleteProjectById($project->getId());
+                    echo json_encode(array("success" => false, "msg" => "Something Went Wrong, Please Try again.", "project_data" => null, "type" => "error"));
+                }
             } else {
                 http_response_code(200);
                 echo json_encode(array("success" => false, "msg" => "Project Data Fetch Failed", "project_data" => null, "type" => "error"));
             }
         } else {
             http_response_code(200);
-            echo json_encode(array("success" => true, "msg" => "Project Creation Failed", "project_data" => null, "type" => "error"));
+            echo json_encode(array("success" => false, "msg" => "Project Creation Failed", "project_data" => null, "type" => "error"));
         }
     } else {
         http_response_code(200);
-        echo json_encode(array("success" => true, "msg" => "Project Name Already in Use. Please Use Another", "project_data" => null, "type" => "error"));
+        echo json_encode(array("success" => false, "msg" => "Project Name Already in Use. Please Use Another", "project_data" => null, "type" => "error"));
     }
 } else {
     http_response_code(400);
