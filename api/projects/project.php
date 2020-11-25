@@ -94,7 +94,6 @@ class Project
             $this->description = htmlspecialchars(strip_tags($this->description));
             $this->creatorId = htmlspecialchars(strip_tags($this->creatorId));
 
-
             $stmt->bindParam(":name", $this->name);
             $stmt->bindParam(":description", $this->description);
             $stmt->bindParam(":creator_id", $this->creatorId);
