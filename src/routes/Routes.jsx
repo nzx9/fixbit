@@ -9,11 +9,13 @@ import Home from "../containers/home";
 import Login from "../containers/login";
 import Register from "../containers/register";
 import Profile from "../containers/profile";
+import ViewProject from "../containers/view-project";
 
 export const MAIN_APP = () => {
   return (
     <>
       <Switch>
+        <Route path={routes.PROJECTS} component={ViewProject} />
         <Route path={routes.PROFILE} component={Profile} />
         <Route path={routes.HOME} component={Home} />
       </Switch>
