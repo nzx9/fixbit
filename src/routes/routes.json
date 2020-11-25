@@ -4,6 +4,6 @@
     "REGISTER": "/register",
     "PROFILE": "/profile",
     "PROJECTS":"/projects",
-    "PROJECTS-VIEW": "projects/view",
-    "PROJECTS-CREATE": "projects/create"
+    "PROJECTS_VIEW": "projects/view",
+    "PROJECTS_CREATE": "projects/create"
 }
