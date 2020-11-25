@@ -62,6 +62,10 @@ const Home = () => {
   const goToProfile = useCallback(() => history.push(routes.PROFILE), [
     history,
   ]);
+  const goToProjectView = useCallback(
+    () => history.push(routes.PROJECTS_VIEW),
+    [history]
+  );
 
   return (
     <div>
@@ -75,6 +79,14 @@ const Home = () => {
             onClick={goToProfile}
           >
             Profile
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            style={{ marginBottom: 10 }}
+            onClick={goToProjectView}
+          >
+            Projects
           </Button>
           <Button
             className={classes.button}
