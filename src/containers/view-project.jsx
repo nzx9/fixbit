@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   Container,
@@ -6,45 +6,26 @@ import {
   makeStyles,
   Grid,
   Typography,
-  Backdrop,
-  CircularProgress,
   Avatar,
-  Button,
-  IconButton,
   List,
   ListItem,
   ListItemText,
   Divider,
-  ButtonGroup,
-  Popover,
   Chip,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TablePagination,
-  InputBase,
-  withStyles,
-  useTheme,
-  fade,
 } from "@material-ui/core";
-
-import {
-  Settings,
-  ArrowDownward,
-  FirstPage,
-  LastPage,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  Search,
-} from "@material-ui/icons";
 
 import { AvatarGroup } from "@material-ui/lab";
 
-import PropTypes from "prop-types";
+import IssueCreateDialog from "./issue-create";
+import EditProjectDialog from "./edit-project";
+import IssueTable from "./issue-table";
+
+import { httpPOST } from "../components/httpRequest";
+import { DEBUG_PRINT } from "../components/debugTools";
+
+import { useSelector } from "react-redux";
+import { getToken } from "../reducers/tokenTracker";
+import { getUId } from "../reducers/userDataTracker";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -89,175 +70,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     borderColor: theme.palette.text.primary,
   },
-  table: {
-    maxHeight:
-      "innerHeight" in window
-        ? window.innerHeight
-        : document.documentElement.offsetHeight,
-  },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(0),
-      width: "auto",
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    border: "1px solid black",
-    borderRadius: 10,
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
 }));
-
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
-const useStyles1 = makeStyles((theme) => ({
-  root: {
-    flexShrink: 0,
-    marginLeft: theme.spacing(2.5),
-  },
-}));
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-function TablePaginationActions(props) {
-  const classes = useStyles1();
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
-
-  const handleFirstPageButtonClick = (event) => {
-    onChangePage(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onChangePage(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    onChangePage(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <div className={classes.root}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === "rtl" ? <LastPage /> : <FirstPage />}
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === "rtl" ? <FirstPage /> : <LastPage />}
-      </IconButton>
-    </div>
-  );
-}
 
 const project_name = "Apollo 11";
 const project_description =
@@ -266,301 +79,269 @@ const team_members = ["navindu", "sandul", "jennive", "gowrisha"];
 
 const ViewProject = () => {
   const classes = useStyles();
-  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const uId = useSelector(getUId);
+  const token = useSelector(getToken);
+  const pId = 21; // temp
 
-  const handleDescriptionClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const [projectDataAll, setProjectDataAll] = React.useState([]);
+  const [projectData, setProjectData] = React.useState([]);
+  const [error, setError] = React.useState(null);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [selectedTopAction, setSelectedTopAction] = React.useState(1);
+  const [selectedPriority, setSelectedPriority] = React.useState(null);
+  const [selectedBottomAction, setSelectedBottomAction] = React.useState(null);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [counts, setCounts] = React.useState({
+    all: 0,
+    critical: 0,
+    high: 0,
+    normal: 0,
+    low: 0,
+    none: 0,
+    assignedToYou: 0,
+    unassigned: 0,
+    closed: 0,
+  });
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const priority_list = [
+  const top_action_list = [
     {
-      name: "Critical",
-      tag: "critical",
-      cls: classes.tag_critical,
-      nos: 2,
-    },
-    {
-      name: "High Priority",
-      tag: "high",
-      cls: classes.tag_high,
-      nos: 10,
-    },
-    {
-      name: "Normal Priority",
-      tag: "normal",
-      cls: classes.tag_normal,
-      nos: 100,
-    },
-    {
-      name: "Low Priority",
-      tag: "low",
-      cls: classes.tag_low,
-      nos: 120,
-    },
-    {
-      name: "No Priority",
-      tag: "none",
-      cls: classes.tag_no,
-      nos: 3,
+      id: 1,
+      name: "All",
+      nos: counts.all,
     },
   ];
 
-  return (
-    <Container component="main" maxWidth="xl">
-      <Backdrop className={classes.backdrop} open={_openBackdrop}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Grid container spacing={1}>
-        <Grid item md={3}>
-          <Paper className={classes.paper}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Grid container>
-                  <Grid item xs={9}>
-                    <Typography variant="h5">{project_name}</Typography>
-                    <Popover
-                      id={"description"}
-                      open={Boolean(anchorEl)}
-                      anchorEl={anchorEl}
-                      onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "center",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                      }}
-                    >
-                      <Typography className={classes.typography}>
-                        {project_description}
-                      </Typography>
-                    </Popover>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ButtonGroup disableElevation variant="contained">
-                      <IconButton
-                        aria-label="description"
-                        className={classes.margin}
-                        size="small"
-                        onClick={handleDescriptionClick}
-                      >
-                        <ArrowDownward fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="delete"
-                        className={classes.margin}
-                        size="small"
-                      >
-                        <Settings fontSize="inherit" />
-                      </IconButton>
-                    </ButtonGroup>
-                  </Grid>
-                </Grid>
-                <List>
-                  <Grid container justify="">
-                    <AvatarGroup>
-                      {team_members.map((value, index) => {
-                        return <Avatar key={index} alt={value} src="_" />;
-                      })}
-                    </AvatarGroup>
-                  </Grid>
-                  <br />
-                  <Button variant="contained" color="primary" fullWidth>
-                    Create
-                  </Button>
-                </List>
-                <Divider />
-                <List>
-                  {["All"].map((text, index) => (
-                    <ListItem
-                      button
-                      key={text}
-                      onClick={() => {
-                        alert(text);
-                      }}
-                    >
-                      <ListItemText style={{ width: "80%" }} primary={text} />
-                      <ListItemText
-                        style={{ maxWidth: "20%", textAlign: "right" }}
-                        primary={3}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider />
-                <List>
-                  {priority_list.map((value, index) => (
-                    <ListItem
-                      button
-                      key={value.name}
-                      onClick={() => {
-                        alert(value.name);
-                      }}
-                    >
-                      <ListItemText
-                        style={{ minWidth: "40%" }}
-                        primary={value.name}
-                      />
-                      <Chip
-                        size="small"
-                        label={value.tag}
-                        variant="outlined"
-                        className={value.cls}
-                      />
+  const bottom_action_list = [
+    {
+      name: "Assigned To You",
+      nos: counts.assignedToYou,
+    },
+    {
+      name: "Unassigned",
+      nos: counts.unassigned,
+    },
+    {
+      name: "Closed",
+      nos: counts.closed,
+    },
+  ];
 
-                      <ListItemText
-                        style={{ maxWidth: "15%", textAlign: "right" }}
-                        primary={value.nos}
+  const priority_list = [
+    {
+      id: 5,
+      name: "Critical",
+      tag: "critical",
+      cls: classes.tag_critical,
+      nos: counts.critical,
+    },
+    {
+      id: 4,
+      name: "High Priority",
+      tag: "high",
+      cls: classes.tag_high,
+      nos: counts.high,
+    },
+    {
+      id: 3,
+      name: "Normal Priority",
+      tag: "normal",
+      cls: classes.tag_normal,
+      nos: counts.normal,
+    },
+    {
+      id: 2,
+      name: "Low Priority",
+      tag: "low",
+      cls: classes.tag_low,
+      nos: counts.low,
+    },
+    {
+      id: 1,
+      name: "No Priority",
+      tag: "none",
+      cls: classes.tag_no,
+      nos: counts.none,
+    },
+  ];
+  useEffect(() => {
+    httpPOST(
+      `${window.location.protocol}//${window.location.hostname}/api/issues/allissues.php`,
+      {
+        uid: uId,
+        pid: 21,
+        token: token,
+      }
+    )
+      .then((result) => {
+        setIsLoaded(true);
+        if (result.success) {
+          setProjectDataAll(result.data);
+          setProjectData(result.data);
+          let tmpCounts = {
+            all: result.data.length,
+            critical: 0,
+            high: 0,
+            normal: 0,
+            low: 0,
+            none: 0,
+            assignedToYou: 0,
+            unassigned: 0,
+            closed: 0,
+          };
+          result.data.forEach((element) => {
+            if (Number(element.priority) === 1) tmpCounts.none++;
+            else if (Number(element.priority) === 2) tmpCounts.low++;
+            else if (Number(element.priority) === 3) tmpCounts.normal++;
+            else if (Number(element.priority) === 4) tmpCounts.high++;
+            else if (Number(element.priority) === 5) tmpCounts.critical++;
+
+            if (Number(element.isOpen) === 1) tmpCounts.closed++;
+
+            if (element.assignedTo === null) tmpCounts.unassigned++;
+            else if (Number(element.assignedTo) === Number(uId))
+              tmpCounts.assignedToYou++;
+          });
+          setCounts(tmpCounts);
+        }
+        DEBUG_PRINT(result);
+        DEBUG_PRINT(counts);
+      })
+      .catch((error) => {
+        setIsLoaded(true);
+        setError(error);
+      });
+  }, []);
+  if (error) return <div>Error: {error}</div>;
+  else if (!isLoaded) return <div>Loading...</div>;
+  else
+    return (
+      <Container component="main" maxWidth="xl">
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={3}>
+            <Paper className={classes.paper}>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Grid container>
+                    <Grid item xs={9}>
+                      <Typography variant="h5">{project_name}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <EditProjectDialog
+                        project_description={project_description}
                       />
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider />
-                <List>
-                  {["Assigned to You", "Unassigned", "Closed"].map(
-                    (text, index) => (
+                    </Grid>
+                  </Grid>
+                  <List>
+                    <Grid container justify="">
+                      <AvatarGroup>
+                        {team_members.map((value, index) => {
+                          return <Avatar key={index} alt={value} src="_" />;
+                        })}
+                      </AvatarGroup>
+                    </Grid>
+                    <br />
+                    <IssueCreateDialog uId={uId} pId={pId} token={token} />
+                  </List>
+                  <Divider />
+                  <List>
+                    {top_action_list.map((value, index) => (
                       <ListItem
                         button
-                        key={text}
+                        key={value.id}
                         onClick={() => {
-                          alert(text);
+                          setProjectData(projectDataAll);
+                          setSelectedPriority(null);
+                          setSelectedTopAction(1);
                         }}
+                        selected={selectedTopAction === value.id ? true : false}
                       >
-                        <ListItemText style={{ width: "80%" }} primary={text} />
+                        <ListItemText
+                          style={{ width: "80%" }}
+                          primary={value.name}
+                        />
                         <ListItemText
                           style={{ maxWidth: "20%", textAlign: "right" }}
-                          primary={3}
+                          primary={value.nos}
                         />
                       </ListItem>
-                    )
-                  )}
-                </List>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
+                    ))}
+                  </List>
+                  <Divider />
+                  <List>
+                    {priority_list.map((value, index) => (
+                      <ListItem
+                        button
+                        key={value.id}
+                        onClick={() => {
+                          let tmp_list = [];
+                          projectDataAll.forEach((element) => {
+                            if (Number(element.priority) === value.id) {
+                              tmp_list.push(element);
+                            }
+                          });
+                          setProjectData(tmp_list);
+                          setSelectedTopAction(null);
+                          setSelectedPriority(value.id);
+                        }}
+                        selected={value.id === selectedPriority ? true : false}
+                      >
+                        <ListItemText
+                          style={{ minWidth: "40%" }}
+                          primary={value.name}
+                        />
+                        <Chip
+                          size="small"
+                          label={value.tag}
+                          variant="outlined"
+                          className={value.cls}
+                        />
 
-        <Grid item md={9} style={{ maxHeight: "100%", overflowY: "hidden" }}>
-          <Paper className={classes.paper}>
-            <Grid container style={{ marginBottom: 10 }}>
-              <Grid item xs={4}>
-                <div className={classes.search}>
-                  <div className={classes.searchIcon}>
-                    <Search />
-                  </div>
-                  <InputBase
-                    placeholder="Search…"
-                    classes={{
-                      root: classes.inputRoot,
-                      input: classes.inputInput,
-                    }}
-                    inputProps={{ "aria-label": "search" }}
-                  />
-                </div>
+                        <ListItemText
+                          style={{ maxWidth: "15%", textAlign: "right" }}
+                          primary={value.nos}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Divider />
+                  <List>
+                    {bottom_action_list.map((value, index) => (
+                      <ListItem
+                        button
+                        key={value.name}
+                        onClick={() => {
+                          alert(value.name);
+                        }}
+                      >
+                        <ListItemText
+                          style={{ width: "80%" }}
+                          primary={value.name}
+                        />
+                        <ListItemText
+                          style={{ maxWidth: "20%", textAlign: "right" }}
+                          primary={value.nos}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                x2
-              </Grid>
-              <Grid item xs={2}></Grid>
-            </Grid>
-            <TableContainer component={Paper} className={classes.table}>
-              <Table aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                    <StyledTableCell align="right">Calories</StyledTableCell>
-                    <StyledTableCell align="right">
-                      Fat&nbsp;(g)
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      Carbs&nbsp;(g)
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      Protein&nbsp;(g)
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? rows.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : rows
-                  ).map((row) => (
-                    <StyledTableRow key={row.name}>
-                      <StyledTableCell component="th" scope="row">
-                        {row.name}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {row.calories}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                      <StyledTableCell align="right">
-                        {row.carbs}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {row.protein}
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[
-                        5,
-                        10,
-                        25,
-                        { label: "All", value: -1 },
-                      ]}
-                      colSpan={3}
-                      count={rows.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      SelectProps={{
-                        inputProps: { "aria-label": "rows per page" },
-                        native: true,
-                      }}
-                      onChangePage={handleChangePage}
-                      onChangeRowsPerPage={handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
-          </Paper>
+            </Paper>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            md={9}
+            style={{ maxHeight: "100%", overflowY: "hidden" }}
+          >
+            <Paper className={classes.paper}>
+              <IssueTable rows={projectData} />
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
-  );
+      </Container>
+    );
 };
 
 export default ViewProject;
