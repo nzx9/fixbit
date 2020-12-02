@@ -23,6 +23,9 @@ import { Close, FiberManualRecord } from "@material-ui/icons";
 import { httpPOST } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
+import { useDispatch } from "react-redux";
+import { dataChanged } from "../reducers/dataChangeTracker";
+
 const settings = require("../components/settings.json");
 
 const styles = (theme) => ({
@@ -97,7 +100,7 @@ const DialogTitle = withStyles(styles)((props) => {
   );
 });
 
-function IssueCreateDialog({ uId, pId, token }) {
+function IssueCreateDialog(props) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
@@ -136,13 +139,10 @@ function IssueCreateDialog({ uId, pId, token }) {
     setType(e.target.value);
   };
 
-  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
+  const dispatch = useDispatch();
 
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={_openBackdrop}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <Button
         variant="outlined"
         color="primary"
@@ -165,43 +165,45 @@ function IssueCreateDialog({ uId, pId, token }) {
           onSubmit={(e) => {
             DEBUG_PRINT("CLICKED");
             DEBUG_PRINT({
-              uid: uId,
-              pid: pId,
+              uid: props.uId,
+              pid: props.pId,
               title: title,
               description: description,
-              createdBy: uId,
+              createdBy: props.uId,
               isOpen: isOpen,
               priority: priority,
               type: type,
               assignedTo: assignedTo,
-              token: token,
+              token: props.token,
             });
-            _setOpenBackdrop(true);
+            props.setOpenBackdrop(true);
             httpPOST(
               `${window.location.protocol}//${window.location.hostname}/api/issues/create.php`,
               {
-                uid: uId,
-                pid: pId,
+                uid: props.uId,
+                pid: props.pId,
                 title: title,
                 description: description,
-                createdBy: uId,
+                createdBy: props.uId,
                 assignedTo: assignedTo,
                 isOpen: isOpen,
                 priority: priority,
                 type: type,
-                token: token,
+                token: props.token,
               }
             )
               .then((res) => {
                 DEBUG_PRINT(res);
-                _setOpenBackdrop(false);
+                props.setOpenBackdrop(false);
                 if (res.success) {
+                  dispatch(dataChanged);
+                  props.action();
                   enqueueSnackbar("Success", {
                     variant: "success",
                     anchorOrigin: settings.snackbar.anchorOrigin,
                   });
                 } else {
-                  _setOpenBackdrop(false);
+                  props.setOpenBackdrop(false);
                   enqueueSnackbar(res.msg, {
                     variant: "error",
                     anchorOrigin: settings.snackbar.anchorOrigin,
