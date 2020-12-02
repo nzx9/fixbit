@@ -12,6 +12,8 @@ import {
   ListItemText,
   Divider,
   Chip,
+  Backdrop,
+  CircularProgress,
 } from "@material-ui/core";
 
 import { AvatarGroup } from "@material-ui/lab";
@@ -23,9 +25,11 @@ import IssueTable from "./issue-table";
 import { httpPOST } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 
-import { useSelector } from "react-redux";
 import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
+import { getDataChangeStatus } from "../reducers/dataChangeTracker";
+
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,6 +94,10 @@ const ViewProject = () => {
   const [selectedTopAction, setSelectedTopAction] = React.useState(1);
   const [selectedPriority, setSelectedPriority] = React.useState(null);
   const [selectedBottomAction, setSelectedBottomAction] = React.useState(null);
+  const [isDataChanged, setIsDataChanged] = React.useState(
+    useSelector(getDataChangeStatus)
+  );
+  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const [counts, setCounts] = React.useState({
     all: 0,
@@ -103,6 +111,8 @@ const ViewProject = () => {
     closed: 0,
   });
 
+  const dispatch = useDispatch();
+
   const top_action_list = [
     {
       id: 1,
@@ -113,14 +123,17 @@ const ViewProject = () => {
 
   const bottom_action_list = [
     {
+      id: 1,
       name: "Assigned To You",
       nos: counts.assignedToYou,
     },
     {
+      id: 2,
       name: "Unassigned",
       nos: counts.unassigned,
     },
     {
+      id: 3,
       name: "Closed",
       nos: counts.closed,
     },
@@ -163,7 +176,8 @@ const ViewProject = () => {
       nos: counts.none,
     },
   ];
-  useEffect(() => {
+
+  const fetchDataAndSet = () => {
     httpPOST(
       `${window.location.protocol}//${window.location.hostname}/api/issues/allissues.php`,
       {
@@ -176,7 +190,17 @@ const ViewProject = () => {
         setIsLoaded(true);
         if (result.success) {
           setProjectDataAll(result.data);
-          setProjectData(result.data);
+          if (selectedTopAction !== null) {
+            if (selectedTopAction === 1) {
+              setProjectData(result.data);
+            }
+          } else if (selectedPriority !== null) {
+            filterPriority(result.data, "priority", selectedPriority);
+          } else if (selectedBottomAction !== null) {
+            filterBottomAction(result.data, selectedBottomAction);
+          } else {
+            setProjectData(result.data);
+          }
           let tmpCounts = {
             all: result.data.length,
             critical: 0,
@@ -210,12 +234,73 @@ const ViewProject = () => {
         setIsLoaded(true);
         setError(error);
       });
+  };
+
+  const setOpenBackdrop = (value) => {
+    _setOpenBackdrop(value);
+  };
+
+  const filterPriority = (projectdata, id) => {
+    let tmp_list = [];
+    projectdata.forEach((element) => {
+      if (Number(element.priority) === id) {
+        tmp_list.push(element);
+      }
+    });
+    DEBUG_PRINT("----------");
+    DEBUG_PRINT(tmp_list);
+    DEBUG_PRINT("----------");
+    setProjectData(tmp_list);
+  };
+
+  const filterBottomAction = (projectdata, id) => {
+    let tmp_list = [];
+
+    if (id === 1) {
+      projectdata.forEach((element) => {
+        if (Number(element.assignedTo) === Number(uId)) {
+          tmp_list.push(element);
+        }
+      });
+    } else if (id === 2) {
+      projectdata.forEach((element) => {
+        if (element.assignedTo === null) {
+          tmp_list.push(element);
+        }
+      });
+    } else if (3) {
+      projectdata.forEach((element) => {
+        if (Number(element.isOpen) === 1) {
+          tmp_list.push(element);
+        }
+      });
+    }
+    DEBUG_PRINT("----------");
+    DEBUG_PRINT(tmp_list);
+    DEBUG_PRINT("----------");
+    setProjectData(tmp_list);
+  };
+
+  useEffect(() => {
+    fetchDataAndSet();
   }, []);
+
   if (error) return <div>Error: {error}</div>;
-  else if (!isLoaded) return <div>Loading...</div>;
+  else if (!isLoaded)
+    return (
+      <div>
+        {" "}
+        <Backdrop className={classes.backdrop} open="true">
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </div>
+    );
   else
     return (
       <Container component="main" maxWidth="xl">
+        <Backdrop className={classes.backdrop} open={_openBackdrop}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <Grid container spacing={1}>
           <Grid item xs={12} md={3}>
             <Paper className={classes.paper}>
@@ -240,7 +325,13 @@ const ViewProject = () => {
                       </AvatarGroup>
                     </Grid>
                     <br />
-                    <IssueCreateDialog uId={uId} pId={pId} token={token} />
+                    <IssueCreateDialog
+                      uId={uId}
+                      pId={pId}
+                      token={token}
+                      action={() => fetchDataAndSet()}
+                      setOpenBackdrop={() => setOpenBackdrop()}
+                    />
                   </List>
                   <Divider />
                   <List>
@@ -251,6 +342,7 @@ const ViewProject = () => {
                         onClick={() => {
                           setProjectData(projectDataAll);
                           setSelectedPriority(null);
+                          setSelectedBottomAction(null);
                           setSelectedTopAction(1);
                         }}
                         selected={selectedTopAction === value.id ? true : false}
@@ -273,14 +365,9 @@ const ViewProject = () => {
                         button
                         key={value.id}
                         onClick={() => {
-                          let tmp_list = [];
-                          projectDataAll.forEach((element) => {
-                            if (Number(element.priority) === value.id) {
-                              tmp_list.push(element);
-                            }
-                          });
-                          setProjectData(tmp_list);
+                          filterPriority(projectDataAll, value.id);
                           setSelectedTopAction(null);
+                          setSelectedBottomAction(null);
                           setSelectedPriority(value.id);
                         }}
                         selected={value.id === selectedPriority ? true : false}
@@ -310,8 +397,14 @@ const ViewProject = () => {
                         button
                         key={value.name}
                         onClick={() => {
-                          alert(value.name);
+                          filterBottomAction(projectDataAll, value.id);
+                          setSelectedTopAction(null);
+                          setSelectedPriority(null);
+                          setSelectedBottomAction(value.id);
                         }}
+                        selected={
+                          value.id === selectedBottomAction ? true : false
+                        }
                       >
                         <ListItemText
                           style={{ width: "80%" }}
