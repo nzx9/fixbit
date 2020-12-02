@@ -18,6 +18,7 @@ import {
   withStyles,
   useTheme,
   fade,
+  Tooltip,
 } from "@material-ui/core";
 
 import {
@@ -27,7 +28,9 @@ import {
   KeyboardArrowRight,
   Search,
   CancelRounded,
-  VisibilityRounded,
+  LockOpenTwoTone,
+  MoreTwoTone,
+  LockTwoTone,
 } from "@material-ui/icons";
 
 import PropTypes from "prop-types";
@@ -110,8 +113,11 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  closeBtn: {
+  closeIssueBtn: {
     color: theme.palette.error.main,
+  },
+  openIssueBtn: {
+    color: theme.palette.success.main,
   },
   viewBtn: {
     color: theme.palette.info.main,
@@ -330,17 +336,26 @@ const IssueTable = ({ rows }) => {
                 <StyledTableCell align="right">
                   <ButtonGroup disableElevation variant="contained">
                     <IconButton size="small">
-                      <VisibilityRounded
+                      <MoreTwoTone
                         fontSize="small"
                         className={classes.viewBtn}
                       />
                     </IconButton>
-                    <IconButton size="small">
-                      <CancelRounded
-                        fontSize="small"
-                        className={classes.closeBtn}
-                      />
-                    </IconButton>
+                    {Number(row.isOpen) === 1 ? (
+                      <IconButton size="small" title="Open this Issue">
+                        <LockOpenTwoTone
+                          fontSize="small"
+                          className={classes.openIssueBtn}
+                        />
+                      </IconButton>
+                    ) : (
+                      <IconButton size="small" title="Close this Issue">
+                        <LockTwoTone
+                          fontSize="small"
+                          className={classes.closeIssueBtn}
+                        />
+                      </IconButton>
+                    )}
                   </ButtonGroup>
                 </StyledTableCell>
               </StyledTableRow>
