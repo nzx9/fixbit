@@ -19,10 +19,11 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(0),
+    width: "100%",
     textAlign: "center",
     color: theme.palette.text.secondary,
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(0),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -59,13 +60,7 @@ const Home = () => {
 
   const dispath = useDispatch();
   const history = useHistory();
-  const goToProfile = useCallback(() => history.push(routes.PROFILE), [
-    history,
-  ]);
-  const goToProjectView = useCallback(
-    () => history.push(routes.PROJECTS_VIEW),
-    [history]
-  );
+  const goto = useCallback((path) => history.push(path), [history]);
 
   return (
     <div>
@@ -76,7 +71,7 @@ const Home = () => {
             variant="outlined"
             color="primary"
             style={{ marginBottom: 10 }}
-            onClick={goToProfile}
+            onClick={() => goto(routes.PROFILE)}
           >
             Profile
           </Button>
@@ -84,7 +79,7 @@ const Home = () => {
             variant="outlined"
             color="secondary"
             style={{ marginBottom: 10 }}
-            onClick={goToProjectView}
+            onClick={() => goto(routes.PROJECTS)}
           >
             Projects
           </Button>
