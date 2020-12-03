@@ -10,15 +10,18 @@ import Login from "../containers/login";
 import Register from "../containers/register";
 import Profile from "../containers/profile";
 import ViewProject from "../containers/view-project";
+import SideDrawer from "../containers/drawer";
 
 export const MAIN_APP = () => {
   return (
     <>
-      <Switch>
-        <Route path={routes.PROJECTS} component={ViewProject} />
-        <Route path={routes.PROFILE} component={Profile} />
-        <Route path={routes.HOME} component={Home} />
-      </Switch>
+      <SideDrawer>
+        <Switch>
+          <Route path={routes.PROJECTS} component={ViewProject} />
+          <Route path={routes.PROFILE} component={Profile} />
+          <Route path={routes.HOME} component={Home} />
+        </Switch>
+      </SideDrawer>
     </>
   );
 };
