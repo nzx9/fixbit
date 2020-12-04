@@ -130,6 +130,25 @@ class Project
         }
         return false;
     }
+    public function getAllPublicProjects()
+    {
+        /* This function returns all public projects in projects table */
+        $query = "SELECT * FROM " . $this->table . " WHERE isPublic = 1";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = array(
+                "pid" => $row['pid'],
+                "name" => $row['name'],
+                "description" => $row['description'],
+                "creator_id" => $row['creator_id'],
+                "admin_id" => $row['admin_id'],
+                "team_id" => $row['team_id'],
+                "date_created" => $row['date_created']
+            );
+        }
+        return $data;
+    }
 
     public function getProjectBypid($pid)
     {
