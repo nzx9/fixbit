@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(7) + 1,
+    width: theme.spacing(0),
     [theme.breakpoints.up("sm")]: {
       width: theme.spacing(7) + 1,
     },
@@ -87,6 +87,9 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     marginTop: theme.spacing(1),
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
   },
 }));
 
@@ -167,7 +170,7 @@ export default function SideDrawer(props) {
                 setTopListSelected(value.id);
                 goto(value.url);
               }}
-              selected={history.location.pathname === value.url ? true : false}
+              selected={topListSelected === value.id ? true : false}
             >
               <ListItemIcon>{value.icon}</ListItemIcon>
               <ListItemText primary={value.title} />
