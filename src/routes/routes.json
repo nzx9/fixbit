@@ -4,6 +4,9 @@
     "REGISTER": "/register",
     "PROFILE": "/profile",
     "PROJECTS":"/projects",
-    "PROJECTS_VIEW": "projects/view",
-    "PROJECTS_CREATE": "projects/create"
+    "PROJECTS_VIEW": "/projects/view/:pid",
+    "PROJECTS_VIEW_X": "/projects/view/",
+    "PROJECTS_CREATE": "/projects/create",
+    "ISSUE_VIEW": "/projects/view/:pid/issue/:iid",
+    "ISSUE_VIEW_X": "/issue/"
 }

@@ -9,15 +9,19 @@ import Home from "../containers/home";
 import Login from "../containers/login";
 import Register from "../containers/register";
 import Profile from "../containers/profile";
-import ViewProject from "../containers/view-project";
 import SideDrawer from "../containers/drawer";
+import ViewIssue from "../containers/view-issue";
+import Projects from "../containers/projects";
+import ViewProject from "../containers/view-project";
 
 export const MAIN_APP = () => {
   return (
     <>
       <SideDrawer>
         <Switch>
-          <Route path={routes.PROJECTS} component={ViewProject} />
+          <Route path={routes.ISSUE_VIEW} component={ViewIssue} />
+          <Route path={routes.PROJECTS_VIEW} component={ViewProject} />
+          <Route path={routes.PROJECTS} component={Projects} />
           <Route path={routes.PROFILE} component={Profile} />
           <Route path={routes.HOME} component={Home} />
         </Switch>
