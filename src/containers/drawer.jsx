@@ -13,25 +13,38 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Badge,
+  Menu,
+  MenuItem,
   makeStyles,
   useTheme,
 } from "@material-ui/core";
 import {
   ChevronLeft,
   ChevronRight,
-  Menu,
+  MenuTwoTone,
   Dashboard,
   Apps,
+  Notifications,
+  AccountCircle,
+  ExitToApp,
+  MoreVert,
 } from "@material-ui/icons";
 
 import { useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
+import { logout } from "../reducers/loginTracker";
+import { useDispatch } from "react-redux";
 
 const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    flexGrow: 1,
     display: "flex",
+  },
+  grow: {
+    flexGrow: 1,
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -50,6 +63,9 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: 30,
+    [theme.breakpoints.down("sm")]: {
+      marginRight: 0,
+    },
   },
   hide: {
     display: "none",
@@ -91,6 +107,18 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
     },
   },
+  sectionWideScreen: {
+    display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
+  },
+  sectionSmallScreen: {
+    display: "none",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+    },
+  },
 }));
 
 export default function SideDrawer(props) {
@@ -99,6 +127,13 @@ export default function SideDrawer(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [topListSelected, setTopListSelected] = React.useState(1);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const dispatch = useDispatch();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -116,9 +151,43 @@ export default function SideDrawer(props) {
   ];
   const bottomList = [];
 
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      id="profile-menu"
+      keepMounted
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem
+        onClick={() => {
+          goto(routes.PROFILE);
+          handleMenuClose();
+        }}
+      >
+        Profile <AccountCircle />
+      </MenuItem>
+      <MenuItem onClick={() => dispatch(logout())}>
+        Logout
+        <ExitToApp />
+      </MenuItem>
+    </Menu>
+  );
+
   return (
     <div className={classes.root}>
       <CssBaseline />
+
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
@@ -135,13 +204,53 @@ export default function SideDrawer(props) {
               [classes.hide]: open,
             })}
           >
-            <Menu />
+            <MenuTwoTone />
           </IconButton>
           <Typography variant="h6" noWrap>
             Bug Tracker
           </Typography>
+          <div className={classes.grow} />
+          <IconButton aria-label="show 17 new notifications" color="inherit">
+            <Badge badgeContent={17} color="secondary">
+              <Notifications />
+            </Badge>
+          </IconButton>
+          <div className={classes.sectionSmallScreen}>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <MoreVert />
+            </IconButton>
+          </div>
+          <div className={classes.sectionWideScreen}>
+            <IconButton
+              edge="end"
+              title="user profile"
+              aria-label="account of current user"
+              aria-haspopup="true"
+              onClick={() => goto(routes.PROFILE)}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <IconButton
+              edge="end"
+              title="logout"
+              aria-label="logout"
+              aria-haspopup="true"
+              onClick={() => dispatch(logout())}
+              color="inherit"
+            >
+              <ExitToApp />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
+      {renderMenu}
       <Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
