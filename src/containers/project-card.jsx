@@ -56,7 +56,7 @@ const ProjectCard = (props) => {
           color="textSecondary"
           gutterBottom
         >
-          {props.data.date}
+          {props.data.date_created.substring(0, 16)}
         </Typography>
         <Typography variant="h5" component="h2">
           {props.data.name}

@@ -448,7 +448,7 @@ const ViewProject = (props) => {
                 <Route path={routes.ISSUE_VIEW} component={ViewIssue} />
                 <Route
                   path={routes.PROJECTS_VIEW}
-                  children={<IssueTable rows={projectData} />}
+                  children={<IssueTable rows={projectData} pId={pId} />}
                 />
               </Switch>
             </Paper>

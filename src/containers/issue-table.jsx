@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Table,
   TableHead,
@@ -18,6 +18,7 @@ import {
   withStyles,
   useTheme,
   fade,
+  Typography,
 } from "@material-ui/core";
 
 import {
@@ -36,6 +37,7 @@ import PropTypes from "prop-types";
 import { Link, useHistory } from "react-router-dom";
 
 import routes from "../routes/routes.json";
+import dataNotFoundImage from "../images/nodata-found.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -220,11 +222,12 @@ function TablePaginationActions(props) {
   );
 }
 
-const IssueTable = ({ rows }) => {
+const IssueTable = (props) => {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [rows, setRows] = React.useState(props.rows);
+  const [isLoaded, setIsLoaded] = React.useState(false);
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
 
@@ -239,6 +242,29 @@ const IssueTable = ({ rows }) => {
     setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
   };
+
+  const handleSearchInput = (e) => {
+    if (
+      e.target.value !== "" &&
+      e.target.value !== null &&
+      e.target.value !== undefined
+    ) {
+      let filtered_list = [];
+      props.rows.filter((item) => {
+        if (item.title.toString().indexOf(e.target.value) >= 0) {
+          filtered_list.push(item);
+        }
+      });
+      setRows(filtered_list);
+    } else {
+      setRows(props.rows);
+    }
+  };
+
+  useEffect(() => {
+    setRows(props.rows);
+  }, [props.rows]);
+
   return (
     <div style={{ width: "100%" }}>
       <Grid container style={{ marginBottom: 10 }}>
@@ -248,159 +274,173 @@ const IssueTable = ({ rows }) => {
               <Search />
             </div>
             <InputBase
-              placeholder="Search…"
+              placeholder="Search by title…"
+              value={null}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
+              onChange={handleSearchInput}
               inputProps={{ "aria-label": "search" }}
             />
           </div>
         </Grid>
-        <Grid item md={6}>
-          x2
-        </Grid>
+        <Grid item md={6}></Grid>
         <Grid item md={2}></Grid>
       </Grid>
-      <TableContainer component={Paper} className={classes.table}>
-        <Table aria-label="issue table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>IID</StyledTableCell>
-              <StyledTableCell>Title</StyledTableCell>
-              <StyledTableCell>Type</StyledTableCell>
-              <StyledTableCell>Priority</StyledTableCell>
-              <StyledTableCell align="right">Assigend to</StyledTableCell>
-              <StyledTableCell align="right">Actions</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {page * rowsPerPage > rows.length ? setPage(0) : null}
-            {(rowsPerPage > 0
-              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : rows
-            ).map((row) => (
-              <StyledTableRow key={row.iid}>
-                <StyledTableCell component="th" scope="row">
-                  {row.iid}
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Link
-                    onClick={() => {
-                      goto(
-                        routes.PROJECTS_VIEW_X +
-                          21 +
-                          routes.ISSUE_VIEW_X +
-                          row.iid
-                      );
-                    }}
-                  >
-                    {row.title}
-                  </Link>
-                </StyledTableCell>
-                <StyledTableCell>
-                  {Number(row.type) === 1
-                    ? "BUG"
-                    : Number(row.type) === 1
-                    ? "TO TEST"
-                    : Number(row.type) === 1
-                    ? "SECURITY"
-                    : "OTHER"}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {Number(row.priority) === 1 ? (
-                    <Chip
-                      size="small"
-                      label="none"
-                      variant="outlined"
-                      className={classes.tag_none}
-                    />
-                  ) : Number(row.priority) === 2 ? (
-                    <Chip
-                      size="small"
-                      label="low"
-                      variant="outlined"
-                      className={classes.tag_low}
-                    />
-                  ) : Number(row.priority) === 3 ? (
-                    <Chip
-                      size="small"
-                      label="normal"
-                      variant="outlined"
-                      className={classes.tag_normal}
-                    />
-                  ) : Number(row.priority) === 4 ? (
-                    <Chip
-                      size="small"
-                      label="high"
-                      variant="outlined"
-                      className={classes.tag_high}
-                    />
-                  ) : (
-                    <Chip
-                      size="small"
-                      label="critical"
-                      variant="outlined"
-                      className={classes.tag_critical}
-                    />
-                  )}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  {row.assignedTo === null ? "None" : row.assignedTo}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <ButtonGroup disableElevation variant="contained">
-                    <IconButton size="small">
-                      <MoreTwoTone
-                        fontSize="small"
-                        className={classes.viewBtn}
-                      />
-                    </IconButton>
-                    {Number(row.isOpen) === 1 ? (
-                      <IconButton size="small" title="Open this Issue">
-                        <LockOpenTwoTone
-                          fontSize="small"
-                          className={classes.openIssueBtn}
-                        />
-                      </IconButton>
-                    ) : (
-                      <IconButton size="small" title="Close this Issue">
-                        <LockTwoTone
-                          fontSize="small"
-                          className={classes.closeIssueBtn}
-                        />
-                      </IconButton>
-                    )}
-                  </ButtonGroup>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+      {rows.length > 0 ? (
+        <TableContainer component={Paper} className={classes.table}>
+          <Table aria-label="issue table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>IID</StyledTableCell>
+                <StyledTableCell>Title</StyledTableCell>
+                <StyledTableCell>Type</StyledTableCell>
+                <StyledTableCell>Priority</StyledTableCell>
+                <StyledTableCell align="right">Assigend to</StyledTableCell>
+                <StyledTableCell align="right">Actions</StyledTableCell>
               </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                colSpan={3}
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                SelectProps={{
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                }}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {console.log(rows)}
+              {page * rowsPerPage > rows.length ? setPage(0) : null}
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row) => (
+                <StyledTableRow key={row.iid}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.iid}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link
+                      onClick={() => {
+                        goto(
+                          routes.PROJECTS_VIEW_X +
+                            props.pId +
+                            routes.ISSUE_VIEW_X +
+                            row.iid
+                        );
+                      }}
+                    >
+                      {row.title}
+                    </Link>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.type) === 1
+                      ? "BUG"
+                      : Number(row.type) === 1
+                      ? "TO TEST"
+                      : Number(row.type) === 1
+                      ? "SECURITY"
+                      : "OTHER"}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.priority) === 1 ? (
+                      <Chip
+                        size="small"
+                        label="none"
+                        variant="outlined"
+                        className={classes.tag_none}
+                      />
+                    ) : Number(row.priority) === 2 ? (
+                      <Chip
+                        size="small"
+                        label="low"
+                        variant="outlined"
+                        className={classes.tag_low}
+                      />
+                    ) : Number(row.priority) === 3 ? (
+                      <Chip
+                        size="small"
+                        label="normal"
+                        variant="outlined"
+                        className={classes.tag_normal}
+                      />
+                    ) : Number(row.priority) === 4 ? (
+                      <Chip
+                        size="small"
+                        label="high"
+                        variant="outlined"
+                        className={classes.tag_high}
+                      />
+                    ) : (
+                      <Chip
+                        size="small"
+                        label="critical"
+                        variant="outlined"
+                        className={classes.tag_critical}
+                      />
+                    )}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {row.assignedTo === null ? "None" : row.assignedTo}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <ButtonGroup disableElevation variant="contained">
+                      <IconButton size="small">
+                        <MoreTwoTone
+                          fontSize="small"
+                          className={classes.viewBtn}
+                        />
+                      </IconButton>
+                      {Number(row.isOpen) === 1 ? (
+                        <IconButton size="small" title="Open this Issue">
+                          <LockOpenTwoTone
+                            fontSize="small"
+                            className={classes.openIssueBtn}
+                          />
+                        </IconButton>
+                      ) : (
+                        <IconButton size="small" title="Close this Issue">
+                          <LockTwoTone
+                            fontSize="small"
+                            className={classes.closeIssueBtn}
+                          />
+                        </IconButton>
+                      )}
+                    </ButtonGroup>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                  colSpan={3}
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: { "aria-label": "rows per page" },
+                    native: true,
+                  }}
+                  onChangePage={handleChangePage}
+                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      ) : null}
+      {emptyRows === rowsPerPage && (
+        <Grid container justify="center">
+          <Grid item>
+            {/* <Typography>No Data</Typography> */}
+            <img
+              src={dataNotFoundImage}
+              alt="Data Not Found"
+              // width="500"
+              // height="600"
+            />
+          </Grid>
+        </Grid>
+      )}
     </div>
   );
 };

@@ -24,6 +24,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { httpPOST } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
+import { logout } from "../reducers/loginTracker";
 import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
     "& .MuiTextField-root": {
       marginTop: theme.spacing(1),
     },
+  },
+  grow: {
+    flexGrow: 1,
   },
   paper: {
     padding: theme.spacing(2),
@@ -64,14 +68,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.info.dark,
     },
   },
-  updateBtnGrid: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "right",
-  },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: theme.palette.primary.main,
+  },
+  logout: {
+    backgroundColor: theme.palette.warning.main,
+    color: theme.palette.text.primary,
+    "&:hover": {
+      backgroundColor: theme.palette.warning.dark,
+    },
   },
 }));
 
@@ -119,6 +125,7 @@ const Profile = () => {
     _setRetypeNewPassword(e.target.value);
   };
   const dispatch = useDispatch();
+
   return (
     <Container component="main" maxWidth="xl">
       <Backdrop className={classes.backdrop} open={_openBackdrop}>
@@ -175,24 +182,23 @@ const Profile = () => {
               }}
             >
               <Grid container>
-                <Grid item xs={10} justify="flex-start">
+                <Grid item justify="flex-start">
                   <Typography key="profile-header" variant="h6">
                     Profile
                   </Typography>
                 </Grid>
-                <Grid item xs={2} className={classes.updateBtnGrid}>
-                  <Button
-                    className={
-                      isUserInputDisabled
-                        ? classes.updateBtnActive
-                        : classes.updateBtnDisbled
-                    }
-                    variant="contained"
-                    type="submit"
-                  >
-                    {isUserInputDisabled ? "Edit" : "Update"}
-                  </Button>
-                </Grid>
+                <div className={classes.grow} />
+                <Button
+                  className={
+                    isUserInputDisabled
+                      ? classes.updateBtnActive
+                      : classes.updateBtnDisbled
+                  }
+                  variant="contained"
+                  type="submit"
+                >
+                  {isUserInputDisabled ? "Edit" : "Update"}
+                </Button>
               </Grid>
               <hr />
               <TextField
@@ -291,24 +297,23 @@ const Profile = () => {
               }}
             >
               <Grid container>
-                <Grid item xs={10} justify="flex-start">
+                <Grid item justify="flex-start">
                   <Typography key="profile-header" variant="h6">
                     Passwords
                   </Typography>
                 </Grid>
-                <Grid item xs={2} className={classes.updateBtnGrid}>
-                  <Button
-                    className={
-                      isPasswordInputDisabled
-                        ? classes.updateBtnActive
-                        : classes.updateBtnDisbled
-                    }
-                    variant="contained"
-                    type="submit"
-                  >
-                    {isPasswordInputDisabled ? "Edit" : "Update"}
-                  </Button>
-                </Grid>
+                <div className={classes.grow} />
+                <Button
+                  className={
+                    isPasswordInputDisabled
+                      ? classes.updateBtnActive
+                      : classes.updateBtnDisbled
+                  }
+                  variant="contained"
+                  type="submit"
+                >
+                  {isPasswordInputDisabled ? "Edit" : "Update"}
+                </Button>
               </Grid>
               <hr />
               <TextField
