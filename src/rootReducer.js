@@ -5,6 +5,7 @@ import loginReducer from "./reducers/loginTracker";
 import userDataReducer from "./reducers/userDataTracker";
 import tokenReducer from "./reducers/tokenTracker";
 import dataChangeReducer from "./reducers/dataChangeTracker";
+import projectDataReducer from "./reducers/projectDataTracker";
 
 export default function createRootReducer(history) {
   return combineReducers({
@@ -13,5 +14,6 @@ export default function createRootReducer(history) {
     userData: userDataReducer,
     token: tokenReducer,
     isDataChanged: dataChangeReducer,
+    projectData: projectDataReducer,
   });
 }
