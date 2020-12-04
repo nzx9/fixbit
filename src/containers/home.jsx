@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     textAlign: "center",
     color: theme.palette.text.secondary,
-    marginTop: theme.spacing(0),
+    marginTop: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

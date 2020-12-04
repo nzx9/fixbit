@@ -20,7 +20,6 @@ import { AvatarGroup } from "@material-ui/lab";
 
 import IssueCreateDialog from "./issue-create";
 import EditProjectDialog from "./edit-project";
-import IssueTable from "./issue-table";
 
 import { httpPOST } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
@@ -29,7 +28,20 @@ import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
 import { getDataChangeStatus } from "../reducers/dataChangeTracker";
 
-import { useSelector, useDispatch } from "react-redux";
+import {
+  getPId,
+  getProjectName,
+  getProjectDescription,
+  getAdminId,
+} from "../reducers/projectDataTracker";
+
+import { useSelector } from "react-redux";
+import { Switch, Route } from "react-router-dom";
+
+import IssueTable from "./issue-table";
+import ViewIssue from "./view-issue";
+
+import routes from "../routes/routes.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,16 +88,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const project_name = "Apollo 11";
-const project_description =
-  "This project description is an used only for test porpose";
 const team_members = ["navindu", "sandul", "jennive", "gowrisha"];
 
-const ViewProject = () => {
+const ViewProject = (props) => {
   const classes = useStyles();
   const uId = useSelector(getUId);
   const token = useSelector(getToken);
-  const pId = 21; // temp
+  const pId = useSelector(getPId);
+  const projectName = useSelector(getProjectName);
+  const projectDescription = useSelector(getProjectDescription);
+  const projectAdmin = useSelector(getAdminId);
 
   const [projectDataAll, setProjectDataAll] = React.useState([]);
   const [projectData, setProjectData] = React.useState([]);
@@ -110,8 +122,6 @@ const ViewProject = () => {
     unassigned: 0,
     closed: 0,
   });
-
-  const dispatch = useDispatch();
 
   const top_action_list = [
     {
@@ -182,13 +192,14 @@ const ViewProject = () => {
       `${window.location.protocol}//${window.location.hostname}/api/issues/allissues.php`,
       {
         uid: uId,
-        pid: 21,
+        pid: pId,
         token: token,
       }
     )
       .then((result) => {
         setIsLoaded(true);
-        if (result.success) {
+        DEBUG_PRINT(result);
+        if (result.success && result.data !== null) {
           setProjectDataAll(result.data);
           if (selectedTopAction !== null) {
             if (selectedTopAction === 1) {
@@ -226,9 +237,12 @@ const ViewProject = () => {
               tmpCounts.assignedToYou++;
           });
           setCounts(tmpCounts);
+          DEBUG_PRINT(result);
+          DEBUG_PRINT(counts);
+        } else {
+          // setError("404");
+          setProjectData([]);
         }
-        DEBUG_PRINT(result);
-        DEBUG_PRINT(counts);
       })
       .catch((error) => {
         setIsLoaded(true);
@@ -289,7 +303,6 @@ const ViewProject = () => {
   else if (!isLoaded)
     return (
       <div>
-        {" "}
         <Backdrop className={classes.backdrop} open="true">
           <CircularProgress color="inherit" />
         </Backdrop>
@@ -308,11 +321,13 @@ const ViewProject = () => {
                 <Grid item xs={12}>
                   <Grid container>
                     <Grid item xs={9}>
-                      <Typography variant="h5">{project_name}</Typography>
+                      <Typography variant="h5">{projectName}</Typography>
                     </Grid>
                     <Grid item xs={3}>
                       <EditProjectDialog
-                        project_description={project_description}
+                        projectName={projectName}
+                        projectDescription={projectDescription}
+                        projectAdmin={projectAdmin}
                       />
                     </Grid>
                   </Grid>
@@ -429,7 +444,13 @@ const ViewProject = () => {
             style={{ maxHeight: "100%", overflowY: "hidden" }}
           >
             <Paper className={classes.paper}>
-              <IssueTable rows={projectData} />
+              <Switch>
+                <Route path={routes.ISSUE_VIEW} component={ViewIssue} />
+                <Route
+                  path={routes.PROJECTS_VIEW}
+                  children={<IssueTable rows={projectData} />}
+                />
+              </Switch>
             </Paper>
           </Grid>
         </Grid>

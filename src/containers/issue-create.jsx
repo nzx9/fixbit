@@ -211,7 +211,7 @@ function IssueCreateDialog(props) {
                 }
               })
               .catch((err) => {
-                // _setOpenBackdrop(false);
+                props.setOpenBackdrop(false);
                 alert(err);
               });
             setOpen(false);
@@ -288,7 +288,7 @@ function IssueCreateDialog(props) {
                     label="Open/Close"
                     required
                   >
-                    <MenuItem value="null">
+                    <MenuItem value={-1}>
                       <em>None</em>
                     </MenuItem>
                     <MenuItem value={4}>Navindu</MenuItem>

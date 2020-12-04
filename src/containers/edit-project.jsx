@@ -22,9 +22,10 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import {
   Close,
   FiberManualRecord,
-  ArrowDownward,
+  Description,
   Settings,
 } from "@material-ui/icons";
+import { DEBUG_PRINT } from "../components/debugTools";
 
 const styles = (theme) => ({
   root: {
@@ -96,13 +97,17 @@ const DialogTitle = withStyles(styles)((props) => {
   );
 });
 
-function EditProjectDialog({ project_description }) {
+function EditProjectDialog(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [access, setAccess] = React.useState(2);
-  const [admin, setAdmin] = React.useState(null);
+  const [admin, setAdmin] = React.useState(props.projectAdmin);
   const [team, setTeam] = React.useState(1);
-
+  const [projectName, setProjectName] = React.useState(props.projectName);
+  const [projectDescription, setProjectDescription] = React.useState(
+    props.projectDescription
+  );
+  DEBUG_PRINT(props);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -118,6 +123,14 @@ function EditProjectDialog({ project_description }) {
 
   const handleDescriptionClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleProjectNameChange = (e) => {
+    setProjectName(e.target.value);
+  };
+
+  const handleProjectDescriptionChange = (e) => {
+    setProjectDescription(e.target.value);
   };
 
   const handleAccessChange = (e) => {
@@ -140,7 +153,7 @@ function EditProjectDialog({ project_description }) {
           size="small"
           onClick={handleDescriptionClick}
         >
-          <ArrowDownward fontSize="inherit" />
+          <Description fontSize="inherit" />
         </IconButton>
         <IconButton
           aria-label="delete"
@@ -166,7 +179,7 @@ function EditProjectDialog({ project_description }) {
         }}
       >
         <Typography className={classes.typography}>
-          {project_description}
+          {props.projectDescription}
         </Typography>
       </Popover>
       <Dialog
@@ -189,6 +202,8 @@ function EditProjectDialog({ project_description }) {
               <TextField
                 variant="outlined"
                 label="Project Name"
+                value={projectName}
+                onChange={handleProjectNameChange}
                 fullWidth
                 required
               />
@@ -220,6 +235,8 @@ function EditProjectDialog({ project_description }) {
               <TextField
                 id="description-input"
                 label="Description"
+                onChange={handleProjectDescriptionChange}
+                value={projectDescription}
                 multiline
                 variant="outlined"
                 fullWidth

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Table,
   TableHead,
@@ -18,7 +18,6 @@ import {
   withStyles,
   useTheme,
   fade,
-  Tooltip,
 } from "@material-ui/core";
 
 import {
@@ -34,7 +33,9 @@ import {
 } from "@material-ui/icons";
 
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+
+import routes from "../routes/routes.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -224,6 +225,9 @@ const IssueTable = ({ rows }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const history = useHistory();
+  const goto = useCallback((path) => history.push(path), [history]);
+
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
@@ -281,7 +285,18 @@ const IssueTable = ({ rows }) => {
                   {row.iid}
                 </StyledTableCell>
                 <StyledTableCell>
-                  <Link onClick={() => alert(row.iid)}>{row.title}</Link>
+                  <Link
+                    onClick={() => {
+                      goto(
+                        routes.PROJECTS_VIEW_X +
+                          21 +
+                          routes.ISSUE_VIEW_X +
+                          row.iid
+                      );
+                    }}
+                  >
+                    {row.title}
+                  </Link>
                 </StyledTableCell>
                 <StyledTableCell>
                   {Number(row.type) === 1
