@@ -9,6 +9,9 @@ import {
   Typography,
   makeStyles,
   Grid,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 
 import routes from "../routes/routes.json";
@@ -21,6 +24,7 @@ import {
   setDateCreated,
 } from "../reducers/projectDataTracker";
 import { useDispatch } from "react-redux";
+import { ArrowRight, ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,11 +36,21 @@ const useStyles = makeStyles((theme) => ({
     float: "left",
     margin: theme.spacing(1),
   },
+  grow: {
+    flexGrow: 1,
+  },
   title: {
     fontSize: 14,
   },
   pos: {
     marginBottom: 12,
+  },
+  viewBtn: {
+    backgroundColor: theme.palette.success.main,
+    color: theme.palette.grey[200],
+    "&:hover": {
+      backgroundColor: theme.palette.success.dark,
+    },
   },
 }));
 
@@ -48,21 +62,75 @@ const ProjectCard = (props) => {
 
   const dispatch = useDispatch();
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleMenuOpen = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const renderMenu = (
+    <Menu
+      getContentAnchorEl={null}
+      anchorEl={anchorEl}
+      id="profile-menu"
+      keepMounted
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      open={Boolean(anchorEl)}
+      onClose={handleMenuClose}
+    >
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+        }}
+      >
+        Edit
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
+    </Menu>
+  );
+
   return (
     <Card className={classes.root}>
       <CardContent>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          {props.data.date_created.substring(0, 16)}
-        </Typography>
+        <Grid container>
+          <Grid item>
+            <Typography
+              className={classes.title}
+              color="textSecondary"
+              gutterBottom
+            >
+              {/* {props.data.date_created.substring(0, 16)} */}
+              ProjectID: #{props.data.pid}
+            </Typography>
+          </Grid>
+          <div className={classes.grow} />
+          <Grid item>
+            <IconButton
+              size="small"
+              onClick={Boolean(anchorEl) ? handleMenuClose : handleMenuOpen}
+            >
+              {Boolean(anchorEl) ? (
+                <ExpandLess fontSize="small" />
+              ) : (
+                <ExpandMore fontSize="small" />
+              )}
+            </IconButton>
+          </Grid>
+        </Grid>
+        {renderMenu}
         <Typography variant="h5" component="h2">
           {props.data.name}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          #{props.data.pid}
+          {props.data.is_public ? "Public" : "Private"}
         </Typography>
         <Typography
           variant="body2"
@@ -73,13 +141,22 @@ const ProjectCard = (props) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Grid container justify="flex-end">
-          <Grid item></Grid>
+        <Grid container justify="flex-start">
+          <Grid item>
+            <Typography
+              className={classes.title}
+              color="textSecondary"
+              gutterBottom
+            >
+              {props.data.date_created.substring(0, 16)}
+            </Typography>
+          </Grid>
+          <div className={classes.grow} />
           <Grid item>
             <Button
+              className={classes.viewBtn}
               size="small"
-              color="secondary"
-              variant="outlined"
+              variant="contained"
               onClick={() => {
                 dispatch(setPId(props.data.pid));
                 dispatch(setProjectName(props.data.name));
@@ -91,6 +168,7 @@ const ProjectCard = (props) => {
               }}
             >
               View
+              <ArrowRight fontSize="small" />
             </Button>
           </Grid>
         </Grid>

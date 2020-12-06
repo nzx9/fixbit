@@ -26,7 +26,6 @@ import { DEBUG_PRINT } from "../components/debugTools";
 
 import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
-import { getDataChangeStatus } from "../reducers/dataChangeTracker";
 
 import {
   getPId,
@@ -106,9 +105,7 @@ const ViewProject = (props) => {
   const [selectedTopAction, setSelectedTopAction] = React.useState(1);
   const [selectedPriority, setSelectedPriority] = React.useState(null);
   const [selectedBottomAction, setSelectedBottomAction] = React.useState(null);
-  const [isDataChanged, setIsDataChanged] = React.useState(
-    useSelector(getDataChangeStatus)
-  );
+
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const [counts, setCounts] = React.useState({
@@ -297,7 +294,7 @@ const ViewProject = (props) => {
 
   useEffect(() => {
     fetchDataAndSet();
-  }, []);
+  });
 
   if (error) return <div>Error: {error}</div>;
   else if (!isLoaded)

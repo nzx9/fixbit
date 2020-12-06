@@ -18,7 +18,6 @@ import {
   withStyles,
   useTheme,
   fade,
-  Typography,
 } from "@material-ui/core";
 
 import {
@@ -27,7 +26,6 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   Search,
-  CancelRounded,
   LockOpenTwoTone,
   MoreTwoTone,
   LockTwoTone,
@@ -227,7 +225,6 @@ const IssueTable = (props) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState(props.rows);
-  const [isLoaded, setIsLoaded] = React.useState(false);
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
 
@@ -254,6 +251,7 @@ const IssueTable = (props) => {
         if (item.title.toString().indexOf(e.target.value) >= 0) {
           filtered_list.push(item);
         }
+        return 0;
       });
       setRows(filtered_list);
     } else {

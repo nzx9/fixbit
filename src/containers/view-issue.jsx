@@ -27,7 +27,7 @@ const ViewIssue = (props) => {
   //   else
   return (
     <div>
-      {props.match.params.pid} ISSUE : {props.match.params.iid}
+      PROJECT : {props.match.params.pid} <br /> ISSUE : {props.match.params.iid}
     </div>
   );
 };
