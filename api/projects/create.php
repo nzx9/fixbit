@@ -9,12 +9,15 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once "../config/db.php";
 include_once "../users/token_validation.php";
 include_once "./project.php";
+include_once "../op_support/op_support.php";
 
 $_db = new Database();
 $db = $_db->connect();
 
 $token = new Token();
 $project = new Project($db);
+$op_support = new OpSupport($db);
+
 
 $data = json_decode(file_get_contents('php://input'));
 
@@ -30,6 +33,10 @@ if (
     $project->setCreatorId($data->uid);
     $project->setAdminId($data->uid);
     $project->setTeamId(null);
+
+    $isPublic = $data->isPublic === 0 ? 0 : 1;
+    $project->setIsPublic($isPublic);
+
     if ($project->projectNameOk($data->name)) {
         if ($project->create()) {
             if ($project->getProjectByName($data->name)) {
@@ -39,10 +46,10 @@ if (
                     "name" => $project->getName(),
                     "description" => $project->getDescription(),
                     "creatorId" => $project->getCreatorId(),
-                    "adminId" => $project->getAdminId()
+                    "adminId" => $project->getAdminId(),
+                    "isPublic" => $project->getIsPublic()
                 );
-
-                if ($project->createTableForProject($project->getId())) {
+                if ($op_support->addToProjectUserSearchSupport($data->uid, $project->getId(), 1, $project->getIsPublic()) && $project->createTableForProject($project->getId())) {
                     echo json_encode(array("success" => true, "msg" => "Project Created Successfully", "project_data" => $project_data, "type" => "success"));
                 } else {
                     http_response_code(200);
