@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 04, 2020 at 08:11 AM
+-- Generation Time: Dec 06, 2020 at 07:02 PM
 -- Server version: 8.0.22-0ubuntu0.20.04.2
 -- PHP Version: 7.4.3
 
@@ -49,7 +49,19 @@ INSERT INTO `projects` (`pid`, `name`, `description`, `creator_id`, `admin_id`, 
 (23, 'test project 23', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-11-24 13:34:43'),
 (24, 'test project 24', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:17'),
 (25, 'test project 25', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:25'),
-(26, 'test project 26', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:46');
+(26, 'test project 26', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:46'),
+(27, 'test project 27', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:13:03'),
+(29, 'test project 28', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:15:03'),
+(34, 'test project 30', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:31:19'),
+(35, 'test project 31', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:32:43'),
+(41, 'test project 34', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:36:53'),
+(42, 'test project 42', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:37:22'),
+(44, 'test project 43', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:38:32'),
+(45, 'test project 44', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:38:55'),
+(46, 'test project 45', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:41:16'),
+(47, 'test project 47', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:41:46'),
+(48, 'test project 48', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:50:08'),
+(49, 'test project 49', 'this is test project added using postman by Navindu', 4, 4, NULL, 0, '2020-12-05 05:50:52');
 
 -- --------------------------------------------------------
 
@@ -243,6 +255,243 @@ CREATE TABLE `project_26` (
   `comments` json DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `project_26`
+--
+
+INSERT INTO `project_26` (`iid`, `title`, `description`, `attachments`, `createdBy`, `assignedTo`, `priority`, `type`, `isOpen`, `date_created`, `comments`) VALUES
+(1, 'First Issue', 'OK', NULL, 16, 1, 3, 1, 2, '2020-12-04 04:19:31', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_27`
+--
+
+CREATE TABLE `project_27` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_29`
+--
+
+CREATE TABLE `project_29` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_41`
+--
+
+CREATE TABLE `project_41` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_42`
+--
+
+CREATE TABLE `project_42` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_44`
+--
+
+CREATE TABLE `project_44` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_45`
+--
+
+CREATE TABLE `project_45` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_46`
+--
+
+CREATE TABLE `project_46` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_47`
+--
+
+CREATE TABLE `project_47` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_48`
+--
+
+CREATE TABLE `project_48` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_49`
+--
+
+CREATE TABLE `project_49` (
+  `iid` int NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `createdBy` int NOT NULL,
+  `assignedTo` int DEFAULT NULL,
+  `priority` tinyint NOT NULL,
+  `type` tinyint NOT NULL,
+  `isOpen` tinyint NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `comments` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_users_search_table`
+--
+
+CREATE TABLE `project_users_search_table` (
+  `pu_search_id` int NOT NULL,
+  `pid` int NOT NULL,
+  `uid` int NOT NULL,
+  `data_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  `isPublic` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `project_users_search_table`
+--
+
+INSERT INTO `project_users_search_table` (`pu_search_id`, `pid`, `uid`, `data_added`, `isAdmin`, `isPublic`) VALUES
+(1, 29, 4, '2020-12-05 05:15:03', 1, 1),
+(2, 41, 4, '2020-12-05 05:36:53', 1, 1),
+(3, 42, 4, '2020-12-05 05:37:22', 1, 1),
+(4, 44, 4, '2020-12-05 05:38:32', 0, 1),
+(5, 45, 4, '2020-12-05 05:38:55', 0, 0),
+(6, 46, 4, '2020-12-05 05:41:16', 1, 0),
+(7, 47, 4, '2020-12-05 05:41:46', 1, 1),
+(8, 48, 4, '2020-12-05 05:50:08', 1, 1),
+(9, 49, 4, '2020-12-05 05:50:52', 1, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -276,7 +525,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `username`, `fullname`, `email`, `password`, `date_created`) VALUES
-(4, 'Navindu Dananga', 'Dananga', 'navindu@g.com', '$2y$10$lIHgotRIPoLVqqWDxGWhKu1uR4qtSZ0RPAE0DISmh/4bbXwq0hU8a', '2020-11-01 13:08:57'),
+(4, 'Navindu Dananga', 'Dananga', 'navindu@g.com', '$2y$10$lEfMexAnTFJ7JwenutpYEOPcCprEFh.3AvR6H7iDRmgTcnNpuZJ3W', '2020-11-01 13:08:57'),
 (5, 'Hello', 'World', 'hello23@g.com', '$2y$10$tBA0vDoTTRHEXM9CmPp3deL2Ix2ZrqXLV2o5xrTyYx2nM7gBbtGLK', '2020-11-12 18:00:51'),
 (6, 'hello', 'hello', 'hello@g.com', '$2y$10$L.kmnn6p/A0yyJUoWGhtRe8GnsiWN2vk6jeO5v7zr8uwBV08/bMMm', '2020-11-12 18:03:05'),
 (7, 'Navindu2', 'Dananga2', 'nav@g.com', '$2y$10$MzUWbs1LOJFEp1rxy.Ae9.CY.cpY4q8abpfUZQ6pjQnvilDaeVQ.C', '2020-11-12 18:04:55'),
@@ -342,6 +591,72 @@ ALTER TABLE `project_26`
   ADD PRIMARY KEY (`iid`);
 
 --
+-- Indexes for table `project_27`
+--
+ALTER TABLE `project_27`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_29`
+--
+ALTER TABLE `project_29`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_41`
+--
+ALTER TABLE `project_41`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_42`
+--
+ALTER TABLE `project_42`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_44`
+--
+ALTER TABLE `project_44`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_45`
+--
+ALTER TABLE `project_45`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_46`
+--
+ALTER TABLE `project_46`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_47`
+--
+ALTER TABLE `project_47`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_48`
+--
+ALTER TABLE `project_48`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_49`
+--
+ALTER TABLE `project_49`
+  ADD PRIMARY KEY (`iid`);
+
+--
+-- Indexes for table `project_users_search_table`
+--
+ALTER TABLE `project_users_search_table`
+  ADD PRIMARY KEY (`pu_search_id`);
+
+--
 -- Indexes for table `teams`
 --
 ALTER TABLE `teams`
@@ -363,7 +678,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `pid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `pid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `project_21`
@@ -399,7 +714,73 @@ ALTER TABLE `project_25`
 -- AUTO_INCREMENT for table `project_26`
 --
 ALTER TABLE `project_26`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `project_27`
+--
+ALTER TABLE `project_27`
   MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_29`
+--
+ALTER TABLE `project_29`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_41`
+--
+ALTER TABLE `project_41`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_42`
+--
+ALTER TABLE `project_42`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_44`
+--
+ALTER TABLE `project_44`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_45`
+--
+ALTER TABLE `project_45`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_46`
+--
+ALTER TABLE `project_46`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_47`
+--
+ALTER TABLE `project_47`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_48`
+--
+ALTER TABLE `project_48`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_49`
+--
+ALTER TABLE `project_49`
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `project_users_search_table`
+--
+ALTER TABLE `project_users_search_table`
+  MODIFY `pu_search_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `teams`
