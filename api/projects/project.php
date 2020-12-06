@@ -11,6 +11,7 @@ class Project
     private $creatorId;
     private $adminId;
     private $teamId;
+    private $isPublic;
     private $dateCreated;
 
     public function __construct($db)
@@ -41,6 +42,10 @@ class Project
     {
         return $this->teamId;
     }
+    public function getIsPublic()
+    {
+        return $this->isPublic;
+    }
     public function getDateCreated()
     {
         return $this->dateCreated;
@@ -65,7 +70,10 @@ class Project
     {
         $this->teamId = $teamId;
     }
-
+    public function setIsPublic($isPublic)
+    {
+        $this->isPublic = $isPublic;
+    }
     public function projectNameOk($name)
     {
         if (!empty($name)) {
@@ -85,18 +93,20 @@ class Project
     public function create()
     {
         if (!empty($this->name) && !empty($this->description)) {
-            $query = "INSERT INTO " . $this->table . "(name, description, creator_id, admin_id) 
-                                               VALUES (:name, :description, :creator_id, :creator_id)";
+            $query = "INSERT INTO " . $this->table . "(name, description, creator_id, admin_id, isPublic) 
+                                               VALUES (:name, :description, :creator_id, :creator_id, :isPublic)";
 
             $stmt = $this->connection->prepare($query);
 
             $this->name = htmlspecialchars(strip_tags($this->name));
             $this->description = htmlspecialchars(strip_tags($this->description));
             $this->creatorId = htmlspecialchars(strip_tags($this->creatorId));
+            $this->isPublic = htmlspecialchars(strip_tags($this->isPublic));
 
             $stmt->bindParam(":name", $this->name);
             $stmt->bindParam(":description", $this->description);
             $stmt->bindParam(":creator_id", $this->creatorId);
+            $stmt->bindParam(":isPublic", $this->isPublic);
 
             if ($stmt->execute() && $stmt->rowCount() > 0) {
                 return true;
@@ -144,6 +154,7 @@ class Project
                 "creator_id" => $row['creator_id'],
                 "admin_id" => $row['admin_id'],
                 "team_id" => $row['team_id'],
+                "is_public" => $row['isPublic'],
                 "date_created" => $row['date_created']
             );
         }
@@ -190,6 +201,7 @@ class Project
                 $this->adminId = $row['admin_id'];
                 $this->teamId = $row['team_id'];
                 $this->dateCreated = $row['date_created'];
+                $this->isPublic = $row['isPublic'];
                 return true;
             }
         }
