@@ -26,7 +26,10 @@ class Issue
 
     public function create()
     {
-        /* This function create new issue in given table */
+        /*  This function create new issue in given table 
+            parmas : None
+            return : Boolean 
+        */
         if (
             !empty($this->title) &&
             !empty($this->description) &&
@@ -66,7 +69,10 @@ class Issue
 
     public function getAll()
     {
-        /* This function returns all issues in given table */
+        /*  This function returns all issues in given table
+            parmas : None
+            return : data of all issues
+        */
         $query = "SELECT * FROM " . $this->table;
         $stmt = $this->connection->prepare($query);
         $stmt->execute();
@@ -85,7 +91,10 @@ class Issue
 
     public function getIssue($iid)
     {
-        /* This function take issue_id as an argument and return the data of given issue id in given table */
+        /*  This function take issue_id as an argument and return the data of given issue id in given table
+            params : iid
+            return : issue data
+        */
         if (!empty($iid)) {
             $query = "SELECT * FROM " . $this->table . " WHERE iid = ?";
             $stmt = $this->connection->prepare($query);

@@ -64,6 +64,10 @@ class User
 
     public function emailNotExist()
     {
+        /*  This function checks emails is not exist already 
+            params : None
+            return : Boolean
+        */
         $query = "SELECT uid FROM " . $this->table . " WHERE email = ? LIMIT 0,1";
         $stmt = $this->connection->prepare($query);
 
@@ -78,6 +82,10 @@ class User
 
     public function create()
     {
+        /*  This function create new user
+            params : None
+            return : Boolean
+        */
         if (
             !empty($this->username) &&
             !empty($this->fullname) &&
@@ -113,6 +121,10 @@ class User
 
     public function validateLoginCredentials($email, $password)
     {
+        /*  This function checks email and password is matched with data in database
+            params : email and password
+            return : Boolean
+        */
         if (!empty($email) && !empty($password)) {
             $query = "SELECT * FROM " . $this->table . " WHERE email = ? LIMIT 0,1";
             $stmt = $this->connection->prepare($query);
@@ -136,6 +148,10 @@ class User
     }
     public function getEmailById($uid)
     {
+        /*  This function returns email by user id 
+            params : uid
+            return : Email or null
+        */
         if (!empty($uid)) {
             $query = "SELECT email FROM " . $this->table . " WHERE uid = ? LIMIT 0,1";
             $stmt = $this->connection->prepare($query);
@@ -153,6 +169,10 @@ class User
 
     public function getUserDetailsByEmail($email)
     {
+        /*  This function returns user details by email
+            params : email
+            return : Boolean
+        */
         if (!empty($email)) {
             $query = "SELECT * FROM " . $this->table . " WHERE email = ? LIMIT 0,1";
             $stmt = $this->connection->prepare($query);
@@ -173,6 +193,10 @@ class User
 
     public function verifyEmailById($uid, $email)
     {
+        /*  This function checks email matched to the uid  
+            params : uid and email
+            return : Boolean
+        */
         if (!empty($uid) && !empty($email)) {
             $query = "SELECT uid FROM " . $this->table . " WHERE email = ? AND uid = ? LIMIT 0,1";
             $stmt = $this->connection->prepare($query);
@@ -194,6 +218,10 @@ class User
 
     public function updateUserDetails($uid, $username, $fullname, $email)
     {
+        /*  This function updates user details 
+            params : uid, username, fullname, email
+            return : Boolean
+        */
         if (!empty($uid) && !empty($username) && !empty($fullname) && !empty($email)) {
             $query = "UPDATE " . $this->table . " SET username = :username, fullname = :fullname, email = :email WHERE uid = :uid";
             $stmt = $this->connection->prepare($query);
@@ -221,6 +249,10 @@ class User
 
     public function changePassword($uid, $newPassword)
     {
+        /*  This function changes password of given uid
+            params : uid and new password
+            return : Boolean
+        */
         if (!empty($uid) && !empty($newPassword)) {
             $query = "UPDATE " . $this->table . " SET password = :hash_password WHERE uid = :uid";
             $stmt = $this->connection->prepare($query);

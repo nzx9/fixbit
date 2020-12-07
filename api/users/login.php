@@ -6,6 +6,12 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Origin, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+/*  This file is used for validate login credentilas and issue tokens, 
+    Method   : POST
+    request  : email and password are required
+    response : Error or if success user data and token
+*/
+
 
 include_once "../config/db.php";
 include_once "./user.php";

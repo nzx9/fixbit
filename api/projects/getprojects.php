@@ -5,6 +5,11 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Origin, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+/*  This file is used for get projects matched to given parameters, 
+    Method   : POST
+    request  : uid, filter and token are required
+    response : all projects matched to given filter params
+*/
 
 require_once "../config/db.php";
 require_once "./project.php";

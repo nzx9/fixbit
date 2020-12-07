@@ -5,6 +5,11 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Origin, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+/*  This file is used for update user details, 
+    Method   : POST
+    request  : uid, token and new user deatils are required
+    response : Error or success
+*/
 
 include_once "../config/db.php";
 include_once "./user.php";

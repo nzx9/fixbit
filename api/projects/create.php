@@ -6,6 +6,12 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+/*  This file is used for create project API calls, 
+    Method   : POST
+    request  : uid, name, description and token are required
+    response : Success or Error
+*/
+
 include_once "../config/db.php";
 include_once "../users/token_validation.php";
 include_once "./project.php";

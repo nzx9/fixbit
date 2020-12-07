@@ -1,5 +1,5 @@
 <?php
-require '../vendor/autoload.php';
+require '../vendor/autoload.php'; // import Firebase JWT
 
 use \Firebase\JWT\JWT;
 
@@ -15,6 +15,10 @@ class Token
 
     public function generate($uid)
     {
+        /*  This function generate JWT token
+            params : uid
+            return : JWT Token
+        */
         $payload = array(
             "iss" => $this->site_url,
             "uid" => $uid,
@@ -28,6 +32,10 @@ class Token
 
     public function decode($jwt)
     {
+        /*  This function decode JWT tokens
+            params : token
+            return : decoded data
+        */
         try {
             $decoded_data = JWT::decode($jwt, $this->key, array('HS256'));;
             return $decoded_data;
@@ -38,6 +46,10 @@ class Token
 
     public function validJWT($uid, $jwt)
     {
+        /*  This function validate tokens with uid
+            params : uid and token
+            return : Boolean
+        */
         try {
             $decoded_data = JWT::decode($jwt, $this->key, array('HS256'));
             if (

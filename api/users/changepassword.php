@@ -5,6 +5,14 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Origin, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+
+/*  This file is used for change passwords of users, 
+    Method   : POST
+    request  : uid, current password, new password, confirm new password and token are required
+    response : Success or Error
+*/
+
+
 include_once "../config/db.php";
 include_once "./user.php";
 include_once "./token_validation.php";

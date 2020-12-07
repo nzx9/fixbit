@@ -76,6 +76,10 @@ class Project
     }
     public function projectNameOk($name)
     {
+        /*  This function checks project name is not already used in other project 
+            params : name
+            return : Boolean
+        */
         if (!empty($name)) {
             $query = "SELECT pid FROM " . $this->table . " WHERE name = ? LIMIT 0,1";
             $stmt = $this->connection->prepare($query);
@@ -92,6 +96,10 @@ class Project
 
     public function create()
     {
+        /*  This function create new project on projects table
+            params : none
+            return : Boolean
+        */
         if (!empty($this->name) && !empty($this->description)) {
             $query = "INSERT INTO " . $this->table . "(name, description, creator_id, admin_id, isPublic) 
                                                VALUES (:name, :description, :creator_id, :creator_id, :isPublic)";
@@ -117,6 +125,10 @@ class Project
 
     public function createTableForProject($pid)
     {
+        /*  This function create new table for given project 
+            params : pid
+            return : Boolean
+        */
         if (!empty($pid)) {
             try {
                 $query = "CREATE TABLE " . "project_" . $pid .
@@ -142,7 +154,10 @@ class Project
     }
     public function getAllPublicProjects()
     {
-        /* This function returns all public projects in projects table */
+        /*  This function returns all public projects in projects table 
+            params : None
+            return : Data of all public projects (array)
+        */
         $query = "SELECT * FROM " . $this->table . " WHERE isPublic = 1";
         $stmt = $this->connection->prepare($query);
         $stmt->execute();
@@ -163,6 +178,10 @@ class Project
 
     public function getProjectBypid($pid)
     {
+        /*  This function returns data of given project id 
+            params : pid
+            return : data of pid (array) or null
+        */
         if (!empty($pid)) {
             $query = "SELECT * FROM " . $this->table . " WHERE pid = ?";
             $stmt = $this->connection->prepare($query);
@@ -189,6 +208,10 @@ class Project
 
     public function getProjectByName($name)
     {
+        /*  This function returns project data by name 
+            params : name
+            return : Boolean
+        */
         if (!empty($name)) {
             $query = "SELECT * FROM " . $this->table . " WHERE name = ? LIMIT 0, 1";
             $stmt = $this->connection->prepare($query);
@@ -213,6 +236,10 @@ class Project
 
     public function updateProjectById($pid, $name)
     {
+        /*  This function update project details by pid 
+            params : pid, name, other project data
+            return : Boolean
+        */
         if (!empty($pid) && !empty($name)) {
             $query = "UPDATE " . $this->table . " SET name = :name WHERE pid = :pid";
             $stmt = $this->connection->prepare($query);
@@ -239,6 +266,10 @@ class Project
 
     public function changeAdmin($pid, $new_admin_id)
     {
+        /*  This function changes project admin 
+            params : pid, new admins id
+            return : Boolean
+        */
         if (!empty($pid) && !empty($new_admin_id)) {
             $query = "UPDATE " . $this->table . " SET admin_id = :new_admin WHERE pid = :pid";
             $stmt = $this->connection->prepare($query);
@@ -265,6 +296,10 @@ class Project
 
     public function deleteProjectById($pid)
     {
+        /*  This function deletes project using pid 
+            params : pid
+            return : Boolean
+        */
         if (!empty($pid)) {
             $query = "DELETE FROM " . $this->table . " WHERE pid = ?";
             $stmt = $this->connection->prepare($query);
@@ -281,6 +316,10 @@ class Project
 
     public function deleteProjectWithTable($pid)
     {
+        /*  This function drop project table of that given pid and row from projects table 
+            params : pid
+            return : Boolean
+        */
         if (!empty($pid)) {
             try {
                 if ($this->deleteProjectById($pid)) {

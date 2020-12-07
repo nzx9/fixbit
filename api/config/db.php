@@ -11,6 +11,7 @@ class Database
 
     public function connect()
     {
+        /* Connect to Database */
         $this->connection = null;
 
         try {
