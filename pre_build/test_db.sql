@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 06, 2020 at 07:02 PM
--- Server version: 8.0.22-0ubuntu0.20.04.2
+-- Generation Time: Dec 07, 2020 at 11:28 AM
+-- Server version: 8.0.22-0ubuntu0.20.04.3
 -- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -44,7 +44,7 @@ CREATE TABLE `projects` (
 --
 
 INSERT INTO `projects` (`pid`, `name`, `description`, `creator_id`, `admin_id`, `team_id`, `isPublic`, `date_created`) VALUES
-(21, 'test project 21', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-11-24 06:37:01'),
+(21, 'test project 21', 'this is test project added using postman by Navindu', 4, 4, NULL, 0, '2020-11-24 06:37:01'),
 (22, 'test project 22', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-11-24 13:21:28'),
 (23, 'test project 23', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-11-24 13:34:43'),
 (24, 'test project 24', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:17'),
@@ -52,8 +52,6 @@ INSERT INTO `projects` (`pid`, `name`, `description`, `creator_id`, `admin_id`, 
 (26, 'test project 26', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:46'),
 (27, 'test project 27', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:13:03'),
 (29, 'test project 28', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:15:03'),
-(34, 'test project 30', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:31:19'),
-(35, 'test project 31', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:32:43'),
 (41, 'test project 34', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:36:53'),
 (42, 'test project 42', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:37:22'),
 (44, 'test project 43', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:38:32'),
@@ -159,7 +157,10 @@ CREATE TABLE `project_22` (
 
 INSERT INTO `project_22` (`iid`, `title`, `description`, `attachments`, `createdBy`, `assignedTo`, `priority`, `type`, `isOpen`, `date_created`, `comments`) VALUES
 (1, 'Hello', 'ads dasdasda ', NULL, 4, 4, 2, 1, 2, '2020-12-03 14:15:47', NULL),
-(2, 'hello', 'adsjnd jasndkas', NULL, 4, 1, 3, 1, 2, '2020-12-03 15:12:07', NULL);
+(2, 'hello', 'adsjnd jasndkas', NULL, 4, 1, 3, 1, 2, '2020-12-03 15:12:07', NULL),
+(3, 'dhkasjhd j', 'nla ndlks kadks lasdn aldka das dkjaskdjlasdjk ajdk djasldjasdjlk ajld jalsjdlaskd ald jlaksj lsajdl ajsdlka lsdjl', NULL, 4, 1, 5, 3, 2, '2020-12-06 18:02:46', NULL),
+(4, 'lkjdkjaslkjd las', 'jdal sjdlkasjd jasl', NULL, 4, 4, 2, 4, 2, '2020-12-06 18:03:08', NULL),
+(5, 'dkdnajs ndkjnasd nn jkasnkjd nksadnsakn', 'aj sdjna sjdnjsa ndjas jdasj dnaj sdkans kdn askndkasn djsn dnaskn akdnaksndkndaskn kasndk asndkn skadnasdnkjans dkjnask ', NULL, 4, 4, 2, 4, 2, '2020-12-06 18:05:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -490,7 +491,8 @@ INSERT INTO `project_users_search_table` (`pu_search_id`, `pid`, `uid`, `data_ad
 (6, 46, 4, '2020-12-05 05:41:16', 1, 0),
 (7, 47, 4, '2020-12-05 05:41:46', 1, 1),
 (8, 48, 4, '2020-12-05 05:50:08', 1, 1),
-(9, 49, 4, '2020-12-05 05:50:52', 1, 0);
+(9, 49, 4, '2020-12-05 05:50:52', 1, 0),
+(10, 21, 4, '2020-12-07 05:26:41', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -690,7 +692,7 @@ ALTER TABLE `project_21`
 -- AUTO_INCREMENT for table `project_22`
 --
 ALTER TABLE `project_22`
-  MODIFY `iid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `project_23`
@@ -780,7 +782,7 @@ ALTER TABLE `project_49`
 -- AUTO_INCREMENT for table `project_users_search_table`
 --
 ALTER TABLE `project_users_search_table`
-  MODIFY `pu_search_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `pu_search_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `teams`
