@@ -29,9 +29,10 @@ import {
   AccountCircle,
   ExitToApp,
   MoreVert,
+  BubbleChart,
 } from "@material-ui/icons";
 
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
@@ -107,17 +108,22 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
     },
   },
-  sectionWideScreen: {
+  sectionDesktop: {
     display: "flex",
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
   },
-  sectionSmallScreen: {
+  sectionMobile: {
     display: "none",
     [theme.breakpoints.down("sm")]: {
       display: "flex",
     },
+  },
+  title: {
+    textDecoration: "none",
+    color: theme.palette.grey[200],
+    outline: "none",
   },
 }));
 
@@ -203,18 +209,20 @@ export default function SideDrawer(props) {
           >
             <MenuTwoTone />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Bug Tracker
-          </Typography>
+          <Link to={routes.HOME} className={classes.title}>
+            <Typography variant="h6" noWrap style={{ fontWeight: 700 }}>
+              Fixbit
+              <BubbleChart />
+            </Typography>
+          </Link>
           <div className={classes.grow} />
-          <IconButton aria-label="show 17 new notifications" color="inherit">
-            <Badge badgeContent={17} color="secondary">
+          <IconButton title="notifications" color="inherit">
+            <Badge badgeContent={0} color="secondary">
               <Notifications />
             </Badge>
           </IconButton>
-          <div className={classes.sectionSmallScreen}>
+          <div className={classes.sectionMobile}>
             <IconButton
-              edge="end"
               aria-label="account of current user"
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
@@ -223,9 +231,8 @@ export default function SideDrawer(props) {
               <MoreVert />
             </IconButton>
           </div>
-          <div className={classes.sectionWideScreen}>
+          <div className={classes.sectionDesktop}>
             <IconButton
-              edge="end"
               title="user profile"
               aria-label="account of current user"
               aria-haspopup="true"
