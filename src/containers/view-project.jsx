@@ -294,7 +294,7 @@ const ViewProject = (props) => {
 
   useEffect(() => {
     fetchDataAndSet();
-  });
+  }, []);
 
   if (error) return <div>Error: {error}</div>;
   else if (!isLoaded)
