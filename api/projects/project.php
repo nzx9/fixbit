@@ -172,16 +172,19 @@ class Project
 
             if ($stmt->rowCount() == 1) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $this->pid = $row['pid'];
-                $this->name = $row['name'];
-                $this->creatorId = $row['creator_id'];
-                $this->adminId = $row['admin_id'];
-                $this->teamId = $row['team_id'];
-                $this->dateCreated = $row['date_created'];
-                return true;
+                return  array(
+                    "pid" => $row['pid'],
+                    "name" => $row['name'],
+                    "description" => $row['description'],
+                    "creator_id" => $row['creator_id'],
+                    "admin_id" => $row['admin_id'],
+                    "team_id" => $row['team_id'],
+                    "is_public" => $row['isPublic'],
+                    "date_created" => $row['date_created']
+                );
             }
         }
-        return false;
+        return null;
     }
 
     public function getProjectByName($name)

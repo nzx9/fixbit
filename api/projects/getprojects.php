@@ -8,6 +8,7 @@ header("Access-Control-Allow-Headers: Origin, Content-Type, Access-Control-Allow
 
 require_once "../config/db.php";
 require_once "./project.php";
+require_once "../op_support/op_support.php";
 require_once "../users/token_validation.php";
 
 $_db = new Database();
@@ -16,6 +17,7 @@ $db = $_db->connect();
 $token = new Token();
 
 $project = new Project($db);
+$op_support = new OpSupport($db);
 
 $data = json_decode(file_get_contents('php://input'));
 
@@ -28,9 +30,11 @@ if (
     && $token->validJWT($data->uid, $data->token)
 ) {
     if ($data->filter === "ALL") {
-        $publicProjectData = $project->getAllPublicProjects();
-
-        $projectData = $publicProjectData; // for tempory
+        $all_project_ids = $op_support->getProjectsByUser($data->uid, 1);
+        foreach ($all_project_ids as $pid_info) {
+            $project_data[] = $project->getProjectBypid($pid_info['pid']);
+        }
+        $projectData = $project_data;
     } else {
         if ($data->filter === "PRIVATE") {
         } else {  // public

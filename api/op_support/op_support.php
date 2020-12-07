@@ -35,14 +35,21 @@ class OpSupport
         return false;
     }
 
-    public function getProjectsByUser()
+    public function getProjectsByUser($uid, $isPublic)
     {
-        $query = "SELECT * FROM " .  $this->PU_SEARCH . " WHERE isPublic = 1 OR uid = :uid";
+        $query = "SELECT * FROM " .  $this->PU_SEARCH . " WHERE isPublic = :isPublic OR uid = :uid";
         $stmt = $this->connection->prepare($query);
+
+        $uid = htmlspecialchars(strip_tags($uid));
+        $isPublic = htmlspecialchars(strip_tags($isPublic));
+
+        $stmt->bindParam(":uid", $uid);
+        $stmt->bindParam(":isPublic", $isPublic);
+
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $data[] = array(
-                "pid" => $row['pid']
+                "pid" => $row['pid'],
             );
         }
         return $data;
