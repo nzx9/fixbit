@@ -1,18 +1,18 @@
-# HyperV
+# Fixbit
 
 ## REQUIREMENTS FOR BUILD
 
 1.  -[x] [Node.js](https://nodejs.org)
 2.  -[x] [Yarn](https://yarnpkg.com/g)
-3.  -[x] [huperV](https://github.com/krypto-i9/hyperv/archive/main.zip) (copy of this repo)
+3.  -[x] [Fixbit](https://github.com/krypto-i9/Fixbit/archive/main.zip) (copy of this repo)
 
 ## BUILD FROM SOURCE
 
 1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
 2.  -[x] Download and Install Node.js
 3.  -[x] Install `yarn` using `npm install -g yarn` commond in cmd
-4.  -[x] Unzip the downloaded `hyperv` file.
-5.  -[x] Open cmd inside the hyperv
+4.  -[x] Unzip the downloaded `Fixbit` file.
+5.  -[x] Open cmd inside the Fixbit
 6.  -[x] Run `yarn production-build`
 7.  -[x] Copy files inside production_build folder into www folder
 8.  -[x] Open browser and goto localhost
@@ -21,8 +21,8 @@
 
 1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
 2.  -[x] Open `pre_build` folder
-3.  -[x] Extract `hyperv.zip`
-4.  -[x] Copy files inside extracted folder `hyperv` to `www`
+3.  -[x] Extract `Fixbit.zip`
+4.  -[x] Copy files inside extracted folder `Fixbit` to `www`
 5.  -[x] Open browser and goto `localhost`
 
 ## Available Scripts
