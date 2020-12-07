@@ -130,7 +130,7 @@ const ProjectCard = (props) => {
           {props.data.name}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          {props.data.is_public ? "Public" : "Private"}
+          {Number(props.data.is_public) ? "Public" : "Private"}
         </Typography>
         <Typography
           variant="body2"
