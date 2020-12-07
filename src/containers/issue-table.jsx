@@ -295,7 +295,7 @@ const IssueTable = (props) => {
                 <StyledTableCell>Title</StyledTableCell>
                 <StyledTableCell>Type</StyledTableCell>
                 <StyledTableCell>Priority</StyledTableCell>
-                <StyledTableCell align="right">Assigend to</StyledTableCell>
+                <StyledTableCell align="right">Assigee</StyledTableCell>
                 <StyledTableCell align="right">Actions</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -310,10 +310,14 @@ const IssueTable = (props) => {
                 : rows
               ).map((row) => (
                 <StyledTableRow key={row.iid}>
-                  <StyledTableCell component="th" scope="row">
+                  <StyledTableCell
+                    component="th"
+                    scope="row"
+                    style={{ width: "50" }}
+                  >
                     {row.iid}
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell style={{ width: 350, overflowX: "hidden" }}>
                     <Link
                       onClick={() => {
                         goto(
@@ -327,16 +331,18 @@ const IssueTable = (props) => {
                       {row.title}
                     </Link>
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell style={{ width: 100 }}>
                     {Number(row.type) === 1
+                      ? "NONE"
+                      : Number(row.type) === 2
                       ? "BUG"
-                      : Number(row.type) === 1
+                      : Number(row.type) === 3
                       ? "TO TEST"
-                      : Number(row.type) === 1
+                      : Number(row.type) === 4
                       ? "SECURITY"
                       : "OTHER"}
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell style={{ width: 150 }}>
                     {Number(row.priority) === 1 ? (
                       <Chip
                         size="small"
@@ -375,7 +381,9 @@ const IssueTable = (props) => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {row.assignedTo === null ? "None" : row.assignedTo}
+                    {row.assignedTo === null || Number(row.assignedTo) === -1
+                      ? "None"
+                      : row.assignedTo}
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <ButtonGroup disableElevation variant="contained">
