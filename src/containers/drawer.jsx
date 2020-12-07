@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     textDecoration: "none",
-    color: theme.palette.grey[200],
+    color: theme.palette.grey[100],
     outline: "none",
   },
 }));
