@@ -35,7 +35,7 @@ import PropTypes from "prop-types";
 import { Link, useHistory } from "react-router-dom";
 
 import routes from "../routes/routes.json";
-import emptyResultImage from "../images/empty_result.png";
+import noResultImage from "../images/no-result-nb.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -437,7 +437,7 @@ const IssueTable = (props) => {
       {emptyRows === rowsPerPage && (
         <Grid container justify="center">
           <Grid item>
-            <img src={emptyResultImage} alt="Data Not Found" width="100%" />
+            <img src={noResultImage} alt="Data Not Found" width="100%" />
           </Grid>
         </Grid>
       )}

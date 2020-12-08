@@ -10,9 +10,7 @@ import { getUId } from "../reducers/userDataTracker";
 
 import ProjectCard from "./project-card";
 
-import dataNotFoundImage from "../images/nodata-found.png";
-
-import router from "../routes/routes.json";
+import noProjectsImage from "../images/no-projects.png";
 
 import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
@@ -48,6 +46,12 @@ const useStyles = makeStyles((theme) => ({
   fabText: {
     display: "flex",
   },
+  noResultImage: {
+    width: "auto",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
+  },
 }));
 
 const Projects = () => {
@@ -75,9 +79,9 @@ const Projects = () => {
     )
       .then((result) => {
         setIsLoaded(true);
+        DEBUG_PRINT(result);
         if (result.success) {
-          DEBUG_PRINT(result);
-          if (result.data !== null) {
+          if (result.project_data !== null) {
             setData(result.project_data);
           } else {
             setData([]);
@@ -126,7 +130,13 @@ const Projects = () => {
         }}
       >
         {data.length === 0 ? (
-          <img src={dataNotFoundImage} alt="Data Not Found" width="100%" />
+          <div style={{ textAlign: "center", maxWidth: "100%" }}>
+            <img
+              className={classes.noResultImage}
+              src={noProjectsImage}
+              alt="No Projects"
+            />
+          </div>
         ) : (
           data.map((value, index) => <ProjectCard key={index} data={value} />)
         )}
