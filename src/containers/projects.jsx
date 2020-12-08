@@ -10,6 +10,8 @@ import { getUId } from "../reducers/userDataTracker";
 
 import ProjectCard from "./project-card";
 
+import dataNotFoundImage from "../images/nodata-found.png";
+
 import router from "../routes/routes.json";
 
 import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
@@ -123,9 +125,11 @@ const Projects = () => {
           marginLeft: "3%",
         }}
       >
-        {data.map((value, index) => (
-          <ProjectCard key={index} data={value} />
-        ))}
+        {data.length === 0 ? (
+          <img src={dataNotFoundImage} alt="Data Not Found" width="100%" />
+        ) : (
+          data.map((value, index) => <ProjectCard key={index} data={value} />)
+        )}
       </div>
     </div>
   );

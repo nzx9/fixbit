@@ -23,8 +23,17 @@ import {
   setAdminId,
   setDateCreated,
 } from "../reducers/projectDataTracker";
-import { useDispatch } from "react-redux";
-import { ArrowRight, ExpandLess, ExpandMore } from "@material-ui/icons";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ArrowRight,
+  DeleteForever,
+  Edit,
+  ExpandLess,
+  ExpandMore,
+  Group,
+} from "@material-ui/icons";
+import { getUId } from "../reducers/userDataTracker";
+import { DEBUG_PRINT } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  deleteItem: {
+    color: theme.palette.error.main,
+  },
 }));
 
 const ProjectCard = (props) => {
@@ -63,6 +75,7 @@ const ProjectCard = (props) => {
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const uid = useSelector(getUId);
 
   const handleMenuOpen = (e) => {
     setAnchorEl(e.currentTarget);
@@ -72,6 +85,7 @@ const ProjectCard = (props) => {
     setAnchorEl(null);
   };
 
+  DEBUG_PRINT(props.admin_id);
   const renderMenu = (
     <Menu
       getContentAnchorEl={null}
@@ -91,9 +105,25 @@ const ProjectCard = (props) => {
           handleMenuClose();
         }}
       >
-        Edit
+        <Group />
+        &ensp;View Team
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
+      {Number(props.data.admin_id) === Number(uid) ? (
+        <>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+            }}
+          >
+            <Edit /> &ensp; Edit Project
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose} className={classes.deleteItem}>
+            <DeleteForever /> &ensp; Delete
+          </MenuItem>
+        </>
+      ) : (
+        <></>
+      )}
     </Menu>
   );
 
@@ -107,7 +137,6 @@ const ProjectCard = (props) => {
               color="textSecondary"
               gutterBottom
             >
-              {/* {props.data.date_created.substring(0, 16)} */}
               ProjectID: #{props.data.pid}
             </Typography>
           </Grid>
