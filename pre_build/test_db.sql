@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 07, 2020 at 11:28 AM
+-- Generation Time: Dec 08, 2020 at 01:23 PM
 -- Server version: 8.0.22-0ubuntu0.20.04.3
 -- PHP Version: 7.4.3
 
@@ -51,7 +51,7 @@ INSERT INTO `projects` (`pid`, `name`, `description`, `creator_id`, `admin_id`, 
 (25, 'test project 25', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:25'),
 (26, 'test project 26', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-03 17:10:46'),
 (27, 'test project 27', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:13:03'),
-(29, 'test project 28', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:15:03'),
+(29, 'test project 28', 'this is test project added using postman by Navindu', 4, 7, NULL, 1, '2020-12-05 05:15:03'),
 (41, 'test project 34', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:36:53'),
 (42, 'test project 42', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:37:22'),
 (44, 'test project 43', 'this is test project added using postman by Navindu', 4, 4, NULL, 1, '2020-12-05 05:38:32'),
@@ -129,7 +129,9 @@ INSERT INTO `project_21` (`iid`, `title`, `description`, `attachments`, `created
 (41, '1234567890', 'hello world', NULL, 4, 1, 3, 1, 1, '2020-12-02 18:18:18', NULL),
 (42, 'Register issue', 'Can\'t Register', NULL, 4, 1, 4, 2, 2, '2020-12-03 05:16:13', NULL),
 (43, 'dkls kas damskd als', 'cklx ldalsd lsakmdlas', NULL, 4, -1, 3, 1, 2, '2020-12-03 15:18:47', NULL),
-(44, 'Hdhdjjsjdnd', 'Hshdjjdjdbd', NULL, 4, 1, 3, 1, 2, '2020-12-03 17:34:36', NULL);
+(44, 'Hdhdjjsjdnd', 'Hshdjjdjdbd', NULL, 4, 1, 3, 1, 2, '2020-12-03 17:34:36', NULL),
+(45, 'ksnj nxlkzclk mkmxlx', 'km alssalmsda', NULL, 4, 4, 4, 4, 2, '2020-12-07 07:12:10', NULL),
+(46, 'lkclakm ldkasdlk ', 'kla mdkmaslkd ms', NULL, 4, 4, 4, 4, 2, '2020-12-07 07:13:19', NULL);
 
 -- --------------------------------------------------------
 
@@ -302,6 +304,13 @@ CREATE TABLE `project_29` (
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `comments` json DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `project_29`
+--
+
+INSERT INTO `project_29` (`iid`, `title`, `description`, `attachments`, `createdBy`, `assignedTo`, `priority`, `type`, `isOpen`, `date_created`, `comments`) VALUES
+(1, 'jasjdn ksndknas kd', 'as dsd asda sdas das das da', NULL, 4, 1, 2, 4, 1, '2020-12-08 04:30:20', NULL);
 
 -- --------------------------------------------------------
 
@@ -483,7 +492,7 @@ CREATE TABLE `project_users_search_table` (
 --
 
 INSERT INTO `project_users_search_table` (`pu_search_id`, `pid`, `uid`, `data_added`, `isAdmin`, `isPublic`) VALUES
-(1, 29, 4, '2020-12-05 05:15:03', 1, 1),
+(1, 29, 4, '2020-12-05 05:15:03', 0, 1),
 (2, 41, 4, '2020-12-05 05:36:53', 1, 1),
 (3, 42, 4, '2020-12-05 05:37:22', 1, 1),
 (4, 44, 4, '2020-12-05 05:38:32', 0, 1),
@@ -554,7 +563,8 @@ ALTER TABLE `projects`
   ADD UNIQUE KEY `name_2` (`name`),
   ADD KEY `admin` (`admin_id`),
   ADD KEY `created_by` (`creator_id`),
-  ADD KEY `team` (`team_id`);
+  ADD KEY `team` (`team_id`),
+  ADD KEY `isPublic` (`isPublic`);
 
 --
 -- Indexes for table `project_21`
@@ -656,7 +666,10 @@ ALTER TABLE `project_49`
 -- Indexes for table `project_users_search_table`
 --
 ALTER TABLE `project_users_search_table`
-  ADD PRIMARY KEY (`pu_search_id`);
+  ADD PRIMARY KEY (`pu_search_id`),
+  ADD KEY `pid` (`pid`,`uid`,`isAdmin`,`isPublic`),
+  ADD KEY `uid` (`uid`),
+  ADD KEY `isPublic` (`isPublic`);
 
 --
 -- Indexes for table `teams`
@@ -686,7 +699,7 @@ ALTER TABLE `projects`
 -- AUTO_INCREMENT for table `project_21`
 --
 ALTER TABLE `project_21`
-  MODIFY `iid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `project_22`
@@ -728,7 +741,7 @@ ALTER TABLE `project_27`
 -- AUTO_INCREMENT for table `project_29`
 --
 ALTER TABLE `project_29`
-  MODIFY `iid` int NOT NULL AUTO_INCREMENT;
+  MODIFY `iid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `project_41`
@@ -807,6 +820,14 @@ ALTER TABLE `projects`
   ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`uid`),
   ADD CONSTRAINT `projects_ibfk_2` FOREIGN KEY (`admin_id`) REFERENCES `users` (`uid`) ON DELETE RESTRICT,
   ADD CONSTRAINT `projects_ibfk_3` FOREIGN KEY (`team_id`) REFERENCES `teams` (`tid`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `project_users_search_table`
+--
+ALTER TABLE `project_users_search_table`
+  ADD CONSTRAINT `project_users_search_table_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `projects` (`pid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_users_search_table_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_users_search_table_ibfk_3` FOREIGN KEY (`isPublic`) REFERENCES `projects` (`isPublic`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
