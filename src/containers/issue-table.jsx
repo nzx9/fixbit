@@ -35,7 +35,7 @@ import PropTypes from "prop-types";
 import { Link, useHistory } from "react-router-dom";
 
 import routes from "../routes/routes.json";
-import dataNotFoundImage from "../images/nodata-found.png";
+import emptyResultImage from "../images/empty_result.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -295,7 +295,7 @@ const IssueTable = (props) => {
                 <StyledTableCell>Title</StyledTableCell>
                 <StyledTableCell>Type</StyledTableCell>
                 <StyledTableCell>Priority</StyledTableCell>
-                <StyledTableCell align="right">Assigee</StyledTableCell>
+                <StyledTableCell align="right">Assignee</StyledTableCell>
                 <StyledTableCell align="right">Actions</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -437,13 +437,7 @@ const IssueTable = (props) => {
       {emptyRows === rowsPerPage && (
         <Grid container justify="center">
           <Grid item>
-            {/* <Typography>No Data</Typography> */}
-            <img
-              src={dataNotFoundImage}
-              alt="Data Not Found"
-              // width="500"
-              // height="600"
-            />
+            <img src={emptyResultImage} alt="Data Not Found" width="100%" />
           </Grid>
         </Grid>
       )}
