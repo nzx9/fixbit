@@ -11,6 +11,10 @@ class OpSupport
 
     public function addToProjectUserSearchSupport($uid, $pid, $isAdmin, $isPublic)
     {
+        /*  This function add user and project data to project_users_search_table
+            params : uid, pid, isAdmin, isPublic
+            return : Boolean
+        */
         if (!empty($uid) && !empty($pid)) {
             $query = "INSERT INTO " . $this->PU_SEARCH . " (uid, pid, isAdmin, isPublic) 
                                                VALUES (:uid, :pid, :isAdmin, :isPublic)";
@@ -37,6 +41,10 @@ class OpSupport
 
     public function getProjectsByUser($uid, $isPublic)
     {
+        /*  This function fetch data from project_user_search_table with given params
+            params : uid, isPublic
+            return : array of pids
+        */
         $query = "SELECT * FROM " .  $this->PU_SEARCH . " WHERE isPublic = :isPublic OR uid = :uid";
         $stmt = $this->connection->prepare($query);
 
