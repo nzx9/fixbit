@@ -15,6 +15,8 @@ import noProjectsImage from "../images/no-projects.png";
 import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 
+import ProjectDialog from "./project-dialog";
+
 const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -23,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   fabDesktop: {
     display: "flex",
     position: "fixed",
-    zIndex: 9999,
+    zIndex: 1,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
@@ -33,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   fabMobile: {
     display: "none",
     position: "fixed",
-    zIndex: 9999,
+    zIndex: 1,
     bottom: theme.spacing(2),
     right: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
@@ -65,8 +67,21 @@ const Projects = () => {
   const [filterValue, setFilterValue] = React.useState("ALL");
   const [newProjectAdded, setNewProjectAdded] = React.useState(false);
 
+  const [openBackdrop, setOpenBackdrop] = React.useState(false);
+
+  const [open, setOpen] = React.useState(false);
+
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
+
+  const handleNewProjectAdded = () => setNewProjectAdded(!newProjectAdded);
+
+  const handleOpenBackdrop = () => setOpenBackdrop(true);
+  const handleCloseBackdrop = () => setOpenBackdrop(false);
 
   const fetchDataAndSet = (filter_value) => {
     httpPOST(
@@ -116,13 +131,30 @@ const Projects = () => {
     );
   return (
     <div>
-      <Fab variant="extended" className={classes.fabDesktop} color="primary">
+      <Backdrop className={classes.backdrop} open={openBackdrop}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Fab
+        variant="extended"
+        className={classes.fabDesktop}
+        color="primary"
+        onClick={handleOpen}
+      >
         <Add className={classes.extendedIcon} />
         <div className={classes.fabText}>New Project</div>
       </Fab>
-      <Fab className={classes.fabMobile} color="primary">
+      <Fab className={classes.fabMobile} color="primary" onClick={null}>
         <Add />
       </Fab>
+      <ProjectDialog
+        open={open}
+        handleClose={() => handleClose()}
+        uId={uId}
+        token={token}
+        openBackdrop={() => handleOpenBackdrop()}
+        closeBackdrop={() => handleCloseBackdrop()}
+        newProjectAddedAction={() => fetchDataAndSet(filterValue)}
+      />
       <div
         style={{
           display: "auto",

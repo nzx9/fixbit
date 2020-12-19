@@ -30,6 +30,7 @@ import {
   ExitToApp,
   MoreVert,
   BubbleChart,
+  Group,
 } from "@material-ui/icons";
 
 import { Link, useHistory } from "react-router-dom";
@@ -150,6 +151,7 @@ export default function SideDrawer(props) {
   const topList = [
     { id: 1, title: "Dashboard", url: routes.HOME, icon: <Dashboard /> },
     { id: 2, title: "Projects", url: routes.PROJECTS, icon: <Apps /> },
+    { id: 3, title: "Teams", url: routes.TEAMS, icon: <Group /> },
   ];
   const bottomList = [];
 

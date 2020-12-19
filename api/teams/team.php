@@ -14,6 +14,12 @@ class Team
 
     public function create()
     {
+
+        /*
+            Create new row in teams table
+            parmas : None
+            return : Boolean  
+        */
         if (!empty($this->name)) {
             $query = "INSERT INTO " . $this->table . "(name) VALUES (:name)";
 
@@ -30,5 +36,14 @@ class Team
             }
         }
         return false;
+    }
+
+
+    public function createTabelForTeam()
+    {
+    }
+
+    public function addToTeam($tid, $pid)
+    {
     }
 }

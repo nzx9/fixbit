@@ -325,6 +325,7 @@ const ViewProject = (props) => {
                         projectName={projectName}
                         projectDescription={projectDescription}
                         projectAdmin={projectAdmin}
+                        buttonType={"Save"}
                       />
                     </Grid>
                   </Grid>

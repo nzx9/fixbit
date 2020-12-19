@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.grey[200],
     "&:hover": {
       backgroundColor: theme.palette.success.dark,
+      zIndex: 1,
     },
   },
   deleteItem: {

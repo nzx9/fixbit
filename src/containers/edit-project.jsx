@@ -100,13 +100,14 @@ const DialogTitle = withStyles(styles)((props) => {
 function EditProjectDialog(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [access, setAccess] = React.useState(2);
-  const [admin, setAdmin] = React.useState(props.projectAdmin);
-  const [team, setTeam] = React.useState(1);
   const [projectName, setProjectName] = React.useState(props.projectName);
   const [projectDescription, setProjectDescription] = React.useState(
     props.projectDescription
   );
+  const [access, setAccess] = React.useState(2);
+  const [admin, setAdmin] = React.useState(props.projectAdmin);
+  const [team, setTeam] = React.useState(1);
+
   DEBUG_PRINT(props);
   const handleClickOpen = () => {
     setOpen(true);
@@ -182,168 +183,174 @@ function EditProjectDialog(props) {
           {props.projectDescription}
         </Typography>
       </Popover>
-      <Dialog
-        // onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle
-          disableTypography
-          className={classes.root}
-          onClose={handleClose}
-        >
-          Project Settings
+      <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
+        <DialogTitle disableTypography className={classes.root}>
+          Edit Project
         </DialogTitle>
-        <DialogContent dividers>
-          <Grid container spacing={1} className={classes.gridContainer}>
-            <Grid item xs={12} md={9}>
-              <TextField
-                variant="outlined"
-                label="Project Name"
-                value={projectName}
-                onChange={handleProjectNameChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <FormControl
-                variant="outlined"
-                className={classes.formControl}
-                fullWidth
-                required
-              >
-                <InputLabel id="isOpen-select">Access</InputLabel>
-                <Select
-                  labelId="access-select"
-                  id="access-select"
-                  value={access}
-                  onChange={handleAccessChange}
-                  label="Access"
+        <form
+          onSubmit={(e) => {
+            //   httpPOST(
+            //     `${window.location.protocol}//${window.location.hostname}/api/projects/create.php`,
+            //     {
+            //       uid: props.uId,
+            //       token: props.token,
+            //       name: projectName,
+            //       description: projectDescription,
+            //     }
+            //   )
+            //     .then((result) => console.log(result))
+            //     .catch((err) => console.error(err));
+            //   props.handleClose();
+            //   e.preventDefault();
+          }}
+        >
+          <DialogContent dividers>
+            <Grid container spacing={1} className={classes.gridContainer}>
+              <Grid item xs={12} md={9}>
+                <TextField
+                  variant="outlined"
+                  label="Project Name"
+                  onChange={handleProjectNameChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <FormControl
+                  variant="outlined"
+                  className={classes.formControl}
+                  fullWidth
                   required
                 >
-                  <MenuItem value={2}>Public</MenuItem>
-                  <MenuItem value={1}>Private</MenuItem>
-                </Select>
-              </FormControl>
+                  <InputLabel id="isOpen-select">Access</InputLabel>
+                  <Select
+                    labelId="access-select"
+                    id="access-select"
+                    value={access}
+                    onChange={handleAccessChange}
+                    label="Access"
+                    required
+                  >
+                    <MenuItem value={2}>Public</MenuItem>
+                    <MenuItem value={1}>Private</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container className={classes.gridContainer}>
-            <Grid item xs={12}>
-              <TextField
-                id="description-input"
-                label="Description"
-                onChange={handleProjectDescriptionChange}
-                value={projectDescription}
-                multiline
-                variant="outlined"
-                fullWidth
-              />
+            <Grid container className={classes.gridContainer}>
+              <Grid item xs={12}>
+                <TextField
+                  id="description-input"
+                  label="Description"
+                  onChange={handleProjectDescriptionChange}
+                  multiline
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container className={classes.gridContainer} spacing={1}>
-            <Grid item md={6}>
-              <FormControl
-                variant="outlined"
-                className={classes.formControl}
-                fullWidth
-                required
-              >
-                <InputLabel id="admin-select">Admin</InputLabel>
-                <Select
-                  labelId="admin-select"
-                  id="admin-select"
-                  value={admin}
-                  onChange={handleAdminChange}
-                  label="Admin"
+            <Grid container className={classes.gridContainer} spacing={1}>
+              <Grid item md={6}>
+                <FormControl
+                  variant="outlined"
+                  className={classes.formControl}
+                  fullWidth
                   required
                 >
-                  <MenuItem value="null">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={2}>Navindu</MenuItem>
-                  <MenuItem value={1}>Sandul</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item md={6}>
-              <FormControl
-                variant="outlined"
-                className={classes.formControl}
-                fullWidth
-                required
-              >
-                <InputLabel id="team-select">Team</InputLabel>
-                <Select
-                  labelId="team-select"
-                  id="team-select"
-                  value={team}
-                  onChange={handleTeamChange}
-                  label="Team"
+                  <InputLabel id="admin-select">Admin</InputLabel>
+                  <Select
+                    labelId="admin-select"
+                    id="admin-select"
+                    value={admin}
+                    onChange={handleAdminChange}
+                    label="Admin"
+                    required
+                  >
+                    <MenuItem value="null">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={2}>Navindu</MenuItem>
+                    <MenuItem value={1}>Sandul</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item md={6}>
+                <FormControl
+                  variant="outlined"
+                  className={classes.formControl}
+                  fullWidth
                   required
                 >
-                  <MenuItem value="1">
-                    <Grid container>
-                      <Grid item xs={9}>
-                        None
+                  <InputLabel id="team-select">Team</InputLabel>
+                  <Select
+                    labelId="team-select"
+                    id="team-select"
+                    value={props.team}
+                    onChange={props.handleTeamChange}
+                    label="Team"
+                    required
+                  >
+                    <MenuItem value="1">
+                      <Grid container>
+                        <Grid item xs={9}>
+                          None
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FiberManualRecord className={classes.tag_no} />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={3}>
-                        <FiberManualRecord className={classes.tag_no} />
+                    </MenuItem>
+                    <MenuItem value={2}>
+                      <Grid container>
+                        <Grid item xs={9}>
+                          Low
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FiberManualRecord className={classes.tag_low} />
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </MenuItem>
-                  <MenuItem value={2}>
-                    <Grid container>
-                      <Grid item xs={9}>
-                        Low
+                    </MenuItem>
+                    <MenuItem value={3}>
+                      <Grid container>
+                        <Grid item xs={9}>
+                          Normal
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FiberManualRecord className={classes.tag_normal} />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={3}>
-                        <FiberManualRecord className={classes.tag_low} />
+                    </MenuItem>
+                    <MenuItem value={4}>
+                      <Grid container>
+                        <Grid item xs={9}>
+                          High
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FiberManualRecord className={classes.tag_high} />
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </MenuItem>
-                  <MenuItem value={3}>
-                    <Grid container>
-                      <Grid item xs={9}>
-                        Normal
+                    </MenuItem>
+                    <MenuItem value={5}>
+                      <Grid container>
+                        <Grid item xs={9}>
+                          Critical
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FiberManualRecord className={classes.tag_critical} />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={3}>
-                        <FiberManualRecord className={classes.tag_normal} />
-                      </Grid>
-                    </Grid>
-                  </MenuItem>
-                  <MenuItem value={4}>
-                    <Grid container>
-                      <Grid item xs={9}>
-                        High
-                      </Grid>
-                      <Grid item xs={3}>
-                        <FiberManualRecord className={classes.tag_high} />
-                      </Grid>
-                    </Grid>
-                  </MenuItem>
-                  <MenuItem value={5}>
-                    <Grid container>
-                      <Grid item xs={9}>
-                        Critical
-                      </Grid>
-                      <Grid item xs={3}>
-                        <FiberManualRecord className={classes.tag_critical} />
-                      </Grid>
-                    </Grid>
-                  </MenuItem>
-                </Select>
-              </FormControl>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
-            Save
-          </Button>
-        </DialogActions>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus type="submit" color="primary">
+              Create
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   );

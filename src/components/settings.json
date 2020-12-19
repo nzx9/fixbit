@@ -2,7 +2,7 @@
   "snackbar": {
     "anchorOrigin": {
       "vertical": "bottom",
-      "horizontal": "right"
+      "horizontal": "left"
     }
   }
 }

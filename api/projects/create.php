@@ -75,6 +75,6 @@ if (
         echo json_encode(array("success" => false, "msg" => "Project Name Already in Use. Please Use Another", "project_data" => null, "type" => "error"));
     }
 } else {
-    http_response_code(400);
+    http_response_code(200);
     echo json_encode(array("success" => false, "msg" => "Unauthorized"));
 }

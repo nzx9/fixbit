@@ -8,5 +8,6 @@
     "PROJECTS_VIEW_X": "/projects/view/",
     "PROJECTS_CREATE": "/projects/create",
     "ISSUE_VIEW": "/projects/view/:pid/issue/:iid",
-    "ISSUE_VIEW_X": "/issue/"
+    "ISSUE_VIEW_X": "/issue/",
+    "TEAMS": "/teams"
 }
