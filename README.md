@@ -1,4 +1,4 @@
-# Fixbit
+<p align="center"><a href="#" target="_blank"><img src="https://i.ibb.co/6rVx2CF/fixbit-logo-m-removebg-preview.png" width="200"></a></p>
 
 ## REQUIREMENTS FOR BUILD
 
