@@ -11,10 +11,12 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import { httpPOST } from "../components/httpRequest";
+import { httpReq } from "../components/httpRequest";
 import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { DEBUG_PRINT } from "../components/debugTools";
+import config from "../components/config.json";
+import { NOTIFY, AlertDialog } from "../components/notify";
 
 const settings = require("../components/settings.json");
 
@@ -49,24 +51,20 @@ const Register = () => {
   const [_password, _setPassword] = React.useState(null);
   const [_confirmPassword, _setConfimPassword] = React.useState(null);
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertType, setAlertType] = React.useState(null);
+  const [alertTitle, setAlertTitle] = React.useState(null);
+  const [alertMsg, setAlertMsg] = React.useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const userNameInputHandler = (e) => {
-    _setUserName(e.target.value);
-  };
-  const fullNameInputHandler = (e) => {
-    _setFullName(e.target.value);
-  };
-  const emailInputHandler = (e) => {
-    _setEmail(e.target.value);
-  };
-  const passwordInputHandler = (e) => {
-    _setPassword(e.target.value);
-  };
-  const confirmPasswordInputHandler = (e) => {
-    _setConfimPassword(e.target.value);
-  };
+  const userNameInputHandler = (e) => _setUserName(e.target.value);
+  const fullNameInputHandler = (e) => _setFullName(e.target.value);
+  const emailInputHandler = (e) => _setEmail(e.target.value);
+  const passwordInputHandler = (e) => _setPassword(e.target.value);
+  const confirmPasswordInputHandler = (e) => _setConfimPassword(e.target.value);
+
+  const handleAlertClose = () => setAlertOpen(false);
 
   const history = useHistory();
   const goToLogin = useCallback(() => history.push(routes.LOGIN), [history]);
@@ -79,36 +77,44 @@ const Register = () => {
       onSubmit={(e) => {
         _setOpenBackdrop(true);
         if (_password === _confirmPassword) {
-          httpPOST(
-            `${window.location.protocol}//${window.location.hostname}/api/users/register.php`,
-            {
-              username: _userName,
-              fullname: _fullName,
-              email: _email,
-              password: _password,
-              c_password: _confirmPassword,
-            }
-          )
+          httpReq(`${config.URL}/api/users/register`, "POST", {
+            username: _userName,
+            fullname: _fullName,
+            email: _email,
+            password: _password,
+            c_password: _confirmPassword,
+          })
             .then((res) => {
               DEBUG_PRINT(res);
-              _setOpenBackdrop(false);
-              if (res.success) {
-                goToLogin();
-                enqueueSnackbar("Registration Success! Please Login.", {
-                  variant: "success",
-                  anchorOrigin: settings.snackbar.anchorOrigin,
+              res.json().then((r) => {
+                NOTIFY(r.msg, (msg) => {
+                  _setOpenBackdrop(false);
+                  enqueueSnackbar(msg, {
+                    variant: r.type,
+                    anchorOrigin: settings.snackbar.anchorOrigin,
+                  });
+                  if (res.status === 201 && r.success === true) {
+                    goToLogin();
+                  }
                 });
-              } else {
-                _setOpenBackdrop(false);
-                enqueueSnackbar(res.msg, {
-                  variant: "error",
-                  anchorOrigin: settings.snackbar.anchorOrigin,
-                });
-              }
+              });
             })
             .catch((err) => {
+              DEBUG_PRINT(err);
               _setOpenBackdrop(false);
-              alert(err);
+              setAlertType("error");
+              const parsedError = err.toString().split(":");
+              if (parsedError.length >= 1) {
+                setAlertTitle(parsedError[0].trim());
+              } else {
+                setAlertTitle("Error");
+              }
+              if (parsedError.length >= 2) {
+                setAlertMsg(parsedError[1].trim());
+              } else {
+                setAlertMsg("Unknown");
+              }
+              setAlertOpen(true);
             });
         } else {
           _setOpenBackdrop(false);
@@ -125,6 +131,13 @@ const Register = () => {
         <Backdrop className={classes.backdrop} open={_openBackdrop}>
           <CircularProgress color="inherit" />
         </Backdrop>
+        <AlertDialog
+          alertOpen={alertOpen}
+          title={alertTitle}
+          type={alertType}
+          msg={alertMsg}
+          handleAlertClose={() => handleAlertClose()}
+        />
         <Paper className={classes.paper}>
           <h1>Register</h1>
           <TextField
