@@ -1,42 +1,33 @@
-export const httpPOST = (url, data) => {
+export const httpReq = (url, method, data = null, token = null) => {
   return new Promise((resolve, reject) => {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify(data),
-    };
+    let headers;
+    let options;
+    if (token === null) {
+      headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+    } else {
+      headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    if (method === "GET" || method === "HEAD") {
+      options = {
+        method: method,
+        headers: headers,
+      };
+    } else {
+      options = {
+        method: method,
+        headers: headers,
+        body: JSON.stringify(data),
+      };
+    }
     fetch(url, options)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error(response.statusText);
-        }
-      })
-      .then((result) => {
-        resolve(result);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
-
-export const httpGET = (url) => {
-  return new Promise((resolve, reject) => {
-    fetch(url)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error(response.statusText);
-        }
-      })
-      .then((result) => {
-        resolve(result);
-      })
+      .then((response) => resolve(response))
       .catch((err) => {
         reject(err);
       });
