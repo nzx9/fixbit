@@ -182,7 +182,12 @@ export default function SideDrawer(props) {
       >
         Profile <AccountCircle />
       </MenuItem>
-      <MenuItem onClick={() => dispatch(logout())}>
+      <MenuItem
+        onClick={() => {
+          localStorage.setItem("token", null);
+          dispatch(logout());
+        }}
+      >
         Logout
         <ExitToApp />
       </MenuItem>
@@ -248,7 +253,10 @@ export default function SideDrawer(props) {
               title="logout"
               aria-label="logout"
               aria-haspopup="true"
-              onClick={() => dispatch(logout())}
+              onClick={() => {
+                localStorage.setItem("token", null);
+                dispatch(logout());
+              }}
               color="inherit"
             >
               <ExitToApp />
