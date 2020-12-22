@@ -18,12 +18,21 @@ import {
   withStyles,
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import { useSelector } from "react-redux";
+import { getToken } from "../reducers/tokenTracker";
+import { getUId } from "../reducers/userDataTracker";
+import { httpReq } from "../components/httpRequest";
+import config from "../components/config.json";
+import settings from "../components/settings.json";
+import { NOTIFY } from "../components/notify";
+import { useSnackbar } from "notistack";
 
 import {
   Close,
   FiberManualRecord,
   Description,
   Settings,
+  Cancel,
 } from "@material-ui/icons";
 import { DEBUG_PRINT } from "../components/debugTools";
 
@@ -36,7 +45,7 @@ const styles = (theme) => ({
     position: "absolute",
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: theme.palette.error.main,
   },
 });
 const useStyles = makeStyles((theme) => ({
@@ -77,6 +86,16 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     fontSize: 15,
   },
+  settingsBtn: {
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.tonalOffset.light,
+    padding: 0,
+    margin: 0,
+    width: 5,
+  },
+  descBtn: {
+    backgroundColor: theme.palette.info.main,
+  },
 }));
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -90,7 +109,7 @@ const DialogTitle = withStyles(styles)((props) => {
           className={classes.closeButton}
           onClick={onClose}
         >
-          <Close />
+          <Cancel />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -99,14 +118,19 @@ const DialogTitle = withStyles(styles)((props) => {
 
 function EditProjectDialog(props) {
   const classes = useStyles();
+
+  const uId = useSelector(getUId);
+  const token = useSelector(getToken);
+
   const [open, setOpen] = React.useState(false);
-  const [projectName, setProjectName] = React.useState(props.projectName);
+  const [projectName, setProjectName] = React.useState(props.projectInfo.name);
   const [projectDescription, setProjectDescription] = React.useState(
-    props.projectDescription
+    props.projectInfo.description
   );
-  const [access, setAccess] = React.useState(2);
-  const [admin, setAdmin] = React.useState(props.projectAdmin);
+  const [isPublic, setIsPublic] = React.useState(props.projectInfo.is_public);
+  const [adminId, setAdminId] = React.useState(props.projectInfo.admin_id);
   const [team, setTeam] = React.useState(1);
+  const { enqueueSnackbar } = useSnackbar();
 
   DEBUG_PRINT(props);
   const handleClickOpen = () => {
@@ -134,36 +158,42 @@ function EditProjectDialog(props) {
     setProjectDescription(e.target.value);
   };
 
-  const handleAccessChange = (e) => {
-    setAccess(e.target.value);
+  const handleIsPublicChange = (e) => {
+    setIsPublic(e.target.value);
   };
   const handleAdminChange = (e) => {
-    setAdmin(e.target.value);
+    setAdminId(e.target.value);
   };
 
   const handleTeamChange = (e) => {
     setTeam(e.target.value);
   };
-
+  DEBUG_PRINT(projectName);
   return (
     <div>
-      <ButtonGroup disableElevation variant="contained">
-        <IconButton
+      <ButtonGroup
+        disableElevation
+        variant="contained"
+        style={{ marginRight: 0 }}
+      >
+        <Button
           aria-label="description"
-          className={classes.margin}
+          className={classes.descBtn}
           size="small"
           onClick={handleDescriptionClick}
         >
           <Description fontSize="inherit" />
-        </IconButton>
-        <IconButton
-          aria-label="delete"
-          className={classes.margin}
-          size="small"
-          onClick={handleClickOpen}
-        >
-          <Settings fontSize="inherit" />
-        </IconButton>
+        </Button>
+        {props.admin_id !== uId ? (
+          <Button
+            aria-label="delete"
+            className={classes.settingsBtn}
+            size="small"
+            onClick={handleClickOpen}
+          >
+            <Settings fontSize="inherit" />
+          </Button>
+        ) : null}
       </ButtonGroup>
       <Popover
         id={"description"}
@@ -180,37 +210,61 @@ function EditProjectDialog(props) {
         }}
       >
         <Typography className={classes.typography}>
-          {props.projectDescription}
+          {props.projectInfo.description}
         </Typography>
       </Popover>
       <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
-        <DialogTitle disableTypography className={classes.root}>
+        <DialogTitle
+          disableTypography
+          className={classes.root}
+          onClose={handleClose}
+        >
           Edit Project
         </DialogTitle>
         <form
           onSubmit={(e) => {
-            //   httpPOST(
-            //     `${window.location.protocol}//${window.location.hostname}/api/projects/create.php`,
-            //     {
-            //       uid: props.uId,
-            //       token: props.token,
-            //       name: projectName,
-            //       description: projectDescription,
-            //     }
-            //   )
-            //     .then((result) => console.log(result))
-            //     .catch((err) => console.error(err));
-            //   props.handleClose();
-            //   e.preventDefault();
+            let data = {};
+            if (projectName !== props.projectInfo.name)
+              data["name"] = projectName;
+            if (projectDescription !== props.projectInfo.description)
+              data["description"] = projectDescription;
+            if (isPublic !== props.projectInfo.isPublic)
+              data["is_public"] = isPublic;
+            httpReq(
+              `${config.URL}/api/projects/${props.projectInfo.id}`,
+              "PUT",
+              data,
+              token
+            )
+              .then((res) => {
+                DEBUG_PRINT(res);
+                res.json().then((r) => {
+                  NOTIFY(r.msg, (msg) => {
+                    // _setOpenBackdrop(false);
+                    enqueueSnackbar(msg, {
+                      variant: r.type,
+                      anchorOrigin: settings.snackbar.anchorOrigin,
+                    });
+                    if (res.status === 200 && r.success === true) {
+                      props.action();
+                    }
+                  });
+                });
+              })
+              .catch((err) => console.error(err));
+            handleClose();
+            e.preventDefault();
           }}
         >
           <DialogContent dividers>
             <Grid container spacing={1} className={classes.gridContainer}>
               <Grid item xs={12} md={9}>
                 <TextField
-                  variant="outlined"
-                  label="Project Name"
+                  id="name-input"
+                  label="Name"
+                  value={projectName}
                   onChange={handleProjectNameChange}
+                  variant="outlined"
                   fullWidth
                   required
                 />
@@ -226,13 +280,13 @@ function EditProjectDialog(props) {
                   <Select
                     labelId="access-select"
                     id="access-select"
-                    value={access}
-                    onChange={handleAccessChange}
+                    value={isPublic}
+                    onChange={handleIsPublicChange}
                     label="Access"
                     required
                   >
-                    <MenuItem value={2}>Public</MenuItem>
-                    <MenuItem value={1}>Private</MenuItem>
+                    <MenuItem value={true}>Public</MenuItem>
+                    <MenuItem value={false}>Private</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -243,7 +297,7 @@ function EditProjectDialog(props) {
                   id="description-input"
                   label="Description"
                   onChange={handleProjectDescriptionChange}
-                  multiline
+                  value={projectDescription}
                   variant="outlined"
                   fullWidth
                 />
@@ -261,7 +315,7 @@ function EditProjectDialog(props) {
                   <Select
                     labelId="admin-select"
                     id="admin-select"
-                    value={admin}
+                    value={adminId}
                     onChange={handleAdminChange}
                     label="Admin"
                     required
@@ -347,7 +401,7 @@ function EditProjectDialog(props) {
           </DialogContent>
           <DialogActions>
             <Button autoFocus type="submit" color="primary">
-              Create
+              Save
             </Button>
           </DialogActions>
         </form>

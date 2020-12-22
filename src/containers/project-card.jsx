@@ -138,7 +138,7 @@ const ProjectCard = (props) => {
               color="textSecondary"
               gutterBottom
             >
-              ProjectID: #{props.data.pid}
+              ProjectID: #{props.data.id}
             </Typography>
           </Grid>
           <div className={classes.grow} />
@@ -178,7 +178,7 @@ const ProjectCard = (props) => {
               color="textSecondary"
               gutterBottom
             >
-              {props.data.date_created.substring(0, 16)}
+              {props.data.updated_at.substring(0, 16)}
             </Typography>
           </Grid>
           <div className={classes.grow} />
@@ -188,13 +188,13 @@ const ProjectCard = (props) => {
               size="small"
               variant="contained"
               onClick={() => {
-                dispatch(setPId(props.data.pid));
+                dispatch(setPId(props.data.id));
                 dispatch(setProjectName(props.data.name));
                 dispatch(setProjectDescription(props.data.description));
                 dispatch(setCreatorId(props.data.creator_id));
                 dispatch(setAdminId(props.data.admin_id));
-                dispatch(setDateCreated(props.data.date_created));
-                goto(routes.PROJECTS_VIEW_X + props.data.pid);
+                dispatch(setDateCreated(props.data.updated_at));
+                goto(routes.PROJECTS_VIEW_X + props.data.id);
               }}
             >
               View

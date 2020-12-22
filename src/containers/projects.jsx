@@ -1,21 +1,19 @@
 import React, { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 import { DEBUG_PRINT } from "../components/debugTools";
-import { httpPOST } from "../components/httpRequest";
-
+import { httpReq } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
-
 import ProjectCard from "./project-card";
-
 import noProjectsImage from "../images/no-projects.png";
-
 import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
-
 import ProjectDialog from "./project-dialog";
+import config from "../components/config.json";
+import { NOTIFY, AlertDialog } from "../components/notify";
+import { useSnackbar } from "notistack";
+import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -66,8 +64,12 @@ const Projects = () => {
   const [data, setData] = React.useState([]);
   const [filterValue, setFilterValue] = React.useState("ALL");
   const [newProjectAdded, setNewProjectAdded] = React.useState(false);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertType, setAlertType] = React.useState(null);
+  const [alertTitle, setAlertTitle] = React.useState(null);
+  const [alertMsg, setAlertMsg] = React.useState(null);
 
-  const [openBackdrop, setOpenBackdrop] = React.useState(false);
+  const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const [open, setOpen] = React.useState(false);
 
@@ -79,35 +81,48 @@ const Projects = () => {
   const handleClose = () => setOpen(false);
 
   const handleNewProjectAdded = () => setNewProjectAdded(!newProjectAdded);
+  const handleAlertClose = () => setAlertOpen(false);
 
-  const handleOpenBackdrop = () => setOpenBackdrop(true);
-  const handleCloseBackdrop = () => setOpenBackdrop(false);
+  const handleOpenBackdrop = () => _setOpenBackdrop(true);
+  const handleCloseBackdrop = () => _setOpenBackdrop(false);
 
-  const fetchDataAndSet = (filter_value) => {
-    httpPOST(
-      `${window.location.protocol}//${window.location.hostname}/api/projects/getprojects.php`,
-      {
-        uid: uId,
-        token: token,
-        filter: filter_value,
-      }
-    )
-      .then((result) => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const fetchDataAndSet = () => {
+    httpReq(`${config.URL}/api/projects`, "GET", null, token)
+      .then((res) => {
         setIsLoaded(true);
-        DEBUG_PRINT(result);
-        if (result.success) {
-          if (result.project_data !== null) {
-            setData(result.project_data);
-          } else {
-            setData([]);
-          }
-        } else {
-          setError(result.msg);
-        }
+        DEBUG_PRINT(res);
+        res.json().then((r) => {
+          NOTIFY(r.msg, (msg) => {
+            _setOpenBackdrop(false);
+            enqueueSnackbar(msg, {
+              variant: r.type,
+              anchorOrigin: settings.snackbar.anchorOrigin,
+            });
+            DEBUG_PRINT(r);
+            if (res.status === 200 && r.success === true)
+              r.data !== null ? setData(r.data) : setData([]);
+            else setError(r.msg);
+          });
+        });
       })
-      .catch((error) => {
+      .catch((err) => {
         setIsLoaded(true);
-        setError(error);
+        setAlertType("error");
+        const parsedError = err.toString().split(":");
+        if (parsedError.length >= 1) {
+          setAlertTitle(parsedError[0].trim());
+        } else {
+          setAlertTitle("Error");
+        }
+        if (parsedError.length >= 2) {
+          setAlertMsg(parsedError[1].trim());
+        } else {
+          setAlertMsg("Unknown");
+        }
+        setAlertOpen(true);
+        setError(err);
       });
   };
 
@@ -131,9 +146,16 @@ const Projects = () => {
     );
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={openBackdrop}>
+      <Backdrop className={classes.backdrop} open={_openBackdrop}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <AlertDialog
+        alertOpen={alertOpen}
+        title={alertTitle}
+        type={alertType}
+        msg={alertMsg}
+        handleAlertClose={() => handleAlertClose()}
+      />
       <Fab
         variant="extended"
         className={classes.fabDesktop}

@@ -309,13 +309,13 @@ const IssueTable = (props) => {
                   )
                 : rows
               ).map((row) => (
-                <StyledTableRow key={row.iid}>
+                <StyledTableRow key={row.id}>
                   <StyledTableCell
                     component="th"
                     scope="row"
                     style={{ width: "50" }}
                   >
-                    {row.iid}
+                    {row.id}
                   </StyledTableCell>
                   <StyledTableCell style={{ width: 350, overflowX: "hidden" }}>
                     <Link
@@ -324,7 +324,7 @@ const IssueTable = (props) => {
                           routes.PROJECTS_VIEW_X +
                             props.pId +
                             routes.ISSUE_VIEW_X +
-                            row.iid
+                            row.id
                         );
                       }}
                     >
@@ -332,39 +332,39 @@ const IssueTable = (props) => {
                     </Link>
                   </StyledTableCell>
                   <StyledTableCell style={{ width: 100 }}>
-                    {Number(row.type) === 1
+                    {Number(row.type) === 0
                       ? "NONE"
-                      : Number(row.type) === 2
+                      : Number(row.type) === 1
                       ? "BUG"
-                      : Number(row.type) === 3
+                      : Number(row.type) === 2
                       ? "TO TEST"
-                      : Number(row.type) === 4
+                      : Number(row.type) === 3
                       ? "SECURITY"
                       : "OTHER"}
                   </StyledTableCell>
                   <StyledTableCell style={{ width: 150 }}>
-                    {Number(row.priority) === 1 ? (
+                    {Number(row.priority) === 0 ? (
                       <Chip
                         size="small"
                         label="none"
                         variant="outlined"
                         className={classes.tag_none}
                       />
-                    ) : Number(row.priority) === 2 ? (
+                    ) : Number(row.priority) === 1 ? (
                       <Chip
                         size="small"
                         label="low"
                         variant="outlined"
                         className={classes.tag_low}
                       />
-                    ) : Number(row.priority) === 3 ? (
+                    ) : Number(row.priority) === 2 ? (
                       <Chip
                         size="small"
                         label="normal"
                         variant="outlined"
                         className={classes.tag_normal}
                       />
-                    ) : Number(row.priority) === 4 ? (
+                    ) : Number(row.priority) === 3 ? (
                       <Chip
                         size="small"
                         label="high"
@@ -381,9 +381,9 @@ const IssueTable = (props) => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {row.assignedTo === null || Number(row.assignedTo) === -1
+                    {row.assign_to === null || Number(row.assign_to) === -1
                       ? "None"
-                      : row.assignedTo}
+                      : row.assign_to}
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <ButtonGroup disableElevation variant="contained">
@@ -393,7 +393,7 @@ const IssueTable = (props) => {
                           className={classes.viewBtn}
                         />
                       </IconButton>
-                      {Number(row.isOpen) === 1 ? (
+                      {Boolean(row.is_open) === false ? (
                         <IconButton size="small" title="Open this Issue">
                           <LockOpenTwoTone
                             fontSize="small"

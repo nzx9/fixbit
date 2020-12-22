@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-
 import {
   Container,
   Paper,
@@ -15,32 +14,23 @@ import {
   Backdrop,
   CircularProgress,
 } from "@material-ui/core";
-
 import { AvatarGroup } from "@material-ui/lab";
-
 import IssueCreateDialog from "./issue-create";
 import EditProjectDialog from "./edit-project";
-
-import { httpPOST } from "../components/httpRequest";
+import { httpReq } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
-
 import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
-
-import {
-  getPId,
-  getProjectName,
-  getProjectDescription,
-  getAdminId,
-} from "../reducers/projectDataTracker";
-
 import { useSelector } from "react-redux";
 import { Switch, Route } from "react-router-dom";
-
 import IssueTable from "./issue-table";
 import ViewIssue from "./view-issue";
-
 import routes from "../routes/routes.json";
+import config from "../components/config.json";
+import { NOTIFY, AlertDialog } from "../components/notify";
+import { useSnackbar } from "notistack";
+import settings from "../components/settings.json";
+import notFoundImage from "../images/404-error-not-found.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,21 +83,25 @@ const ViewProject = (props) => {
   const classes = useStyles();
   const uId = useSelector(getUId);
   const token = useSelector(getToken);
-  const pId = useSelector(getPId);
-  const projectName = useSelector(getProjectName);
-  const projectDescription = useSelector(getProjectDescription);
-  const projectAdmin = useSelector(getAdminId);
 
   const [projectDataAll, setProjectDataAll] = React.useState([]);
   const [projectData, setProjectData] = React.useState([]);
   const [error, setError] = React.useState(null);
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isLoadedII, setIsLoadedII] = React.useState(false);
+  const [isLoadedPI, setIsLoadedPI] = React.useState(false);
   const [selectedTopAction, setSelectedTopAction] = React.useState(1);
   const [selectedPriority, setSelectedPriority] = React.useState(null);
   const [selectedBottomAction, setSelectedBottomAction] = React.useState(null);
+  const [projectInfo, setProjectInfo] = React.useState({});
+  const [notFoundError, setNotFoundError] = React.useState(false);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertType, setAlertType] = React.useState(null);
+  const [alertTitle, setAlertTitle] = React.useState(null);
+  const [alertMsg, setAlertMsg] = React.useState(null);
 
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
-
+  const handleAlertClose = () => setAlertOpen(false);
+  const { enqueueSnackbar } = useSnackbar();
   const [counts, setCounts] = React.useState({
     all: 0,
     critical: 0,
@@ -148,35 +142,35 @@ const ViewProject = (props) => {
 
   const priority_list = [
     {
-      id: 5,
+      id: 4,
       name: "Critical",
       tag: "critical",
       cls: classes.tag_critical,
       nos: counts.critical,
     },
     {
-      id: 4,
+      id: 3,
       name: "High Priority",
       tag: "high",
       cls: classes.tag_high,
       nos: counts.high,
     },
     {
-      id: 3,
+      id: 2,
       name: "Normal Priority",
       tag: "normal",
       cls: classes.tag_normal,
       nos: counts.normal,
     },
     {
-      id: 2,
+      id: 1,
       name: "Low Priority",
       tag: "low",
       cls: classes.tag_low,
       nos: counts.low,
     },
     {
-      id: 1,
+      id: 0,
       name: "No Priority",
       tag: "none",
       cls: classes.tag_no,
@@ -184,66 +178,129 @@ const ViewProject = (props) => {
     },
   ];
 
-  const fetchDataAndSet = () => {
-    httpPOST(
-      `${window.location.protocol}//${window.location.hostname}/api/issues/allissues.php`,
-      {
-        uid: uId,
-        pid: pId,
-        token: token,
-      }
+  const fetchProjectInfo = () => {
+    httpReq(
+      `${config.URL}/api/projects/${props.match.params.pid}`,
+      "GET",
+      null,
+      token
     )
-      .then((result) => {
-        setIsLoaded(true);
-        DEBUG_PRINT(result);
-        if (result.success && result.data !== null) {
-          setProjectDataAll(result.data);
-          if (selectedTopAction !== null) {
-            if (selectedTopAction === 1) {
-              setProjectData(result.data);
-            }
-          } else if (selectedPriority !== null) {
-            filterPriority(result.data, "priority", selectedPriority);
-          } else if (selectedBottomAction !== null) {
-            filterBottomAction(result.data, selectedBottomAction);
-          } else {
-            setProjectData(result.data);
-          }
-          let tmpCounts = {
-            all: result.data.length,
-            critical: 0,
-            high: 0,
-            normal: 0,
-            low: 0,
-            none: 0,
-            assignedToYou: 0,
-            unassigned: 0,
-            closed: 0,
-          };
-          result.data.forEach((element) => {
-            if (Number(element.priority) === 1) tmpCounts.none++;
-            else if (Number(element.priority) === 2) tmpCounts.low++;
-            else if (Number(element.priority) === 3) tmpCounts.normal++;
-            else if (Number(element.priority) === 4) tmpCounts.high++;
-            else if (Number(element.priority) === 5) tmpCounts.critical++;
-
-            if (Number(element.isOpen) === 1) tmpCounts.closed++;
-
-            if (element.assignedTo === null) tmpCounts.unassigned++;
-            else if (Number(element.assignedTo) === Number(uId))
-              tmpCounts.assignedToYou++;
-          });
-          setCounts(tmpCounts);
-          DEBUG_PRINT(result);
-          DEBUG_PRINT(counts);
-        } else {
-          // setError("404");
-          setProjectData([]);
+      .then((res) => {
+        DEBUG_PRINT(res);
+        res.json().then((r) => {
+          DEBUG_PRINT(r);
+          if (res.status === 200 && r.success === true)
+            r.data !== null
+              ? setProjectInfo(r.data)
+              : setProjectInfo({
+                  name: null,
+                  description: null,
+                });
+          else setError(r.msg);
+        });
+        setIsLoadedPI(true);
+        if (res.status === 404 || res.status === 401) {
+          setNotFoundError(true);
         }
       })
-      .catch((error) => {
-        setIsLoaded(true);
-        setError(error);
+      .catch((err) => {
+        setAlertType("error");
+        const parsedError = err.toString().split(":");
+        if (parsedError.length >= 1) {
+          setAlertTitle(parsedError[0].trim());
+        } else {
+          setAlertTitle("Error");
+        }
+        if (parsedError.length >= 2) {
+          setAlertMsg(parsedError[1].trim());
+        } else {
+          setAlertMsg("Unknown");
+        }
+        setAlertOpen(true);
+        setIsLoadedPI(true);
+        setError(err);
+      });
+  };
+
+  const fetchDataAndSet = () => {
+    httpReq(
+      `${config.URL}/api/projects/${props.match.params.pid}/issues`,
+      "GET",
+      null,
+      token
+    )
+      .then((res) => {
+        DEBUG_PRINT(res);
+        res.json().then((r) => {
+          NOTIFY(r.msg, (msg) => {
+            _setOpenBackdrop(false);
+            enqueueSnackbar(msg, {
+              variant: r.type,
+              anchorOrigin: settings.snackbar.anchorOrigin,
+            });
+            if (res.status === 200 && r.success === true) {
+              setProjectDataAll(r.data);
+              if (selectedTopAction !== null) {
+                if (selectedTopAction === 1) {
+                  setProjectData(r.data);
+                }
+              } else if (selectedPriority !== null) {
+                filterPriority(r.data, "priority", selectedPriority);
+              } else if (selectedBottomAction !== null) {
+                filterBottomAction(r.data, selectedBottomAction);
+              } else {
+                setProjectData(r.data);
+              }
+              let tmpCounts = {
+                all: r.data.length,
+                critical: 0,
+                high: 0,
+                normal: 0,
+                low: 0,
+                none: 0,
+                assignedToYou: 0,
+                unassigned: 0,
+                closed: 0,
+              };
+              r.data.forEach((element) => {
+                if (Number(element.priority) === 0) tmpCounts.none++;
+                else if (Number(element.priority) === 1) tmpCounts.low++;
+                else if (Number(element.priority) === 2) tmpCounts.normal++;
+                else if (Number(element.priority) === 3) tmpCounts.high++;
+                else if (Number(element.priority) === 4) tmpCounts.critical++;
+
+                if (Boolean(element.is_open) === false) tmpCounts.closed++;
+
+                if (element.assign_to === null) tmpCounts.unassigned++;
+                else if (Number(element.assign_to) === Number(uId))
+                  tmpCounts.assignedToYou++;
+              });
+              setCounts(tmpCounts);
+              DEBUG_PRINT(r);
+              DEBUG_PRINT(counts);
+            } else {
+              setProjectData([]);
+            }
+            setIsLoadedII(true);
+          });
+        });
+      })
+      .catch((err) => {
+        setAlertType("error");
+        const parsedError = err.toString().split(":");
+        if (parsedError.length >= 1) {
+          setAlertTitle(parsedError[0].trim());
+        } else {
+          setAlertTitle("Error");
+        }
+        if (parsedError.length >= 2) {
+          setAlertMsg(parsedError[1].trim());
+        } else {
+          setAlertMsg("Unknown");
+        }
+        setAlertOpen(true);
+        setIsLoadedII(true);
+        setError(err);
       });
   };
 
@@ -258,9 +315,6 @@ const ViewProject = (props) => {
         tmp_list.push(element);
       }
     });
-    DEBUG_PRINT("----------");
-    DEBUG_PRINT(tmp_list);
-    DEBUG_PRINT("----------");
     setProjectData(tmp_list);
   };
 
@@ -286,18 +340,32 @@ const ViewProject = (props) => {
         }
       });
     }
-    DEBUG_PRINT("----------");
-    DEBUG_PRINT(tmp_list);
-    DEBUG_PRINT("----------");
     setProjectData(tmp_list);
   };
 
   useEffect(() => {
+    fetchProjectInfo();
     fetchDataAndSet();
   }, []);
 
-  if (error) return <div>Error: {error}</div>;
-  else if (!isLoaded)
+  if (notFoundError)
+    return (
+      <div>
+        <img
+          style={{
+            display: "block",
+            marginLeft: "auto",
+            marginRight: "auto",
+            width: "50%",
+            textAlign: "center",
+          }}
+          src={notFoundImage}
+          alt="Not Found"
+        />
+      </div>
+    );
+  else if (error) return <div>Error: {error}</div>;
+  else if (!isLoadedPI || !isLoadedII)
     return (
       <div>
         <Backdrop className={classes.backdrop} open="true">
@@ -311,21 +379,26 @@ const ViewProject = (props) => {
         <Backdrop className={classes.backdrop} open={_openBackdrop}>
           <CircularProgress color="inherit" />
         </Backdrop>
+        <AlertDialog
+          alertOpen={alertOpen}
+          title={alertTitle}
+          type={alertType}
+          msg={alertMsg}
+          handleAlertClose={() => handleAlertClose()}
+        />
         <Grid container spacing={1}>
           <Grid item xs={12} md={3}>
             <Paper className={classes.paper}>
               <Grid container>
                 <Grid item xs={12}>
-                  <Grid container>
-                    <Grid item xs={9}>
-                      <Typography variant="h5">{projectName}</Typography>
+                  <Grid container justify="space-between">
+                    <Grid item xs={8}>
+                      <Typography variant="h5">{projectInfo.name}</Typography>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item>
                       <EditProjectDialog
-                        projectName={projectName}
-                        projectDescription={projectDescription}
-                        projectAdmin={projectAdmin}
-                        buttonType={"Save"}
+                        projectInfo={projectInfo}
+                        action={() => fetchProjectInfo()}
                       />
                     </Grid>
                   </Grid>
@@ -340,7 +413,7 @@ const ViewProject = (props) => {
                     <br />
                     <IssueCreateDialog
                       uId={uId}
-                      pId={pId}
+                      pId={props.match.params.pid}
                       token={token}
                       action={() => fetchDataAndSet()}
                       setOpenBackdrop={() => setOpenBackdrop()}
@@ -446,7 +519,12 @@ const ViewProject = (props) => {
                 <Route path={routes.ISSUE_VIEW} component={ViewIssue} />
                 <Route
                   path={routes.PROJECTS_VIEW}
-                  children={<IssueTable rows={projectData} pId={pId} />}
+                  children={
+                    <IssueTable
+                      rows={projectData}
+                      pId={props.match.params.pid}
+                    />
+                  }
                 />
               </Switch>
             </Paper>

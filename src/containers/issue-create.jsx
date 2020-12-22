@@ -18,18 +18,18 @@ import {
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 
 import { Close, FiberManualRecord } from "@material-ui/icons";
-import { httpPOST } from "../components/httpRequest";
+import { httpReq } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
-import { useDispatch } from "react-redux";
-import { dataChanged } from "../reducers/dataChangeTracker";
-
-const settings = require("../components/settings.json");
+import { useDispatch, useSelector } from "react-redux";
+import config from "../components/config.json";
+import settings from "../components/settings.json";
+import { NOTIFY } from "../components/notify";
+import { getToken } from "../reducers/tokenTracker";
+import { getUId } from "../reducers/userDataTracker";
 
 const styles = (theme) => ({
   root: {
-    // margin: 0,
-    // padding: theme.spacing(2),
     flexGrow: 1,
     "& .MuiTextField-root": {
       margin: theme.spacing(1),
@@ -100,14 +100,18 @@ const DialogTitle = withStyles(styles)((props) => {
 
 function IssueCreateDialog(props) {
   const classes = useStyles();
+
+  const uId = useSelector(getUId);
+  const token = useSelector(getToken);
+
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [isOpen, setIsOpen] = React.useState(2);
+  const [isOpen, setIsOpen] = React.useState(true);
   const [assignedTo, setAssignedTo] = React.useState(null);
-  const [priority, setPriority] = React.useState(3);
-  const [type, setType] = React.useState(1);
+  const [priority, setPriority] = React.useState(2);
+  const [type, setType] = React.useState(0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -150,7 +154,6 @@ function IssueCreateDialog(props) {
         Create Issue
       </Button>
       <Dialog
-        // onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
         maxWidth="sm"
@@ -161,52 +164,33 @@ function IssueCreateDialog(props) {
           validate="true"
           autoComplete="on"
           onSubmit={(e) => {
-            DEBUG_PRINT("CLICKED");
-            DEBUG_PRINT({
-              uid: props.uId,
-              pid: props.pId,
-              title: title,
-              description: description,
-              createdBy: props.uId,
-              isOpen: isOpen,
-              priority: priority,
-              type: type,
-              assignedTo: assignedTo,
-              token: props.token,
-            });
             props.setOpenBackdrop(true);
-            httpPOST(
-              `${window.location.protocol}//${window.location.hostname}/api/issues/create.php`,
+            httpReq(
+              `${config.URL}/api/projects/${props.pId}/issues`,
+              "POST",
               {
-                uid: props.uId,
-                pid: props.pId,
                 title: title,
                 description: description,
-                createdBy: props.uId,
-                assignedTo: assignedTo,
-                isOpen: isOpen,
                 priority: priority,
                 type: type,
-                token: props.token,
-              }
+                is_open: isOpen,
+              },
+              token
             )
               .then((res) => {
                 DEBUG_PRINT(res);
-                props.setOpenBackdrop(false);
-                if (res.success) {
-                  dispatch(dataChanged);
-                  props.action();
-                  enqueueSnackbar("Success", {
-                    variant: "success",
-                    anchorOrigin: settings.snackbar.anchorOrigin,
+                res.json().then((r) => {
+                  NOTIFY(r.msg, (msg) => {
+                    props.setOpenBackdrop(false);
+                    enqueueSnackbar(msg, {
+                      variant: r.type,
+                      anchorOrigin: settings.snackbar.anchorOrigin,
+                    });
+                    if (res.status === 201 && r.success === true) {
+                      props.action();
+                    }
                   });
-                } else {
-                  props.setOpenBackdrop(false);
-                  enqueueSnackbar(res.msg, {
-                    variant: "error",
-                    anchorOrigin: settings.snackbar.anchorOrigin,
-                  });
-                }
+                });
               })
               .catch((err) => {
                 props.setOpenBackdrop(false);
@@ -250,8 +234,8 @@ function IssueCreateDialog(props) {
                     label="Open/Close"
                     required
                   >
-                    <MenuItem value={2}>Open</MenuItem>
-                    <MenuItem value={1}>Close</MenuItem>
+                    <MenuItem value={true}>Open</MenuItem>
+                    <MenuItem value={false}>Close</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -310,7 +294,7 @@ function IssueCreateDialog(props) {
                     label="Priority"
                     required
                   >
-                    <MenuItem value="1">
+                    <MenuItem value={0}>
                       <Grid container>
                         <Grid item xs={9}>
                           None
@@ -320,7 +304,7 @@ function IssueCreateDialog(props) {
                         </Grid>
                       </Grid>
                     </MenuItem>
-                    <MenuItem value={2}>
+                    <MenuItem value={1}>
                       <Grid container>
                         <Grid item xs={9}>
                           Low
@@ -330,7 +314,7 @@ function IssueCreateDialog(props) {
                         </Grid>
                       </Grid>
                     </MenuItem>
-                    <MenuItem value={3}>
+                    <MenuItem value={2}>
                       <Grid container>
                         <Grid item xs={9}>
                           Normal
@@ -340,7 +324,7 @@ function IssueCreateDialog(props) {
                         </Grid>
                       </Grid>
                     </MenuItem>
-                    <MenuItem value={4}>
+                    <MenuItem value={3}>
                       <Grid container>
                         <Grid item xs={9}>
                           High
@@ -350,7 +334,7 @@ function IssueCreateDialog(props) {
                         </Grid>
                       </Grid>
                     </MenuItem>
-                    <MenuItem value={5}>
+                    <MenuItem value={4}>
                       <Grid container>
                         <Grid item xs={9}>
                           Critical
@@ -379,13 +363,13 @@ function IssueCreateDialog(props) {
                     label="Type"
                     required
                   >
-                    <MenuItem value={1}>
+                    <MenuItem value={0}>
                       <em>None</em>
                     </MenuItem>
-                    <MenuItem value={2}>Bug</MenuItem>
-                    <MenuItem value={3}>To Test</MenuItem>
-                    <MenuItem value={4}>Security</MenuItem>
-                    <MenuItem value={5}>Other</MenuItem>
+                    <MenuItem value={1}>Bug</MenuItem>
+                    <MenuItem value={2}>To Test</MenuItem>
+                    <MenuItem value={3}>Security</MenuItem>
+                    <MenuItem value={4}>Other</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
