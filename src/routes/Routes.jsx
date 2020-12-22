@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getLoginStatus, login } from "../reducers/loginTracker";
@@ -56,8 +56,8 @@ export const LOGIN_ACTIVITY = () => {
   return (
     <>
       <Switch>
-        <Route path={routes.LOGIN} component={Login} />
-        <Route path={routes.REGISTER} component={Register} />
+        <Route exact path={routes.LOGIN} component={Login} />
+        <Route exact path={routes.REGISTER} component={Register} />
       </Switch>
     </>
   );
@@ -100,35 +100,50 @@ export default function Routes() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+
   const goToLogin = useCallback(() => history.push(routes.LOGIN), [history]);
-  const goToHome = useCallback(() => history.push(routes.HOME), [history]);
   const token = localStorage.getItem("token");
-  if (token !== null) {
-    httpReq(`${config.URL}/api/users/user`, "GET", null, token)
-      .then((res) => {
-        DEBUG_PRINT(res);
-        res.json().then((r) => {
-          if (res.status === 200 && r.success === true) {
-            dispatch(setUId(r.data.id));
-            dispatch(setUserName(r.data.username));
-            dispatch(setFullName(r.data.fullname));
-            dispatch(setEmail(r.data.email));
-            dispatch(setToken(token));
-            dispatch(login());
-            setIsLoaded(true);
-          } else {
-            localStorage.setItem("token", null);
-            setIsLoaded(true);
-          }
+
+  useEffect(() => {
+    if (token !== null) {
+      httpReq(`${config.URL}/api/users/user`, "GET", null, token)
+        .then((res) => {
+          DEBUG_PRINT(res);
+          res.json().then((r) => {
+            DEBUG_PRINT(token);
+            DEBUG_PRINT(r);
+            if (res.status === 200 && r.success === true) {
+              dispatch(setUId(r.data.id));
+              dispatch(setUserName(r.data.username));
+              dispatch(setFullName(r.data.fullname));
+              dispatch(setEmail(r.data.email));
+              dispatch(setToken(token));
+              dispatch(login());
+              setIsLoaded(true);
+            } else {
+              localStorage.setItem("token", null);
+              setIsLoaded(true);
+              setIsError(true);
+            }
+          });
+        })
+        .catch((err) => {
+          DEBUG_PRINT(err);
+          setIsLoaded(true);
+          setIsError(true);
         });
-      })
-      .catch((err) => {
-        DEBUG_PRINT(err);
-        setIsLoaded(true);
-      });
-  }
-  if (useSelector(getLoginStatus) && isLoaded) {
+    } else {
+      setIsLoaded(true);
+      setIsError(true);
+    }
+  }, []);
+
+  if (useSelector(getLoginStatus) && isLoaded && !isError) {
     return <MAIN_APP />;
+  } else if (isError) {
+    goToLogin();
+    return <LOGIN_ACTIVITY />;
   } else if (!isLoaded) {
     return <ValidateUser />;
   } else {
