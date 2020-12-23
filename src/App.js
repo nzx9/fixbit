@@ -1,7 +1,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "connected-react-router";
-import Routes from "./routes/Routes";
+import Router from "./routes/Router";
 import { SnackbarProvider } from "notistack";
 import { configuredStore, history } from "./store";
 
@@ -11,7 +11,7 @@ const App = () => {
     <SnackbarProvider maxSnack={3}>
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <Routes />
+          <Router />
         </ConnectedRouter>
       </Provider>
     </SnackbarProvider>

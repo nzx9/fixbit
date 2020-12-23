@@ -21,6 +21,7 @@ import ViewIssue from "../containers/view-issue";
 import Projects from "../containers/projects";
 import ViewProject from "../containers/view-project";
 import NotFound from "../containers/not-found";
+import Teams from "../containers/teams";
 
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
@@ -43,6 +44,7 @@ export const MAIN_APP = () => {
           <Route exact path={routes.PROJECTS_VIEW} component={ViewProject} />
           <Route exact path={routes.PROJECTS} component={Projects} />
           <Route exact path={routes.PROFILE} component={Profile} />
+          <Route exact path={routes.TEAMS} component={Teams} />
           <Route exact path={routes.HOME} component={Home} />
           <Route path="/404" component={NotFound} />
           <Redirect to="/404" />
@@ -96,7 +98,7 @@ const ValidateUser = (props) => {
   );
 };
 
-export default function Routes() {
+export default function Router() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = React.useState(false);
