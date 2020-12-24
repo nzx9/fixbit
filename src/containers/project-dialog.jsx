@@ -17,12 +17,15 @@ import {
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 
-import { FiberManualRecord, Close } from "@material-ui/icons";
+import { FiberManualRecord, Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 
 import { DEBUG_PRINT } from "../components/debugTools";
-import { httpPOST } from "../components/httpRequest";
+import { httpReq } from "../components/httpRequest";
 import settings from "../components/settings.json";
+import { useSelector } from "react-redux";
+import { getToken } from "../reducers/tokenTracker";
+import { getUId } from "../reducers/userDataTracker";
 
 const styles = (theme) => ({
   root: {
@@ -33,7 +36,7 @@ const styles = (theme) => ({
     position: "absolute",
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: theme.palette.error.main,
   },
 });
 
@@ -83,7 +86,7 @@ const DialogTitle = withStyles(styles)((props) => {
           className={classes.closeButton}
           onClick={onClose}
         >
-          <Close />
+          <Cancel />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -92,6 +95,10 @@ const DialogTitle = withStyles(styles)((props) => {
 
 const ProjectDialog = (props) => {
   const classes = useStyles();
+
+  const uId = useSelector(getUId);
+  const token = useSelector(getToken);
+
   const [open, setOpen] = React.useState(false);
   const [projectName, setProjectName] = React.useState(null);
   const [projectDescription, setProjectDescription] = React.useState(null);
@@ -122,7 +129,7 @@ const ProjectDialog = (props) => {
       <form
         onSubmit={(e) => {
           props.openBackdrop(true);
-          httpPOST(
+          httpReq(
             `${window.location.protocol}//${window.location.hostname}/api/projects/create.php`,
             {
               uid: props.uId,

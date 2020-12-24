@@ -30,7 +30,9 @@ import config from "../components/config.json";
 import { NOTIFY, AlertDialog } from "../components/notify";
 import { useSnackbar } from "notistack";
 import settings from "../components/settings.json";
-import notFoundImage from "../images/404-error-not-found.png";
+import NotFound from "./not-found";
+import { Info, InfoSubtitle } from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,19 +88,30 @@ const ViewProject = (props) => {
 
   const [projectDataAll, setProjectDataAll] = React.useState([]);
   const [projectData, setProjectData] = React.useState([]);
+  const [teamsInfo, setTeamsInfo] = React.useState([]);
   const [error, setError] = React.useState(null);
   const [isLoadedII, setIsLoadedII] = React.useState(false);
   const [isLoadedPI, setIsLoadedPI] = React.useState(false);
+  const [isLoadedTI, setIsLoadedTI] = React.useState(false);
   const [selectedTopAction, setSelectedTopAction] = React.useState(1);
   const [selectedPriority, setSelectedPriority] = React.useState(null);
   const [selectedBottomAction, setSelectedBottomAction] = React.useState(null);
-  const [projectInfo, setProjectInfo] = React.useState({});
   const [notFoundError, setNotFoundError] = React.useState(false);
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertType, setAlertType] = React.useState(null);
   const [alertTitle, setAlertTitle] = React.useState(null);
   const [alertMsg, setAlertMsg] = React.useState(null);
 
+  const [projectInfo, setProjectInfo] = React.useState({
+    project: {
+      name: "",
+      description: "",
+    },
+    team: {
+      info: null,
+      members: null,
+    },
+  });
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
   const handleAlertClose = () => setAlertOpen(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -178,6 +191,43 @@ const ViewProject = (props) => {
     },
   ];
 
+  const fetchTeamsInfo = () => {
+    httpReq(`${config.URL}/api/teams`, "GET", null, token)
+      .then((res) => {
+        DEBUG_PRINT(res);
+        res.json().then((r) => {
+          NOTIFY(r.msg, (msg) => {
+            if (msg === null || msg === undefined) msg = r.message;
+            enqueueSnackbar(msg, {
+              variant: r.type,
+              anchorOrigin: settings.snackbar.anchorOrigin,
+            });
+            if (res.status === 200 && r.success === true)
+              r.data !== null ? setTeamsInfo(r.data) : setTeamsInfo([]);
+            else setError(r.msg);
+            setIsLoadedTI(true);
+          });
+        });
+      })
+      .catch((err) => {
+        setAlertType("error");
+        const parsedError = err.toString().split(":");
+        if (parsedError.length >= 1) {
+          setAlertTitle(parsedError[0].trim());
+        } else {
+          setAlertTitle("Error");
+        }
+        if (parsedError.length >= 2) {
+          setAlertMsg(parsedError[1].trim());
+        } else {
+          setAlertMsg("Unknown");
+        }
+        setAlertOpen(true);
+        setError(err);
+        setIsLoadedTI(true);
+      });
+  };
+
   const fetchProjectInfo = () => {
     httpReq(
       `${config.URL}/api/projects/${props.match.params.pid}`,
@@ -186,15 +236,21 @@ const ViewProject = (props) => {
       token
     )
       .then((res) => {
-        DEBUG_PRINT(res);
+        // DEBUG_PRINT(res);
         res.json().then((r) => {
-          DEBUG_PRINT(r);
+          // DEBUG_PRINT(r);
           if (res.status === 200 && r.success === true)
             r.data !== null
               ? setProjectInfo(r.data)
               : setProjectInfo({
-                  name: null,
-                  description: null,
+                  project: {
+                    name: "",
+                    description: "",
+                  },
+                  team: {
+                    info: null,
+                    members: null,
+                  },
                 });
           else setError(r.msg);
         });
@@ -230,7 +286,7 @@ const ViewProject = (props) => {
       token
     )
       .then((res) => {
-        DEBUG_PRINT(res);
+        // DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
             _setOpenBackdrop(false);
@@ -276,8 +332,8 @@ const ViewProject = (props) => {
                   tmpCounts.assignedToYou++;
               });
               setCounts(tmpCounts);
-              DEBUG_PRINT(r);
-              DEBUG_PRINT(counts);
+              // DEBUG_PRINT(r);
+              // DEBUG_PRINT(counts);
             } else {
               setProjectData([]);
             }
@@ -344,28 +400,14 @@ const ViewProject = (props) => {
   };
 
   useEffect(() => {
+    fetchTeamsInfo();
     fetchProjectInfo();
     fetchDataAndSet();
   }, []);
 
-  if (notFoundError)
-    return (
-      <div>
-        <img
-          style={{
-            display: "block",
-            marginLeft: "auto",
-            marginRight: "auto",
-            width: "50%",
-            textAlign: "center",
-          }}
-          src={notFoundImage}
-          alt="Not Found"
-        />
-      </div>
-    );
+  if (notFoundError) return <NotFound />;
   else if (error) return <div>Error: {error}</div>;
-  else if (!isLoadedPI || !isLoadedII)
+  else if (!isLoadedPI || !isLoadedII || !isLoadedTI)
     return (
       <div>
         <Backdrop className={classes.backdrop} open="true">
@@ -393,10 +435,13 @@ const ViewProject = (props) => {
                 <Grid item xs={12}>
                   <Grid container justify="space-between">
                     <Grid item xs={8}>
-                      <Typography variant="h5">{projectInfo.name}</Typography>
+                      <Typography variant="h5">
+                        {projectInfo.project.name}
+                      </Typography>
                     </Grid>
                     <Grid item>
                       <EditProjectDialog
+                        teamsInfo={teamsInfo}
                         projectInfo={projectInfo}
                         action={() => fetchProjectInfo()}
                       />
@@ -404,11 +449,18 @@ const ViewProject = (props) => {
                   </Grid>
                   <List>
                     <Grid container justify="">
-                      <AvatarGroup>
-                        {team_members.map((value, index) => {
-                          return <Avatar key={index} alt={value} src="_" />;
-                        })}
-                      </AvatarGroup>
+                      {projectInfo.team.info !== null &&
+                      projectInfo.team.members !== null ? (
+                        <AvatarGroup>
+                          {projectInfo.team.members.map((value, index) => {
+                            return <Avatar key={index} alt={value} src="_" />;
+                          })}
+                        </AvatarGroup>
+                      ) : (
+                        <Info useStyles={useApexInfoStyles}>
+                          <InfoSubtitle>No team assigned</InfoSubtitle>
+                        </Info>
+                      )}
                     </Grid>
                     <br />
                     <IssueCreateDialog

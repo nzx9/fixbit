@@ -21,7 +21,7 @@ import {
 } from "../reducers/userDataTracker";
 import { getToken } from "../reducers/tokenTracker";
 import { useSelector, useDispatch } from "react-redux";
-import { httpPOST } from "../components/httpRequest";
+import { httpReq } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
 import { logout } from "../reducers/loginTracker";
@@ -84,10 +84,10 @@ const useStyles = makeStyles((theme) => ({
 const Profile = () => {
   const classes = useStyles();
   const uId = useSelector(getUId);
+  const token = useSelector(getToken);
   const username = useSelector(getUserName);
   const fullname = useSelector(getFullName);
   const email = useSelector(getEmail);
-  const token = useSelector(getToken);
 
   const [isUserInputDisabled, setIsUserInputDisabled] = React.useState(true);
   const [isPasswordInputDisabled, setIsPasswordInputDisabled] = React.useState(
@@ -141,7 +141,7 @@ const Profile = () => {
               onSubmit={(e) => {
                 if (!isUserInputDisabled) {
                   _setOpenBackdrop(true);
-                  httpPOST(
+                  httpReq(
                     `${window.location.protocol}//${window.location.hostname}/api/users/update.php`,
                     {
                       uid: uId,
@@ -253,7 +253,7 @@ const Profile = () => {
                     _retypeNewPassowrd !== null
                   ) {
                     _setOpenBackdrop(true);
-                    httpPOST(
+                    httpReq(
                       `${window.location.protocol}//${window.location.hostname}/api/users/changepassword.php`,
                       {
                         uid: uId,

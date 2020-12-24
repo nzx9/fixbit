@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -123,16 +123,30 @@ function EditProjectDialog(props) {
   const token = useSelector(getToken);
 
   const [open, setOpen] = React.useState(false);
-  const [projectName, setProjectName] = React.useState(props.projectInfo.name);
-  const [projectDescription, setProjectDescription] = React.useState(
-    props.projectInfo.description
+  const [projectName, setProjectName] = React.useState(
+    props.projectInfo.project.name
   );
-  const [isPublic, setIsPublic] = React.useState(props.projectInfo.is_public);
-  const [adminId, setAdminId] = React.useState(props.projectInfo.admin_id);
-  const [team, setTeam] = React.useState(1);
-  const { enqueueSnackbar } = useSnackbar();
+  const [projectDescription, setProjectDescription] = React.useState(
+    props.projectInfo.project.description
+  );
+  const [isPublic, setIsPublic] = React.useState(
+    props.projectInfo.project.is_public
+  );
+  const [adminId, setAdminId] = React.useState(
+    props.projectInfo.project.admin_id
+  );
+  const [team, setTeam] = React.useState(props.projectInfo.project.team_id);
 
-  DEBUG_PRINT(props);
+  const { enqueueSnackbar } = useSnackbar();
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const [data, setData] = React.useState([]);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertType, setAlertType] = React.useState(null);
+  const [alertTitle, setAlertTitle] = React.useState(null);
+  const [alertMsg, setAlertMsg] = React.useState(null);
+
+  // DEBUG_PRINT(props);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -168,7 +182,7 @@ function EditProjectDialog(props) {
   const handleTeamChange = (e) => {
     setTeam(e.target.value);
   };
-  DEBUG_PRINT(projectName);
+
   return (
     <div>
       <ButtonGroup
@@ -182,9 +196,10 @@ function EditProjectDialog(props) {
           size="small"
           onClick={handleDescriptionClick}
         >
+          {console.error(props)}
           <Description fontSize="inherit" />
         </Button>
-        {props.admin_id !== uId ? (
+        {props.projectInfo.project.admin_id === uId ? (
           <Button
             aria-label="delete"
             className={classes.settingsBtn}
@@ -210,7 +225,7 @@ function EditProjectDialog(props) {
         }}
       >
         <Typography className={classes.typography}>
-          {props.projectInfo.description}
+          {props.projectInfo.project.description}
         </Typography>
       </Popover>
       <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
@@ -224,23 +239,21 @@ function EditProjectDialog(props) {
         <form
           onSubmit={(e) => {
             let data = {};
-            if (projectName !== props.projectInfo.name)
+            if (projectName !== props.projectInfo.project.name)
               data["name"] = projectName;
-            if (projectDescription !== props.projectInfo.description)
+            if (projectDescription !== props.projectInfo.project.description)
               data["description"] = projectDescription;
-            if (isPublic !== props.projectInfo.isPublic)
+            if (isPublic !== props.projectInfo.project.isPublic)
               data["is_public"] = isPublic;
             httpReq(
-              `${config.URL}/api/projects/${props.projectInfo.id}`,
+              `${config.URL}/api/projects/${props.projectInfo.project.id}`,
               "PUT",
               data,
               token
             )
               .then((res) => {
-                DEBUG_PRINT(res);
                 res.json().then((r) => {
                   NOTIFY(r.msg, (msg) => {
-                    // _setOpenBackdrop(false);
                     enqueueSnackbar(msg, {
                       variant: r.type,
                       anchorOrigin: settings.snackbar.anchorOrigin,
@@ -266,6 +279,9 @@ function EditProjectDialog(props) {
                   onChange={handleProjectNameChange}
                   variant="outlined"
                   fullWidth
+                  disabled={
+                    props.projectInfo.project.admin_id !== uId ? true : false
+                  }
                   required
                 />
               </Grid>
@@ -283,6 +299,9 @@ function EditProjectDialog(props) {
                     value={isPublic}
                     onChange={handleIsPublicChange}
                     label="Access"
+                    disabled={
+                      props.projectInfo.project.admin_id !== uId ? true : false
+                    }
                     required
                   >
                     <MenuItem value={true}>Public</MenuItem>
@@ -299,6 +318,9 @@ function EditProjectDialog(props) {
                   onChange={handleProjectDescriptionChange}
                   value={projectDescription}
                   variant="outlined"
+                  disabled={
+                    props.projectInfo.project.admin_id !== uId ? true : false
+                  }
                   fullWidth
                 />
               </Grid>
@@ -318,13 +340,23 @@ function EditProjectDialog(props) {
                     value={adminId}
                     onChange={handleAdminChange}
                     label="Admin"
+                    disabled={
+                      props.projectInfo.project.admin_id !== uId ? true : false
+                    }
                     required
                   >
-                    <MenuItem value="null">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={2}>Navindu</MenuItem>
-                    <MenuItem value={1}>Sandul</MenuItem>
+                    {props.projectInfo.team.info !== null &&
+                    props.projectInfo.team.members !== null ? (
+                      props.projectInfo.team.members.map((value, index) => (
+                        <MenuItem key={index} value={value.uid}>
+                          {value.name}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem value={props.projectInfo.admin.id}>
+                        {props.projectInfo.admin.username}
+                      </MenuItem>
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
@@ -339,68 +371,33 @@ function EditProjectDialog(props) {
                   <Select
                     labelId="team-select"
                     id="team-select"
-                    value={props.team}
-                    onChange={props.handleTeamChange}
+                    value={team}
+                    onChange={handleTeamChange}
+                    disabled={
+                      props.projectInfo.project.admin_id !== uId ? true : false
+                    }
                     label="Team"
                     required
                   >
-                    <MenuItem value="1">
-                      <Grid container>
-                        <Grid item xs={9}>
-                          None
-                        </Grid>
-                        <Grid item xs={3}>
-                          <FiberManualRecord className={classes.tag_no} />
-                        </Grid>
-                      </Grid>
-                    </MenuItem>
-                    <MenuItem value={2}>
-                      <Grid container>
-                        <Grid item xs={9}>
-                          Low
-                        </Grid>
-                        <Grid item xs={3}>
-                          <FiberManualRecord className={classes.tag_low} />
-                        </Grid>
-                      </Grid>
-                    </MenuItem>
-                    <MenuItem value={3}>
-                      <Grid container>
-                        <Grid item xs={9}>
-                          Normal
-                        </Grid>
-                        <Grid item xs={3}>
-                          <FiberManualRecord className={classes.tag_normal} />
-                        </Grid>
-                      </Grid>
-                    </MenuItem>
-                    <MenuItem value={4}>
-                      <Grid container>
-                        <Grid item xs={9}>
-                          High
-                        </Grid>
-                        <Grid item xs={3}>
-                          <FiberManualRecord className={classes.tag_high} />
-                        </Grid>
-                      </Grid>
-                    </MenuItem>
-                    <MenuItem value={5}>
-                      <Grid container>
-                        <Grid item xs={9}>
-                          Critical
-                        </Grid>
-                        <Grid item xs={3}>
-                          <FiberManualRecord className={classes.tag_critical} />
-                        </Grid>
-                      </Grid>
-                    </MenuItem>
+                    {props.teamsInfo.map((value, index) => (
+                      <MenuItem key={index} value={value.info.id}>
+                        {value.info.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus type="submit" color="primary">
+            <Button
+              autoFocus
+              type="submit"
+              color="primary"
+              disabled={
+                props.projectInfo.project.admin_id !== uId ? true : false
+              }
+            >
               Save
             </Button>
           </DialogActions>

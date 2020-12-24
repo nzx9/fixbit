@@ -80,7 +80,6 @@ const Projects = () => {
 
   const handleClose = () => setOpen(false);
 
-  const handleNewProjectAdded = () => setNewProjectAdded(!newProjectAdded);
   const handleAlertClose = () => setAlertOpen(false);
 
   const handleOpenBackdrop = () => _setOpenBackdrop(true);
@@ -175,7 +174,7 @@ const Projects = () => {
         token={token}
         openBackdrop={() => handleOpenBackdrop()}
         closeBackdrop={() => handleCloseBackdrop()}
-        newProjectAddedAction={() => fetchDataAndSet(filterValue)}
+        newProjectAddedAction={() => fetchDataAndSet()}
       />
       <div
         style={{
@@ -192,7 +191,14 @@ const Projects = () => {
             />
           </div>
         ) : (
-          data.map((value, index) => <ProjectCard key={index} data={value} />)
+          data.map((value, index) => (
+            <ProjectCard
+              key={index}
+              data={value}
+              token={token}
+              refetchData={() => fetchDataAndSet()}
+            />
+          ))
         )}
       </div>
     </div>
