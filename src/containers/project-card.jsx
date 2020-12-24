@@ -1,82 +1,134 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
-
 import {
+  Box,
   Card,
-  CardActions,
-  CardContent,
   Button,
-  Typography,
-  makeStyles,
-  Grid,
-  IconButton,
+  Avatar,
+  Slider,
   Menu,
   MenuItem,
+  IconButton,
+  makeStyles,
 } from "@material-ui/core";
-
-import routes from "../routes/routes.json";
+import { AvatarGroup } from "@material-ui/lab";
+import { Column, Row, Item } from "@mui-treasury/components/flex";
+import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import {
-  setPId,
-  setProjectName,
-  setProjectDescription,
-  setCreatorId,
-  setAdminId,
-  setDateCreated,
-} from "../reducers/projectDataTracker";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ArrowRight,
   DeleteForever,
   Edit,
-  ExpandLess,
-  ExpandMore,
+  ExpandLessRounded,
+  ExpandMoreRounded,
+  FiberManualRecord,
   Group,
 } from "@material-ui/icons";
+import { useSelector } from "react-redux";
 import { getUId } from "../reducers/userDataTracker";
-import { DEBUG_PRINT } from "../components/debugTools";
+import routes from "../routes/routes.json";
+import { NOTIFY, AlertDialogConfirmation } from "../components/notify";
+import { httpReq } from "../components/httpRequest";
+import config from "../components/config.json";
+import settings from "../components/settings.json";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 275,
-    width: 275,
-    [theme.breakpoints.down("sm")]: {
-      width: "96%",
-    },
+    height: "250",
     float: "left",
+    width: "275px",
+    transition: "0.3s",
     margin: theme.spacing(1),
+    position: "relative",
+    "&:before": {
+      transition: "0.2s",
+      position: "absolute",
+      width: "100%",
+      height: "250",
+      content: '""',
+      display: "block",
+      backgroundColor: "#d9daf1",
+      borderRadius: "1rem",
+      zIndex: 0,
+      bottom: 0,
+    },
+    "&:hover": {
+      "&:before": {
+        bottom: -6,
+      },
+      "& $card": {
+        boxShadow: "-12px 12px 64px 0 #bcc3d6",
+      },
+    },
   },
   grow: {
     flexGrow: 1,
   },
-  title: {
-    fontSize: 14,
+  card: {
+    zIndex: 1,
+    position: "relative",
+    borderRadius: "1rem",
+    boxShadow: "0 6px 20px 0 #dbdbe8",
+    backgroundColor: "#fff",
+    transition: "0.4s",
+    height: "100%",
   },
-  pos: {
-    marginBottom: 12,
+  avatar: {
+    fontFamily: "Ubuntu",
+    fontSize: "0.875rem",
+    backgroundColor: "#6d7efc",
   },
-  viewBtn: {
-    backgroundColor: theme.palette.success.main,
-    color: theme.palette.grey[200],
-    "&:hover": {
-      backgroundColor: theme.palette.success.dark,
-      zIndex: 1,
+  logo: {
+    width: 48,
+    height: 48,
+    borderRadius: "0.75rem",
+  },
+  join: {
+    background: "linear-gradient(to top, #638ef0, #82e7fe)",
+    "& > *": {
+      textTransform: "none !important",
     },
   },
   deleteItem: {
+    color: theme.palette.error.dark,
+  },
+  publicProject: {
+    color: theme.palette.success.main,
+  },
+  privateProject: {
     color: theme.palette.error.main,
   },
 }));
 
-const ProjectCard = (props) => {
+const useSliderStyles = makeStyles(() => ({
+  root: {
+    height: 4,
+  },
+  rail: {
+    borderRadius: 10,
+    height: 4,
+    backgroundColor: "rgb(202,211,216)",
+  },
+  track: {
+    borderRadius: 10,
+    height: 4,
+    backgroundColor: "rgb(117,156,250)",
+  },
+  thumb: {
+    display: "none",
+  },
+}));
+
+const ProjectCard = (props, joined = false) => {
   const classes = useStyles();
+  const sliderStyles = useSliderStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const uid = useSelector(getUId);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
-
-  const dispatch = useDispatch();
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const uid = useSelector(getUId);
 
   const handleMenuOpen = (e) => {
     setAnchorEl(e.currentTarget);
@@ -85,8 +137,8 @@ const ProjectCard = (props) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  const handleAlertClose = () => setAlertOpen(false);
 
-  DEBUG_PRINT(props.admin_id);
   const renderMenu = (
     <Menu
       getContentAnchorEl={null}
@@ -101,15 +153,20 @@ const ProjectCard = (props) => {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
-      <MenuItem
-        onClick={() => {
-          handleMenuClose();
-        }}
-      >
-        <Group />
-        &ensp;View Team
-      </MenuItem>
-      {Number(props.data.admin_id) === Number(uid) ? (
+      {props.data.project.team_id !== null ? (
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            goto(routes.TEAMS_VIEW_X + props.data.project.team_id);
+          }}
+        >
+          <Group />
+          &ensp;View Team
+        </MenuItem>
+      ) : (
+        <></>
+      )}
+      {Number(props.data.project.admin_id) === Number(uid) ? (
         <>
           <MenuItem
             onClick={() => {
@@ -118,7 +175,13 @@ const ProjectCard = (props) => {
           >
             <Edit /> &ensp; Edit Project
           </MenuItem>
-          <MenuItem onClick={handleMenuClose} className={classes.deleteItem}>
+          <MenuItem
+            className={classes.deleteItem}
+            onClick={() => {
+              setAlertOpen(true);
+              handleMenuClose();
+            }}
+          >
             <DeleteForever /> &ensp; Delete
           </MenuItem>
         </>
@@ -130,79 +193,179 @@ const ProjectCard = (props) => {
 
   return (
     <Card className={classes.root}>
-      <CardContent>
-        <Grid container>
-          <Grid item>
-            <Typography
-              className={classes.title}
-              color="textSecondary"
-              gutterBottom
-            >
-              ProjectID: #{props.data.id}
-            </Typography>
-          </Grid>
-          <div className={classes.grow} />
-          <Grid item>
-            <IconButton
-              size="small"
-              onClick={Boolean(anchorEl) ? handleMenuClose : handleMenuOpen}
-            >
-              {Boolean(anchorEl) ? (
-                <ExpandLess fontSize="small" />
+      <AlertDialogConfirmation
+        alertOpen={alertOpen}
+        title="Delete Project?"
+        type="error"
+        placeholder={props.data.project.name}
+        msg="After deleting the project it can't be recovered."
+        resolveCallback={() => {
+          httpReq(
+            `${config.URL}/api/projects/${props.data.project.id}`,
+            "DELETE",
+            null,
+            props.token
+          )
+            .then((res) => {
+              res.json().then((r) => {
+                NOTIFY(r.msg, (msg) => {
+                  if (msg === null || msg === undefined) msg = r.message;
+                  enqueueSnackbar(msg, {
+                    variant: r.type,
+                    anchorOrigin: settings.snackbar.anchorOrigin,
+                  });
+                  if (res.status === 200 && r.success === true)
+                    props.refetchData();
+                });
+                handleAlertClose();
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+              handleAlertClose();
+            });
+        }}
+        rejectCallback={() => {
+          handleAlertClose();
+        }}
+      />
+      <Column className={classes.card}>
+        <Row px={1} gap={2}>
+          <Column>
+            <Info position={"middle"} useStyles={useApexInfoStyles}>
+              <InfoTitle>
+                {props.data.project.name}
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={null}
+                    title={
+                      props.data.project.is_public
+                        ? "Public Project"
+                        : "Private Project"
+                    }
+                  >
+                    <FiberManualRecord
+                      className={
+                        props.data.project.is_public
+                          ? classes.publicProject
+                          : classes.privateProject
+                      }
+                      fontSize="small"
+                    />
+                  </IconButton>
+                </span>
+              </InfoTitle>
+              {props.data.project.updated_at !== null &&
+              props.data.project.updated_at !== undefined ? (
+                <InfoSubtitle>
+                  {props.data.project.updated_at.substr(0, 10)}{" "}
+                  {props.data.project.updated_at.substr(11, 5)}
+                  <span> | admin: {props.data.admin.username}</span>
+                </InfoSubtitle>
               ) : (
-                <ExpandMore fontSize="small" />
+                <InfoSubtitle>
+                  admin: {props.data.project.admin.username}
+                </InfoSubtitle>
               )}
-            </IconButton>
-          </Grid>
-        </Grid>
-        {renderMenu}
-        <Typography variant="h5" component="h2">
-          {props.data.name}
-        </Typography>
-        <Typography className={classes.pos} color="textSecondary">
-          {Number(props.data.is_public) ? "Public" : "Private"}
-        </Typography>
-        <Typography
-          variant="body2"
-          component="p"
-          style={{ height: 50, overflowY: "auto", margin: 0 }}
-        >
-          {props.data.description}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Grid container justify="flex-start">
-          <Grid item>
-            <Typography
-              className={classes.title}
-              color="textSecondary"
-              gutterBottom
-            >
-              {props.data.updated_at.substring(0, 16)}
-            </Typography>
-          </Grid>
+            </Info>
+          </Column>
           <div className={classes.grow} />
-          <Grid item>
+          <Column>
+            {props.data.project.team_id !== null ||
+            props.data.project.admin_id === Number(uid) ? (
+              <IconButton
+                size="small"
+                onClick={Boolean(anchorEl) ? handleMenuClose : handleMenuOpen}
+              >
+                {Boolean(anchorEl) ? (
+                  <ExpandLessRounded fontSize="small" />
+                ) : (
+                  <ExpandMoreRounded fontSize="small" />
+                )}
+              </IconButton>
+            ) : null}
+          </Column>
+          {props.data.project.team_id !== null ||
+          props.data.project.admin_id === Number(uid)
+            ? renderMenu
+            : null}
+        </Row>
+        <Box
+          pb={1}
+          px={2}
+          color={"grey.600"}
+          fontSize={"0.875rem"}
+          fontFamily={"Ubuntu"}
+          style={{ height: 60, overflowY: "scroll" }}
+        >
+          {props.data.project.description}
+        </Box>
+        <Row px={2} gap={0}>
+          <Column style={{ width: "70%" }}>
+            <Slider
+              classes={sliderStyles}
+              value={
+                ((props.data.issue.total - props.data.issue.open) /
+                  props.data.issue.total) *
+                100
+              }
+            />
+          </Column>
+          <div className={classes.grow} />
+          <Column>
+            <Info useStyles={useApexInfoStyles}>
+              {props.data.issue.total > 0 ? (
+                <InfoSubtitle>
+                  {Math.floor(
+                    ((props.data.issue.total - props.data.issue.open) /
+                      props.data.issue.total) *
+                      100
+                  )}
+                  % Closed
+                </InfoSubtitle>
+              ) : (
+                <Info useStyles={useApexInfoStyles}>
+                  <InfoSubtitle>No issues</InfoSubtitle>
+                </Info>
+              )}
+            </Info>
+          </Column>
+        </Row>
+        <Row p={1} gap={2} position={"bottom"}>
+          {props.data.team.info !== null ? (
+            <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
+              {props.data.team.members.map((value, index) => (
+                <Avatar
+                  key={index}
+                  alt={value.name}
+                  src={
+                    value.profile_pic === null ||
+                    value.profile_pic === undefined
+                      ? "broken-url.jpg"
+                      : value.profile_pic
+                  }
+                />
+              ))}
+            </AvatarGroup>
+          ) : (
+            <Info useStyles={useApexInfoStyles}>
+              <InfoSubtitle>No team assigned</InfoSubtitle>
+            </Info>
+          )}
+          <Item position={"middle-right"}>
             <Button
-              className={classes.viewBtn}
-              size="small"
               variant="contained"
-              onClick={() => {
-                dispatch(setPId(props.data.id));
-                dispatch(setProjectName(props.data.name));
-                dispatch(setProjectDescription(props.data.description));
-                dispatch(setCreatorId(props.data.creator_id));
-                dispatch(setAdminId(props.data.admin_id));
-                dispatch(setDateCreated(props.data.updated_at));
-                goto(routes.PROJECTS_VIEW_X + props.data.id);
-              }}
+              color="primary"
+              onClick={() =>
+                goto(routes.PROJECTS_VIEW_X + props.data.project.id)
+              }
             >
               View
-              <ArrowRight fontSize="small" />
             </Button>
-          </Grid>
-        </Grid>
-      </CardActions>
+          </Item>
+        </Row>
+      </Column>
     </Card>
   );
 };
