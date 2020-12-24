@@ -4,10 +4,11 @@
     "REGISTER": "/register",
     "PROFILE": "/profile",
     "PROJECTS":"/projects",
-    "PROJECTS_VIEW": "/projects/view/:pid",
-    "PROJECTS_VIEW_X": "/projects/view/",
-    "PROJECTS_CREATE": "/projects/create",
-    "ISSUE_VIEW": "/projects/view/:pid/issue/:iid",
+    "PROJECTS_VIEW": "/projects/:pid",
+    "PROJECTS_VIEW_X": "/projects/",
+    "ISSUE_VIEW": "/projects/:pid/issue/:iid",
     "ISSUE_VIEW_X": "/issue/",
-    "TEAMS": "/teams"
+    "TEAMS": "/teams",
+    "TEAMS_VIEW": "/teams/:tid",
+    "TEAMS_VIEW_X" : "/teams/"
 }
