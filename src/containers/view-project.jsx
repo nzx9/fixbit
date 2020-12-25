@@ -33,6 +33,7 @@ import settings from "../components/settings.json";
 import NotFound from "./not-found";
 import { Info, InfoSubtitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
+import { randomColor } from "../components/random-color-generator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,8 +79,6 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.text.primary,
   },
 }));
-
-const team_members = ["navindu", "sandul", "jennive", "gowrisha"];
 
 const ViewProject = (props) => {
   const classes = useStyles();
@@ -305,7 +304,6 @@ const ViewProject = (props) => {
       token
     )
       .then((res) => {
-        // DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
             _setOpenBackdrop(false);
@@ -472,7 +470,21 @@ const ViewProject = (props) => {
                       projectInfo.team.members !== null ? (
                         <AvatarGroup>
                           {projectInfo.team.members.map((value, index) => {
-                            return <Avatar key={index} alt={value} src="_" />;
+                            return (
+                              <Avatar
+                                style={{
+                                  backgroundColor: randomColor(),
+                                }}
+                                key={index}
+                                alt={value.name}
+                                src={
+                                  value.profile_pic === null ||
+                                  value.profile_pic === undefined
+                                    ? "broken-url.jpg"
+                                    : value.profile_pic
+                                }
+                              />
+                            );
                           })}
                         </AvatarGroup>
                       ) : (

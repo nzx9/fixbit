@@ -22,6 +22,7 @@ import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
+import { randomColor } from "../components/random-color-generator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -117,7 +118,7 @@ const TeamCard = (props, joined = false) => {
             `${config.URL}/api/teams/${props.data.info.id}`,
             "DELETE",
             null,
-            props.token
+            token
           )
             .then((res) => {
               props.openBackdrop();
@@ -185,6 +186,7 @@ const TeamCard = (props, joined = false) => {
             <AvatarGroup max={5} classes={{ avatar: classes.avatar }}>
               {props.data.members.map((value, index) => (
                 <Avatar
+                  style={{ backgroundColor: randomColor() }}
                   key={index}
                   alt={value.name}
                   src={

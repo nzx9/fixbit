@@ -31,6 +31,7 @@ import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
+import { randomColor } from "../components/random-color-generator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -339,6 +340,7 @@ const ProjectCard = (props, joined = false) => {
             <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
               {props.data.team.members.map((value, index) => (
                 <Avatar
+                  style={{ backgroundColor: randomColor() }}
                   key={index}
                   alt={value.name}
                   src={

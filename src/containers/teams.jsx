@@ -203,7 +203,6 @@ const Teams = () => {
             <TeamCard
               key={index}
               data={value}
-              token={token}
               openBackdrop={() => handleOpenBackdrop()}
               closeBackdrop={() => handleCloseBackdrop()}
               refetchData={() => fetchDataAndSet()}
