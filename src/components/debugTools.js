@@ -3,3 +3,8 @@ export const DEBUG_PRINT = (msg) => {
     console.log(msg);
   }
 };
+
+export const convetToLocalTime = (date_time) => {
+  let date = new Date(date_time);
+  return date.toString();
+};

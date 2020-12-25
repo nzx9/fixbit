@@ -32,6 +32,7 @@ import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
 import { randomColor } from "../components/random-color-generator";
+import { convetToLocalTime } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -262,8 +263,14 @@ const ProjectCard = (props, joined = false) => {
               {props.data.project.updated_at !== null &&
               props.data.project.updated_at !== undefined ? (
                 <InfoSubtitle>
-                  {props.data.project.updated_at.substr(0, 10)}{" "}
-                  {props.data.project.updated_at.substr(11, 5)}
+                  {convetToLocalTime(props.data.project.updated_at).substr(
+                    4,
+                    11
+                  )}{" "}
+                  {convetToLocalTime(props.data.project.updated_at).substr(
+                    16,
+                    5
+                  )}
                   <span> | admin: {props.data.admin.username}</span>
                 </InfoSubtitle>
               ) : (
