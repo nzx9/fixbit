@@ -34,7 +34,14 @@ import {
   Settings,
   Cancel,
 } from "@material-ui/icons";
-import { DEBUG_PRINT } from "../components/debugTools";
+import { DEBUG_PRINT, convetToLocalTime } from "../components/debugTools";
+import {
+  Info,
+  InfoCaption,
+  InfoSubtitle,
+  InfoTitle,
+} from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
 const styles = (theme) => ({
   root: {
@@ -135,25 +142,16 @@ function EditProjectDialog(props) {
   const [adminId, setAdminId] = React.useState(
     props.projectInfo.project.admin_id
   );
-  const [teamId, setTeamId] = React.useState(props.projectInfo.project.team_id);
+  const [teamId, setTeamId] = React.useState(
+    props.projectInfo.project.team_id === null
+      ? -1
+      : props.projectInfo.project.team_id
+  );
 
   const { enqueueSnackbar } = useSnackbar();
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [error, setError] = React.useState(null);
-  const [data, setData] = React.useState([]);
-  const [alertOpen, setAlertOpen] = React.useState(false);
-  const [alertType, setAlertType] = React.useState(null);
-  const [alertTitle, setAlertTitle] = React.useState(null);
-  const [alertMsg, setAlertMsg] = React.useState(null);
 
-  // DEBUG_PRINT(props);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleDescriptionClick = (event) => {
@@ -225,7 +223,26 @@ function EditProjectDialog(props) {
         }}
       >
         <Typography className={classes.typography}>
-          {props.projectInfo.project.description}
+          <Grid container>
+            <Info useStyles={useApexInfoStyles}>
+              <InfoSubtitle>
+                <b>project id:</b> {props.projectInfo.project.id}
+                <br />
+                <b>admin :</b> {props.projectInfo.admin.fullname} (
+                {props.projectInfo.admin.email}) <br />
+                <b>team :</b> {props.projectInfo.team.info.name} <br />
+                <b>description:</b> {props.projectInfo.project.description}
+                <br />
+                <b>created at :</b>{" "}
+                {convetToLocalTime(props.projectInfo.project.created_at)}
+                <br />
+                <b>last update:</b>{" "}
+                {convetToLocalTime(props.projectInfo.project.updated_at)}
+                <br />
+              </InfoSubtitle>
+            </Info>
+            <Grid item></Grid>
+          </Grid>
         </Typography>
       </Popover>
       <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
@@ -234,179 +251,197 @@ function EditProjectDialog(props) {
           className={classes.root}
           onClose={handleClose}
         >
-          Edit Project
+          <Info useStyles={useApexInfoStyles}>
+            <InfoTitle>Edit Project</InfoTitle>
+          </Info>
         </DialogTitle>
-        <form
-          onSubmit={(e) => {
-            let data = {};
-            if (projectName !== props.projectInfo.project.name)
-              data["name"] = projectName;
-            if (projectDescription !== props.projectInfo.project.description)
-              data["description"] = projectDescription;
-            if (isPublic !== props.projectInfo.project.isPublic)
-              data["is_public"] = isPublic;
-            if (teamId !== props.projectInfo.project.team_id)
-              data["team_id"] = teamId;
-            httpReq(
-              `${config.URL}/api/projects/${props.projectInfo.project.id}`,
-              "PUT",
-              data,
-              token
-            )
-              .then((res) => {
-                res.json().then((r) => {
-                  NOTIFY(r.msg, (msg) => {
-                    enqueueSnackbar(msg, {
-                      variant: r.type,
-                      anchorOrigin: settings.snackbar.anchorOrigin,
+        <Info useStyles={useApexInfoStyles}>
+          <form
+            onSubmit={(e) => {
+              let data = {};
+              if (projectName !== props.projectInfo.project.name)
+                data["name"] = projectName;
+              if (projectDescription !== props.projectInfo.project.description)
+                data["description"] = projectDescription;
+              if (isPublic !== props.projectInfo.project.isPublic)
+                data["is_public"] = isPublic;
+              if (teamId === -1) {
+                if (props.projectInfo.projectName.team_id !== null)
+                  data["team_id"] = null;
+              } else if (
+                teamId !== -1 &&
+                teamId !== props.projectInfo.project.team_id
+              )
+                data["team_id"] = teamId;
+
+              httpReq(
+                `${config.URL}/api/projects/${props.projectInfo.project.id}`,
+                "PUT",
+                data,
+                token
+              )
+                .then((res) => {
+                  res.json().then((r) => {
+                    NOTIFY(r.msg, (msg) => {
+                      enqueueSnackbar(msg, {
+                        variant: r.type,
+                        anchorOrigin: settings.snackbar.anchorOrigin,
+                      });
+                      if (res.status === 200 && r.success === true) {
+                        props.action();
+                      }
                     });
-                    if (res.status === 200 && r.success === true) {
-                      props.action();
-                    }
                   });
-                });
-              })
-              .catch((err) => console.error(err));
-            handleClose();
-            e.preventDefault();
-          }}
-        >
-          <DialogContent dividers>
-            <Grid container spacing={1} className={classes.gridContainer}>
-              <Grid item xs={12} md={9}>
-                <TextField
-                  id="name-input"
-                  label="Name"
-                  value={projectName}
-                  onChange={handleProjectNameChange}
-                  variant="outlined"
-                  fullWidth
-                  disabled={
-                    props.projectInfo.project.admin_id !== uId ? true : false
-                  }
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <FormControl
-                  variant="outlined"
-                  className={classes.formControl}
-                  fullWidth
-                  required
-                >
-                  <InputLabel id="isOpen-select">Access</InputLabel>
-                  <Select
-                    labelId="access-select"
-                    id="access-select"
-                    value={isPublic}
-                    onChange={handleIsPublicChange}
-                    label="Access"
+                })
+                .catch((err) => console.error(err));
+              handleClose();
+              e.preventDefault();
+            }}
+          >
+            <DialogContent dividers>
+              <Grid container spacing={1} className={classes.gridContainer}>
+                <Grid item xs={12} md={9}>
+                  <TextField
+                    id="name-input"
+                    label="Name"
+                    value={projectName}
+                    onChange={handleProjectNameChange}
+                    variant="outlined"
+                    fullWidth
                     disabled={
                       props.projectInfo.project.admin_id !== uId ? true : false
                     }
                     required
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <FormControl
+                    variant="outlined"
+                    className={classes.formControl}
+                    fullWidth
+                    required
                   >
-                    <MenuItem value={true}>Public</MenuItem>
-                    <MenuItem value={false}>Private</MenuItem>
-                  </Select>
-                </FormControl>
+                    <InputLabel id="isOpen-select">Access</InputLabel>
+                    <Select
+                      labelId="access-select"
+                      id="access-select"
+                      value={isPublic}
+                      onChange={handleIsPublicChange}
+                      label="Access"
+                      disabled={
+                        props.projectInfo.project.admin_id !== uId
+                          ? true
+                          : false
+                      }
+                      required
+                    >
+                      <MenuItem value={true}>Public</MenuItem>
+                      <MenuItem value={false}>Private</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container className={classes.gridContainer}>
-              <Grid item xs={12}>
-                <TextField
-                  id="description-input"
-                  label="Description"
-                  onChange={handleProjectDescriptionChange}
-                  value={projectDescription}
-                  variant="outlined"
-                  disabled={
-                    props.projectInfo.project.admin_id !== uId ? true : false
-                  }
-                  fullWidth
-                />
-              </Grid>
-            </Grid>
-            <Grid container className={classes.gridContainer} spacing={1}>
-              <Grid item md={6}>
-                <FormControl
-                  variant="outlined"
-                  className={classes.formControl}
-                  fullWidth
-                  required
-                >
-                  <InputLabel id="admin-select">Admin</InputLabel>
-                  <Select
-                    labelId="admin-select"
-                    id="admin-select"
-                    value={adminId}
-                    onChange={handleAdminChange}
-                    label="Admin"
+              <Grid container className={classes.gridContainer}>
+                <Grid item xs={12}>
+                  <TextField
+                    id="description-input"
+                    label="Description"
+                    onChange={handleProjectDescriptionChange}
+                    value={projectDescription}
+                    variant="outlined"
                     disabled={
                       props.projectInfo.project.admin_id !== uId ? true : false
                     }
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+              <Grid container className={classes.gridContainer} spacing={1}>
+                <Grid item md={6}>
+                  <FormControl
+                    variant="outlined"
+                    className={classes.formControl}
+                    fullWidth
                     required
                   >
-                    {props.projectInfo.team.info !== null &&
-                    props.projectInfo.team.members !== null ? (
-                      props.projectInfo.team.members.map((value, index) => (
-                        <MenuItem key={index} value={value.uid}>
-                          {value.name}
+                    <InputLabel id="admin-select">Admin</InputLabel>
+                    <Select
+                      labelId="admin-select"
+                      id="admin-select"
+                      value={adminId}
+                      onChange={handleAdminChange}
+                      label="Admin"
+                      disabled={
+                        props.projectInfo.project.admin_id !== uId
+                          ? true
+                          : false
+                      }
+                      required
+                    >
+                      {props.projectInfo.team.info !== null &&
+                      props.projectInfo.team.members !== null ? (
+                        props.projectInfo.team.members.map((value, index) => (
+                          <MenuItem key={index} value={value.uid}>
+                            {value.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value={props.projectInfo.admin.id}>
+                          {props.projectInfo.admin.username}
                         </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem value={props.projectInfo.admin.id}>
-                        {props.projectInfo.admin.username}
-                      </MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item md={6}>
-                <FormControl
-                  variant="outlined"
-                  className={classes.formControl}
-                  fullWidth
-                  required
-                >
-                  <InputLabel id="team-select">Team</InputLabel>
-                  <Select
-                    labelId="team-select"
-                    id="team-select"
-                    value={teamId}
-                    onChange={handleTeamChange}
-                    disabled={
-                      props.projectInfo.project.admin_id !== uId ? true : false
-                    }
-                    label="Team"
+                      )}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item md={6}>
+                  <FormControl
+                    variant="outlined"
+                    className={classes.formControl}
+                    fullWidth
                     required
                   >
-                    <MenuItem vale={null}>
-                      <b>Not Assign</b>
-                    </MenuItem>
-                    {props.teamsInfo.map((value, index) => (
-                      <MenuItem key={index} value={value.info.id}>
-                        {value.info.name}
+                    <InputLabel id="team-select">Team</InputLabel>
+                    <Select
+                      labelId="team-select"
+                      id="team-select"
+                      value={teamId}
+                      onChange={handleTeamChange}
+                      disabled={
+                        props.projectInfo.project.admin_id !== uId
+                          ? true
+                          : false
+                      }
+                      label="Team"
+                      required
+                    >
+                      <MenuItem value={-1}>
+                        <b>Not Assign</b>
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      {props.teamsInfo.map((value, index) => (
+                        <MenuItem key={index} value={value.info.id}>
+                          {value.info.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              autoFocus
-              type="submit"
-              color="primary"
-              disabled={
-                props.projectInfo.project.admin_id !== uId ? true : false
-              }
-            >
-              Save
-            </Button>
-          </DialogActions>
-        </form>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                autoFocus
+                variant="outlined"
+                type="submit"
+                color="primary"
+                disabled={
+                  props.projectInfo.project.admin_id !== uId ? true : false
+                }
+              >
+                <InfoTitle>save</InfoTitle>
+              </Button>
+            </DialogActions>
+          </form>
+        </Info>
       </Dialog>
     </div>
   );
