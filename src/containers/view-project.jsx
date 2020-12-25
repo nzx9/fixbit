@@ -111,6 +111,10 @@ const ViewProject = (props) => {
       info: null,
       members: null,
     },
+    admin: {
+      id: null,
+      username: null,
+    },
   });
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
   const handleAlertClose = () => setAlertOpen(false);
@@ -197,9 +201,12 @@ const ViewProject = (props) => {
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
-            if (msg === null || msg === undefined) msg = r.message;
+            if (msg === null || msg === undefined) {
+              msg = r.message;
+              r.type = "error";
+            }
             enqueueSnackbar(msg, {
-              variant: r.type,
+              variant: r.type !== "error" ? "info" : "error",
               anchorOrigin: settings.snackbar.anchorOrigin,
             });
             if (res.status === 200 && r.success === true)
@@ -236,23 +243,35 @@ const ViewProject = (props) => {
       token
     )
       .then((res) => {
-        // DEBUG_PRINT(res);
         res.json().then((r) => {
-          // DEBUG_PRINT(r);
-          if (res.status === 200 && r.success === true)
-            r.data !== null
-              ? setProjectInfo(r.data)
-              : setProjectInfo({
-                  project: {
-                    name: "",
-                    description: "",
-                  },
-                  team: {
-                    info: null,
-                    members: null,
-                  },
-                });
-          else setError(r.msg);
+          NOTIFY(r.msg, (msg) => {
+            if (msg === null || msg === undefined) {
+              msg = r.message;
+              r.type = "error";
+            }
+            enqueueSnackbar(msg, {
+              variant: r.type !== "error" ? "info" : "error",
+              anchorOrigin: settings.snackbar.anchorOrigin,
+            });
+            if (res.status === 200 && r.success === true)
+              r.data !== null
+                ? setProjectInfo(r.data)
+                : setProjectInfo({
+                    project: {
+                      name: "",
+                      description: "",
+                    },
+                    team: {
+                      info: null,
+                      members: null,
+                    },
+                    admin: {
+                      id: null,
+                      username: null,
+                    },
+                  });
+            else setError(r.msg);
+          });
         });
         setIsLoadedPI(true);
         if (res.status === 404 || res.status === 401) {

@@ -60,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: "-12px 12px 64px 0 #bcc3d6",
       },
     },
+    [theme.breakpoints.down("sm")]: {
+      width: "93%",
+    },
   },
   grow: {
     flexGrow: 1,

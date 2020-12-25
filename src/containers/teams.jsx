@@ -20,25 +20,12 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 200,
     color: theme.palette.primary.main,
   },
-  fabDesktop: {
+  fab: {
     display: "flex",
     position: "fixed",
-    zIndex: 2,
+    zIndex: 9999,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
-    [theme.breakpoints.down("sm")]: {
-      display: "none",
-    },
-  },
-  fabMobile: {
-    display: "none",
-    position: "fixed",
-    zIndex: 2,
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-    [theme.breakpoints.down("sm")]: {
-      display: "flex",
-    },
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
@@ -46,11 +33,23 @@ const useStyles = makeStyles((theme) => ({
   fabText: {
     display: "flex",
   },
+  fabTextHidden: {
+    display: "none",
+  },
   noTeamsImage: {
     width: "auto",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
     },
+  },
+  mainViewNoData: {
+    display: "auto",
+    marginLeft: "3%",
+  },
+  mainViewWithData: {
+    display: "auto",
+    marginLeft: "3%",
+    float: "left",
   },
 }));
 
@@ -68,6 +67,7 @@ const Teams = () => {
   const [alertType, setAlertType] = React.useState(null);
   const [alertTitle, setAlertTitle] = React.useState(null);
   const [alertMsg, setAlertMsg] = React.useState(null);
+  const [fabType, setFabType] = React.useState("round");
 
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
@@ -77,13 +77,15 @@ const Teams = () => {
   const goto = useCallback((path) => history.push(path), [history]);
 
   const handleOpen = () => setOpen(true);
-
   const handleClose = () => setOpen(false);
 
   const handleAlertClose = () => setAlertOpen(false);
 
   const handleOpenBackdrop = () => _setOpenBackdrop(true);
   const handleCloseBackdrop = () => _setOpenBackdrop(false);
+
+  const extendFAB = () => setFabType("extended");
+  const roundFAB = () => setFabType("round");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -158,16 +160,23 @@ const Teams = () => {
         handleAlertClose={() => handleAlertClose()}
       />
       <Fab
-        variant="extended"
-        className={classes.fabDesktop}
+        variant={fabType}
+        className={classes.fab}
         color="primary"
         onClick={handleOpen}
+        onMouseEnter={extendFAB}
+        onMouseLeave={roundFAB}
       >
-        <GroupWorkRounded className={classes.extendedIcon} />
-        <div className={classes.fabText}>New Team</div>
-      </Fab>
-      <Fab className={classes.fabMobile} color="primary" onClick={null}>
-        <GroupWorkRounded />
+        <GroupWorkRounded
+          className={fabType === "extended" ? classes.extendedIcon : null}
+        />
+        <div
+          className={
+            fabType === "extended" ? classes.fabText : classes.fabTextHidden
+          }
+        >
+          New Team
+        </div>
       </Fab>
       <TeamDialog
         open={open}
@@ -177,11 +186,9 @@ const Teams = () => {
         action={() => fetchDataAndSet()}
       />
       <div
-        style={{
-          display: "auto",
-          marginLeft: "3%",
-          float: "left",
-        }}
+        className={
+          data.length === 0 ? classes.mainViewNoData : classes.mainViewWithData
+        }
       >
         {data.length === 0 ? (
           <div style={{ textAlign: "center", maxWidth: "100%" }}>

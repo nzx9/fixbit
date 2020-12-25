@@ -20,31 +20,21 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 200,
     color: theme.palette.primary.main,
   },
-  fabDesktop: {
+  fab: {
     display: "flex",
     position: "fixed",
-    zIndex: 2,
+    zIndex: 9999,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
-    [theme.breakpoints.down("sm")]: {
-      display: "none",
-    },
-  },
-  fabMobile: {
-    display: "none",
-    position: "fixed",
-    zIndex: 2,
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-    [theme.breakpoints.down("sm")]: {
-      display: "flex",
-    },
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
   },
   fabText: {
     display: "flex",
+  },
+  fabTextHidden: {
+    display: "none",
   },
   noResultImage: {
     width: "auto",
@@ -68,6 +58,7 @@ const Projects = () => {
   const [alertType, setAlertType] = React.useState(null);
   const [alertTitle, setAlertTitle] = React.useState(null);
   const [alertMsg, setAlertMsg] = React.useState(null);
+  const [fabType, setFabType] = React.useState("round");
 
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
@@ -84,6 +75,9 @@ const Projects = () => {
 
   const handleOpenBackdrop = () => _setOpenBackdrop(true);
   const handleCloseBackdrop = () => _setOpenBackdrop(false);
+
+  const extendFAB = () => setFabType("extended");
+  const roundFAB = () => setFabType("round");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -194,16 +188,21 @@ const Projects = () => {
         handleAlertClose={() => handleAlertClose()}
       />
       <Fab
-        variant="extended"
-        className={classes.fabDesktop}
+        variant={fabType}
+        className={classes.fab}
         color="primary"
         onClick={handleOpen}
+        onMouseEnter={extendFAB}
+        onMouseLeave={roundFAB}
       >
-        <Add className={classes.extendedIcon} />
-        <div className={classes.fabText}>New Project</div>
-      </Fab>
-      <Fab className={classes.fabMobile} color="primary" onClick={null}>
-        <Add />
+        <Add className={fabType === "extended" ? classes.extendedIcon : null} />
+        <div
+          className={
+            fabType === "extended" ? classes.fabText : classes.fabTextHidden
+          }
+        >
+          New Project
+        </div>
       </Fab>
       <ProjectDialog
         open={open}
