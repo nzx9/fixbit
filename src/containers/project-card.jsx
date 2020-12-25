@@ -197,8 +197,7 @@ const ProjectCard = (props, joined = false) => {
         alertOpen={alertOpen}
         title="Delete Project?"
         type="error"
-        placeholder={props.data.project.name}
-        msg="After deleting the project it can't be recovered."
+        msg={`You are going to delete (${props.data.project.name}) project. after deleting the project it can't be recovered.`}
         resolveCallback={() => {
           httpReq(
             `${config.URL}/api/projects/${props.data.project.id}`,

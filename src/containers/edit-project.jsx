@@ -135,7 +135,7 @@ function EditProjectDialog(props) {
   const [adminId, setAdminId] = React.useState(
     props.projectInfo.project.admin_id
   );
-  const [team, setTeam] = React.useState(props.projectInfo.project.team_id);
+  const [teamId, setTeamId] = React.useState(props.projectInfo.project.team_id);
 
   const { enqueueSnackbar } = useSnackbar();
   const [isLoaded, setIsLoaded] = React.useState(false);
@@ -180,7 +180,7 @@ function EditProjectDialog(props) {
   };
 
   const handleTeamChange = (e) => {
-    setTeam(e.target.value);
+    setTeamId(e.target.value);
   };
 
   return (
@@ -245,6 +245,8 @@ function EditProjectDialog(props) {
               data["description"] = projectDescription;
             if (isPublic !== props.projectInfo.project.isPublic)
               data["is_public"] = isPublic;
+            if (teamId !== props.projectInfo.project.team_id)
+              data["team_id"] = teamId;
             httpReq(
               `${config.URL}/api/projects/${props.projectInfo.project.id}`,
               "PUT",
@@ -371,7 +373,7 @@ function EditProjectDialog(props) {
                   <Select
                     labelId="team-select"
                     id="team-select"
-                    value={team}
+                    value={teamId}
                     onChange={handleTeamChange}
                     disabled={
                       props.projectInfo.project.admin_id !== uId ? true : false
@@ -379,6 +381,9 @@ function EditProjectDialog(props) {
                     label="Team"
                     required
                   >
+                    <MenuItem vale={null}>
+                      <b>Not Assign</b>
+                    </MenuItem>
                     {props.teamsInfo.map((value, index) => (
                       <MenuItem key={index} value={value.info.id}>
                         {value.info.name}

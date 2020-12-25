@@ -17,7 +17,7 @@ import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
-    zIndex: theme.zIndex.drawer + 999,
+    zIndex: theme.zIndex.drawer + 200,
     color: theme.palette.primary.main,
   },
   fabDesktop: {
@@ -128,7 +128,7 @@ const Teams = () => {
   };
 
   useEffect(() => {
-    fetchDataAndSet(filterValue);
+    fetchDataAndSet();
   }, [filterValue, newProjectAdded]);
 
   if (error) {
@@ -192,7 +192,16 @@ const Teams = () => {
             />
           </div>
         ) : (
-          data.map((value, index) => <TeamCard key={index} data={value} />)
+          data.map((value, index) => (
+            <TeamCard
+              key={index}
+              data={value}
+              token={token}
+              openBackdrop={() => handleOpenBackdrop()}
+              closeBackdrop={() => handleCloseBackdrop()}
+              refetchData={() => fetchDataAndSet()}
+            />
+          ))
         )}
       </div>
     </div>

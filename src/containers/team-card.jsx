@@ -17,6 +17,11 @@ import { Delete } from "@material-ui/icons";
 import { useSelector } from "react-redux";
 import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
+import { AlertDialogConfirmation, NOTIFY } from "../components/notify";
+import { httpReq } from "../components/httpRequest";
+import config from "../components/config.json";
+import settings from "../components/settings.json";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,6 +90,10 @@ const TeamCard = (props, joined = false) => {
   const history = useHistory();
   const uId = useSelector(getUId);
   const token = useSelector(getToken);
+  const { enqueueSnackbar } = useSnackbar();
+  const [alertOpen, setAlertOpen] = React.useState(false);
+
+  const handleAlertClose = () => setAlertOpen(false);
 
   const goto = useCallback((path) => history.push(path), [history]);
   let leader = props.data.info.leader_id;
@@ -95,6 +104,43 @@ const TeamCard = (props, joined = false) => {
   });
   return (
     <Card className={classes.root}>
+      <AlertDialogConfirmation
+        alertOpen={alertOpen}
+        title={`Delete Team?`}
+        type="error"
+        msg={`You are going to delete (${props.data.info.name}). after deleting the team it can't be recovered.`}
+        resolveCallback={() => {
+          httpReq(
+            `${config.URL}/api/teams/${props.data.info.id}`,
+            "DELETE",
+            null,
+            props.token
+          )
+            .then((res) => {
+              props.openBackdrop();
+              res.json().then((r) => {
+                NOTIFY(r.msg, (msg) => {
+                  if (msg === null || msg === undefined) msg = r.message;
+                  enqueueSnackbar(msg, {
+                    variant: r.type,
+                    anchorOrigin: settings.snackbar.anchorOrigin,
+                  });
+                  if (res.status === 200 && r.success === true)
+                    props.refetchData();
+                });
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          handleAlertClose();
+          props.closeBackdrop();
+        }}
+        rejectCallback={() => {
+          handleAlertClose();
+          props.closeBackdrop();
+        }}
+      />
       <Column className={classes.card}>
         <Row p={2} gap={2}>
           <Avatar
@@ -111,7 +157,11 @@ const TeamCard = (props, joined = false) => {
           <div className={classes.grow} />
           <Column>
             {props.data.info.leader_id === uId ? (
-              <IconButton size="small" className={classes.deleteBtn}>
+              <IconButton
+                size="small"
+                className={classes.deleteBtn}
+                onClick={() => setAlertOpen(true)}
+              >
                 <Delete fontSize="small" />
               </IconButton>
             ) : null}

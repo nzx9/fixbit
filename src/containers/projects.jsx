@@ -17,13 +17,13 @@ import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
+    zIndex: theme.zIndex.drawer + 200,
     color: theme.palette.primary.main,
   },
   fabDesktop: {
     display: "flex",
     position: "fixed",
-    zIndex: 1,
+    zIndex: 2,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   fabMobile: {
     display: "none",
     position: "fixed",
-    zIndex: 1,
+    zIndex: 2,
     bottom: theme.spacing(2),
     right: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
@@ -59,11 +59,11 @@ const Projects = () => {
   const uId = useSelector(getUId);
   const token = useSelector(getToken);
 
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isLoadedP, setIsLoadedP] = React.useState(false);
+  const [isLoadedT, setIsLoadedT] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [data, setData] = React.useState([]);
-  const [filterValue, setFilterValue] = React.useState("ALL");
-  const [newProjectAdded, setNewProjectAdded] = React.useState(false);
+  const [teamsInfo, setTeamsInfo] = React.useState([]);
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertType, setAlertType] = React.useState(null);
   const [alertTitle, setAlertTitle] = React.useState(null);
@@ -87,10 +87,47 @@ const Projects = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const fetchTeamsInfo = () => {
+    httpReq(`${config.URL}/api/teams`, "GET", null, token)
+      .then((res) => {
+        DEBUG_PRINT(res);
+        res.json().then((r) => {
+          NOTIFY(r.msg, (msg) => {
+            if (msg === null || msg === undefined) msg = r.message;
+            enqueueSnackbar(msg, {
+              variant: r.type,
+              anchorOrigin: settings.snackbar.anchorOrigin,
+            });
+            if (res.status === 200 && r.success === true)
+              r.data !== null ? setTeamsInfo(r.data) : setTeamsInfo([]);
+            else setError(r.msg);
+            setIsLoadedT(true);
+          });
+        });
+      })
+      .catch((err) => {
+        setAlertType("error");
+        const parsedError = err.toString().split(":");
+        if (parsedError.length >= 1) {
+          setAlertTitle(parsedError[0].trim());
+        } else {
+          setAlertTitle("Error");
+        }
+        if (parsedError.length >= 2) {
+          setAlertMsg(parsedError[1].trim());
+        } else {
+          setAlertMsg("Unknown");
+        }
+        setAlertOpen(true);
+        setError(err);
+        setIsLoadedT(true);
+      });
+  };
+
   const fetchDataAndSet = () => {
     httpReq(`${config.URL}/api/projects`, "GET", null, token)
       .then((res) => {
-        setIsLoaded(true);
+        setIsLoadedP(true);
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
@@ -107,7 +144,6 @@ const Projects = () => {
         });
       })
       .catch((err) => {
-        setIsLoaded(true);
         setAlertType("error");
         const parsedError = err.toString().split(":");
         if (parsedError.length >= 1) {
@@ -122,12 +158,14 @@ const Projects = () => {
         }
         setAlertOpen(true);
         setError(err);
+        setIsLoadedP(true);
       });
   };
 
   useEffect(() => {
-    fetchDataAndSet(filterValue);
-  }, [filterValue, newProjectAdded]);
+    fetchTeamsInfo();
+    fetchDataAndSet();
+  }, []);
 
   if (error) {
     return (
@@ -135,7 +173,7 @@ const Projects = () => {
         <h1>Error: {error}</h1>
       </div>
     );
-  } else if (!isLoaded)
+  } else if (!isLoadedP || !isLoadedT)
     return (
       <div>
         <Backdrop className={classes.backdrop} open="true">
@@ -171,10 +209,11 @@ const Projects = () => {
         open={open}
         handleClose={() => handleClose()}
         uId={uId}
+        teamsInfo={teamsInfo}
         token={token}
-        openBackdrop={() => handleOpenBackdrop()}
-        closeBackdrop={() => handleCloseBackdrop()}
-        newProjectAddedAction={() => fetchDataAndSet()}
+        handleOpenBackdrop={() => handleOpenBackdrop()}
+        handleCloseBackdrop={() => handleCloseBackdrop()}
+        action={() => fetchDataAndSet()}
       />
       <div
         style={{
