@@ -194,7 +194,6 @@ function EditProjectDialog(props) {
           size="small"
           onClick={handleDescriptionClick}
         >
-          {console.error(props)}
           <Description fontSize="inherit" />
         </Button>
         {props.projectInfo.project.admin_id === uId ? (
@@ -230,7 +229,11 @@ function EditProjectDialog(props) {
                 <br />
                 <b>admin :</b> {props.projectInfo.admin.fullname} (
                 {props.projectInfo.admin.email}) <br />
-                <b>team :</b> {props.projectInfo.team.info.name} <br />
+                <b>team :</b>{" "}
+                {props.projectInfo.team.info !== null
+                  ? props.projectInfo.team.info.name
+                  : null}
+                <br />
                 <b>description:</b> {props.projectInfo.project.description}
                 <br />
                 <b>created at :</b>{" "}
@@ -346,6 +349,7 @@ function EditProjectDialog(props) {
                   <TextField
                     id="description-input"
                     label="Description"
+                    multiline
                     onChange={handleProjectDescriptionChange}
                     value={projectDescription}
                     variant="outlined"

@@ -105,6 +105,8 @@ const ViewProject = (props) => {
     project: {
       name: "",
       description: "",
+      created_at: null,
+      updated_at: null,
     },
     team: {
       info: null,
@@ -113,6 +115,7 @@ const ViewProject = (props) => {
     admin: {
       id: null,
       username: null,
+      fullname: null,
     },
   });
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
@@ -259,6 +262,8 @@ const ViewProject = (props) => {
                     project: {
                       name: "",
                       description: "",
+                      created_at: null,
+                      updated_at: null,
                     },
                     team: {
                       info: null,
@@ -267,6 +272,7 @@ const ViewProject = (props) => {
                     admin: {
                       id: null,
                       username: null,
+                      fullname: null,
                     },
                   });
             else setError(r.msg);
@@ -349,8 +355,6 @@ const ViewProject = (props) => {
                   tmpCounts.assignedToYou++;
               });
               setCounts(tmpCounts);
-              // DEBUG_PRINT(r);
-              // DEBUG_PRINT(counts);
             } else {
               setProjectData([]);
             }
@@ -396,19 +400,19 @@ const ViewProject = (props) => {
 
     if (id === 1) {
       projectdata.forEach((element) => {
-        if (Number(element.assignedTo) === Number(uId)) {
+        if (Number(element.assign_to) === Number(uId)) {
           tmp_list.push(element);
         }
       });
     } else if (id === 2) {
       projectdata.forEach((element) => {
-        if (element.assignedTo === null) {
+        if (element.assign_to === null) {
           tmp_list.push(element);
         }
       });
-    } else if (3) {
+    } else if (id === 3) {
       projectdata.forEach((element) => {
-        if (Number(element.isOpen) === 1) {
+        if (Boolean(element.is_open) === false) {
           tmp_list.push(element);
         }
       });
@@ -495,8 +499,8 @@ const ViewProject = (props) => {
                     </Grid>
                     <br />
                     <IssueCreateDialog
-                      uId={uId}
                       pId={props.match.params.pid}
+                      projectInfo={projectInfo}
                       token={token}
                       action={() => fetchDataAndSet()}
                       setOpenBackdrop={() => setOpenBackdrop()}
@@ -604,6 +608,10 @@ const ViewProject = (props) => {
                   path={routes.PROJECTS_VIEW}
                   children={
                     <IssueTable
+                      uId={uId}
+                      token={token}
+                      action={() => fetchDataAndSet()}
+                      projectInfo={projectInfo}
                       rows={projectData}
                       pId={props.match.params.pid}
                     />

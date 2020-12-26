@@ -15,6 +15,7 @@ import {
   Chip,
   ButtonGroup,
   InputBase,
+  Button,
   withStyles,
   useTheme,
   fade,
@@ -29,6 +30,10 @@ import {
   LockOpenTwoTone,
   MoreTwoTone,
   LockTwoTone,
+  LockOpen,
+  Lock,
+  InfoSharp,
+  MoreHoriz,
 } from "@material-ui/icons";
 
 import PropTypes from "prop-types";
@@ -36,6 +41,18 @@ import { Link, useHistory } from "react-router-dom";
 
 import routes from "../routes/routes.json";
 import noResultImage from "../images/no-result-nb.png";
+import {
+  Info,
+  InfoCaption,
+  InfoSubtitle,
+  InfoTitle,
+} from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
+import config from "../components/config.json";
+import settings from "../components/settings.json";
+import { httpReq } from "../components/httpRequest";
+import { NOTIFY } from "../components/notify";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -115,10 +132,16 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   closeIssueBtn: {
-    color: theme.palette.error.main,
+    backgroundColor: theme.palette.error.main,
+    "&:hover": {
+      color: theme.palette.error.main,
+    },
   },
   openIssueBtn: {
-    color: theme.palette.success.main,
+    backgroundColor: theme.palette.success.main,
+    "&:hover": {
+      color: theme.palette.success.main,
+    },
   },
   viewBtn: {
     color: theme.palette.info.main,
@@ -227,6 +250,7 @@ const IssueTable = (props) => {
   const [rows, setRows] = React.useState(props.rows);
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
+  const { enqueueSnackbar } = useSnackbar();
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -259,189 +283,346 @@ const IssueTable = (props) => {
     }
   };
 
+  const findNameOfAssignee = (projectInfo, assign_to, uid) => {
+    let name = null;
+    if (projectInfo.team.members === null) {
+      if (assign_to === uid && projectInfo.admin.id === uid)
+        return (
+          <InfoSubtitle>
+            {projectInfo.admin.username}
+            <b>&nbsp;(Me)</b>
+          </InfoSubtitle>
+        );
+      else if (assign_to === projectInfo.admin.id)
+        return (
+          <InfoSubtitle>
+            {projectInfo.admin.username}
+            <b>&nbsp;(Me)</b>
+          </InfoSubtitle>
+        );
+      else
+        <InfoSubtitle>
+          <em>Unknown</em>
+        </InfoSubtitle>;
+    } else {
+      projectInfo.team.members.forEach((value) => {
+        if (value.uid === assign_to) {
+          if (Number(uid) === value.uid) {
+            name = (
+              <InfoSubtitle>
+                {value.name}
+                <b>&nbsp;(Me)</b>
+              </InfoSubtitle>
+            );
+          } else name = value.name;
+          return;
+        } else {
+          name = (
+            <InfoSubtitle>
+              <em>
+                <b>Unknown</b>
+              </em>
+            </InfoSubtitle>
+          );
+          return;
+        }
+      });
+      return name;
+    }
+  };
+
   useEffect(() => {
     setRows(props.rows);
   }, [props.rows]);
 
   return (
-    <div style={{ width: "100%" }}>
-      <Grid container style={{ marginBottom: 10 }}>
-        <Grid item xs={10} md={4}>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <Search />
+    <Info useStyles={useApexInfoStyles}>
+      <div style={{ width: "100%" }}>
+        <Grid container style={{ marginBottom: 10 }}>
+          <Grid item xs={10} md={4}>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <Search />
+              </div>
+              <InputBase
+                placeholder="Search by title…"
+                value={null}
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                onChange={handleSearchInput}
+                inputProps={{ "aria-label": "search" }}
+              />
             </div>
-            <InputBase
-              placeholder="Search by title…"
-              value={null}
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              onChange={handleSearchInput}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
-        </Grid>
-        <Grid item md={6}></Grid>
-        <Grid item md={2}></Grid>
-      </Grid>
-      {rows.length > 0 ? (
-        <TableContainer component={Paper} className={classes.table}>
-          <Table aria-label="issue table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>IID</StyledTableCell>
-                <StyledTableCell>Title</StyledTableCell>
-                <StyledTableCell>Type</StyledTableCell>
-                <StyledTableCell>Priority</StyledTableCell>
-                <StyledTableCell align="right">Assignee</StyledTableCell>
-                <StyledTableCell align="right">Actions</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {console.log(rows)}
-              {page * rowsPerPage > rows.length ? setPage(0) : null}
-              {(rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row) => (
-                <StyledTableRow key={row.id}>
-                  <StyledTableCell
-                    component="th"
-                    scope="row"
-                    style={{ width: "50" }}
-                  >
-                    {row.id}
-                  </StyledTableCell>
-                  <StyledTableCell style={{ width: 350, overflowX: "hidden" }}>
-                    <Link
-                      onClick={() => {
-                        goto(
-                          routes.PROJECTS_VIEW_X +
-                            props.pId +
-                            routes.ISSUE_VIEW_X +
-                            row.id
-                        );
-                      }}
-                    >
-                      {row.title}
-                    </Link>
-                  </StyledTableCell>
-                  <StyledTableCell style={{ width: 100 }}>
-                    {Number(row.type) === 0
-                      ? "NONE"
-                      : Number(row.type) === 1
-                      ? "BUG"
-                      : Number(row.type) === 2
-                      ? "TO TEST"
-                      : Number(row.type) === 3
-                      ? "SECURITY"
-                      : "OTHER"}
-                  </StyledTableCell>
-                  <StyledTableCell style={{ width: 150 }}>
-                    {Number(row.priority) === 0 ? (
-                      <Chip
-                        size="small"
-                        label="none"
-                        variant="outlined"
-                        className={classes.tag_none}
-                      />
-                    ) : Number(row.priority) === 1 ? (
-                      <Chip
-                        size="small"
-                        label="low"
-                        variant="outlined"
-                        className={classes.tag_low}
-                      />
-                    ) : Number(row.priority) === 2 ? (
-                      <Chip
-                        size="small"
-                        label="normal"
-                        variant="outlined"
-                        className={classes.tag_normal}
-                      />
-                    ) : Number(row.priority) === 3 ? (
-                      <Chip
-                        size="small"
-                        label="high"
-                        variant="outlined"
-                        className={classes.tag_high}
-                      />
-                    ) : (
-                      <Chip
-                        size="small"
-                        label="critical"
-                        variant="outlined"
-                        className={classes.tag_critical}
-                      />
-                    )}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {row.assign_to === null || Number(row.assign_to) === -1
-                      ? "None"
-                      : row.assign_to}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    <ButtonGroup disableElevation variant="contained">
-                      <IconButton size="small">
-                        <MoreTwoTone
-                          fontSize="small"
-                          className={classes.viewBtn}
-                        />
-                      </IconButton>
-                      {Boolean(row.is_open) === false ? (
-                        <IconButton size="small" title="Open this Issue">
-                          <LockOpenTwoTone
-                            fontSize="small"
-                            className={classes.openIssueBtn}
-                          />
-                        </IconButton>
-                      ) : (
-                        <IconButton size="small" title="Close this Issue">
-                          <LockTwoTone
-                            fontSize="small"
-                            className={classes.closeIssueBtn}
-                          />
-                        </IconButton>
-                      )}
-                    </ButtonGroup>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  colSpan={3}
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: { "aria-label": "rows per page" },
-                    native: true,
-                  }}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-      ) : null}
-      {emptyRows === rowsPerPage && (
-        <Grid container justify="center">
-          <Grid item>
-            <img src={noResultImage} alt="Data Not Found" width="100%" />
           </Grid>
+          <Grid item md={6}></Grid>
+          <Grid item md={2}></Grid>
         </Grid>
-      )}
-    </div>
+        {rows.length > 0 ? (
+          <TableContainer component={Paper} className={classes.table}>
+            <Table aria-label="issue table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>
+                    <InfoCaption>iid</InfoCaption>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <InfoCaption>title</InfoCaption>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <InfoCaption>type</InfoCaption>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <InfoCaption>priority</InfoCaption>
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <InfoCaption>assignee</InfoCaption>
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <InfoCaption>actions&ensp;</InfoCaption>
+                  </StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {page * rowsPerPage > rows.length ? setPage(0) : null}
+                {(rowsPerPage > 0
+                  ? rows.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : rows
+                ).map((row) => (
+                  <StyledTableRow key={row.id}>
+                    <StyledTableCell
+                      component="th"
+                      scope="row"
+                      style={{ width: "50" }}
+                    >
+                      <InfoSubtitle>
+                        <b>{row.id}</b>
+                      </InfoSubtitle>
+                    </StyledTableCell>
+                    <StyledTableCell
+                      style={{ width: 350, overflowX: "hidden" }}
+                    >
+                      <Link
+                        onClick={() => {
+                          goto(
+                            routes.PROJECTS_VIEW_X +
+                              props.pId +
+                              routes.ISSUE_VIEW_X +
+                              row.id
+                          );
+                        }}
+                      >
+                        <InfoTitle>{row.title}</InfoTitle>
+                      </Link>
+                    </StyledTableCell>
+                    <StyledTableCell style={{ width: 100 }}>
+                      <InfoSubtitle>
+                        {/* <b> */}
+                        {Number(row.type) === 0
+                          ? "NONE"
+                          : Number(row.type) === 1
+                          ? "BUG"
+                          : Number(row.type) === 2
+                          ? "TO TEST"
+                          : Number(row.type) === 3
+                          ? "SECURITY"
+                          : "OTHER"}
+                        {/* </b> */}
+                      </InfoSubtitle>
+                    </StyledTableCell>
+                    <StyledTableCell style={{ width: 150 }}>
+                      {Number(row.priority) === 0 ? (
+                        <Chip
+                          size="small"
+                          label="none"
+                          variant="outlined"
+                          className={classes.tag_none}
+                        />
+                      ) : Number(row.priority) === 1 ? (
+                        <Chip
+                          size="small"
+                          label="low"
+                          variant="outlined"
+                          className={classes.tag_low}
+                        />
+                      ) : Number(row.priority) === 2 ? (
+                        <Chip
+                          size="small"
+                          label="normal"
+                          variant="outlined"
+                          className={classes.tag_normal}
+                        />
+                      ) : Number(row.priority) === 3 ? (
+                        <Chip
+                          size="small"
+                          label="high"
+                          variant="outlined"
+                          className={classes.tag_high}
+                        />
+                      ) : (
+                        <Chip
+                          size="small"
+                          label="critical"
+                          variant="outlined"
+                          className={classes.tag_critical}
+                        />
+                      )}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {console.log(rows)}
+                      {row.assign_to === null ? (
+                        <InfoSubtitle>
+                          <em>
+                            <b>None</b>
+                          </em>
+                        </InfoSubtitle>
+                      ) : (
+                        findNameOfAssignee(
+                          props.projectInfo,
+                          row.assign_to,
+                          props.uId
+                        )
+                      )}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <ButtonGroup
+                        disableElevation
+                        variant="contained"
+                        style={{ marginRight: 0 }}
+                      >
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
+                            goto(
+                              routes.PROJECTS_VIEW_X +
+                                props.pId +
+                                routes.ISSUE_VIEW_X +
+                                row.id
+                            );
+                          }}
+                        >
+                          <MoreHoriz fontSize="small" />
+                        </Button>
+                        {Boolean(row.is_open) === false ? (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            className={classes.openIssueBtn}
+                            title="Re-Open this Issue"
+                            onClick={() => {
+                              httpReq(
+                                `${config.URL}/api/projects/${props.projectInfo.project.id}/issues/${row.id}`,
+                                "PUT",
+                                {
+                                  is_open: true,
+                                },
+                                props.token
+                              )
+                                .then((res) => {
+                                  res.json().then((r) => {
+                                    NOTIFY(r.msg, (msg) => {
+                                      enqueueSnackbar(msg, {
+                                        variant: r.type,
+                                        anchorOrigin:
+                                          settings.snackbar.anchorOrigin,
+                                      });
+                                      if (
+                                        res.status === 200 &&
+                                        r.success === true
+                                      ) {
+                                        props.action();
+                                      }
+                                    });
+                                  });
+                                })
+                                .catch((err) => console.error(err));
+                            }}
+                          >
+                            <LockOpen fontSize="small" />
+                          </Button>
+                        ) : (
+                          <Button
+                            className={classes.closeIssueBtn}
+                            size="small"
+                            variant="outlined"
+                            title="Close this Issue"
+                            onClick={() => {
+                              httpReq(
+                                `${config.URL}/api/projects/${props.projectInfo.project.id}/issues/${row.id}`,
+                                "PUT",
+                                {
+                                  is_open: false,
+                                },
+                                props.token
+                              )
+                                .then((res) => {
+                                  res.json().then((r) => {
+                                    NOTIFY(r.msg, (msg) => {
+                                      enqueueSnackbar(msg, {
+                                        variant: r.type,
+                                        anchorOrigin:
+                                          settings.snackbar.anchorOrigin,
+                                      });
+                                      if (
+                                        res.status === 200 &&
+                                        r.success === true
+                                      ) {
+                                        props.action();
+                                      }
+                                    });
+                                  });
+                                })
+                                .catch((err) => console.error(err));
+                            }}
+                          >
+                            <Lock fontSize="small" />
+                          </Button>
+                        )}
+                      </ButtonGroup>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      5,
+                      10,
+                      25,
+                      { label: "All", value: -1 },
+                    ]}
+                    colSpan={3}
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    SelectProps={{
+                      inputProps: { "aria-label": "rows per page" },
+                      native: true,
+                    }}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
+        ) : null}
+        {emptyRows === rowsPerPage && (
+          <Grid container justify="center">
+            <Grid item>
+              <img src={noResultImage} alt="Data Not Found" width="100%" />
+            </Grid>
+          </Grid>
+        )}
+      </div>
+    </Info>
   );
 };
 

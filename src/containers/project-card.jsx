@@ -36,9 +36,10 @@ import { convetToLocalTime } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "250",
+    height: 250,
     float: "left",
-    width: "275px",
+    width: 275,
+    maxHeight: 250,
     transition: "0.3s",
     margin: theme.spacing(1),
     position: "relative",
@@ -46,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
       transition: "0.2s",
       position: "absolute",
       width: "100%",
-      height: "250",
+      height: 250,
+      maxHeight: 250,
       content: '""',
       display: "block",
       backgroundColor: "#d9daf1",

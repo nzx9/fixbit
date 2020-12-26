@@ -109,7 +109,7 @@ function IssueCreateDialog(props) {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(true);
-  const [assignedTo, setAssignedTo] = React.useState(null);
+  const [assignTo, setAssignTo] = React.useState(null);
   const [priority, setPriority] = React.useState(2);
   const [type, setType] = React.useState(0);
 
@@ -131,8 +131,8 @@ function IssueCreateDialog(props) {
   const handleIsOpenChange = (e) => {
     setIsOpen(e.target.value);
   };
-  const handleAssignedToChange = (e) => {
-    setAssignedTo(e.target.value);
+  const handleAssignToChange = (e) => {
+    setAssignTo(e.target.value);
   };
   const handlePriorityChange = (e) => {
     setPriority(e.target.value);
@@ -165,16 +165,22 @@ function IssueCreateDialog(props) {
           autoComplete="on"
           onSubmit={(e) => {
             props.setOpenBackdrop(true);
+            let data = {
+              title: title,
+              description: description,
+              priority: priority,
+              type: type,
+              is_open: isOpen,
+            };
+            if (assignTo === -1) {
+              data["assign_to"] = null;
+            } else {
+              data["assign_to"] = assignTo;
+            }
             httpReq(
               `${config.URL}/api/projects/${props.pId}/issues`,
               "POST",
-              {
-                title: title,
-                description: description,
-                priority: priority,
-                type: type,
-                is_open: isOpen,
-              },
+              data,
               token
             )
               .then((res) => {
@@ -261,20 +267,43 @@ function IssueCreateDialog(props) {
                   fullWidth
                   required
                 >
-                  <InputLabel id="isOpen-select">Assigned To</InputLabel>
+                  <InputLabel id="isOpen-select">Assign To</InputLabel>
                   <Select
                     labelId="isOpen-select"
                     id="isOpen-select"
-                    value={assignedTo}
-                    onChange={handleAssignedToChange}
+                    value={assignTo}
+                    onChange={handleAssignToChange}
                     label="Open/Close"
                     required
                   >
-                    <MenuItem value={-1}>
-                      <em>None</em>
+                    <MenuItem index={-1} value={-1}>
+                      <b>Not Assign</b>
                     </MenuItem>
-                    <MenuItem value={4}>Navindu</MenuItem>
-                    <MenuItem value={1}>Sandul</MenuItem>
+                    {props.projectInfo.team.members !== null ? (
+                      props.projectInfo.team.members.map((value, index) =>
+                        value.uid === uId ? (
+                          <MenuItem key={index} value={value.uid}>
+                            {value.name}&nbsp;<b>(Me)</b>
+                          </MenuItem>
+                        ) : value.uid === props.projectInfo.admin.id ? (
+                          <MenuItem key={index} value={value.uid}>
+                            {value.name}&nbsp;<b>(Admin)</b>
+                          </MenuItem>
+                        ) : (
+                          <MenuItem key={index} value={value.uid}>
+                            {value.name}
+                          </MenuItem>
+                        )
+                      )
+                    ) : props.projectInfo.admin.id === uId ? (
+                      <MenuItem value={props.projectInfo.admin.id}>
+                        {props.projectInfo.admin.username}&nbsp;<b>(Me)</b>
+                      </MenuItem>
+                    ) : (
+                      <MenuItem value={props.projectInfo.admin.id}>
+                        {props.projectInfo.admin.username}&nbsp;<b>(Admin)</b>
+                      </MenuItem>
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
