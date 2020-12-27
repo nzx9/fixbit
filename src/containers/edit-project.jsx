@@ -230,9 +230,11 @@ function EditProjectDialog(props) {
                 <b>admin :</b> {props.projectInfo.admin.fullname} (
                 {props.projectInfo.admin.email}) <br />
                 <b>team :</b>{" "}
-                {props.projectInfo.team.info !== null
-                  ? props.projectInfo.team.info.name
-                  : null}
+                {props.projectInfo.team.info !== null ? (
+                  props.projectInfo.team.info.name
+                ) : (
+                  <em>Not assigned</em>
+                )}
                 <br />
                 <b>description:</b> {props.projectInfo.project.description}
                 <br />
@@ -269,13 +271,17 @@ function EditProjectDialog(props) {
               if (isPublic !== props.projectInfo.project.isPublic)
                 data["is_public"] = isPublic;
               if (teamId === -1) {
-                if (props.projectInfo.projectName.team_id !== null)
+                if (props.projectInfo.project.team_id !== null)
                   data["team_id"] = null;
               } else if (
                 teamId !== -1 &&
                 teamId !== props.projectInfo.project.team_id
               )
                 data["team_id"] = teamId;
+
+              if (props.projectInfo.project.admin_id !== adminId) {
+                data["admin_id"] = adminId;
+              }
 
               httpReq(
                 `${config.URL}/api/projects/${props.projectInfo.project.id}`,

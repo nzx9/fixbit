@@ -131,14 +131,15 @@ const TeamCard = (props, joined = false) => {
                   });
                   if (res.status === 200 && r.success === true)
                     props.refetchData();
+                  props.closeBackdrop();
                 });
               });
             })
             .catch((err) => {
               console.log(err);
             });
-          handleAlertClose();
           props.closeBackdrop();
+          handleAlertClose();
         }}
         rejectCallback={() => {
           handleAlertClose();
