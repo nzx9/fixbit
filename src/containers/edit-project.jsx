@@ -313,6 +313,7 @@ function EditProjectDialog(props) {
                   <TextField
                     id="name-input"
                     label="Name"
+                    defaultValue={props.projectInfo.project.name}
                     value={projectName}
                     onChange={handleProjectNameChange}
                     variant="outlined"
@@ -335,6 +336,7 @@ function EditProjectDialog(props) {
                       labelId="access-select"
                       id="access-select"
                       value={isPublic}
+                      defaultValue={props.projectInfo.project.is_public}
                       onChange={handleIsPublicChange}
                       label="Access"
                       disabled={
@@ -357,6 +359,7 @@ function EditProjectDialog(props) {
                     label="Description"
                     multiline
                     onChange={handleProjectDescriptionChange}
+                    defaultValue={props.projectInfo.project.description}
                     value={projectDescription}
                     variant="outlined"
                     disabled={
@@ -379,6 +382,11 @@ function EditProjectDialog(props) {
                       labelId="admin-select"
                       id="admin-select"
                       value={adminId}
+                      defaultValue={
+                        props.projectInfo.project.admin_id === null
+                          ? -1
+                          : props.projectInfo.project.admin_id
+                      }
                       onChange={handleAdminChange}
                       label="Admin"
                       disabled={
@@ -414,6 +422,7 @@ function EditProjectDialog(props) {
                     <Select
                       labelId="team-select"
                       id="team-select"
+                      defaultValue={props.projectInfo.project.team_id}
                       value={teamId}
                       onChange={handleTeamChange}
                       disabled={

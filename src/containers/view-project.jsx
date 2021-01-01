@@ -276,9 +276,9 @@ const ViewProject = (props) => {
                     },
                   });
             else setError(r.msg);
+            setIsLoadedPI(true);
           });
         });
-        setIsLoadedPI(true);
         if (res.status === 404 || res.status === 401) {
           setNotFoundError(true);
         }
