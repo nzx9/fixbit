@@ -27,12 +27,8 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   Search,
-  LockOpenTwoTone,
-  MoreTwoTone,
-  LockTwoTone,
   LockOpen,
   Lock,
-  InfoSharp,
   MoreHoriz,
 } from "@material-ui/icons";
 
@@ -297,13 +293,15 @@ const IssueTable = (props) => {
         return (
           <InfoSubtitle>
             {projectInfo.admin.username}
-            <b>&nbsp;(Me)</b>
+            <b>&nbsp;(Admin)</b>
           </InfoSubtitle>
         );
       else
-        <InfoSubtitle>
-          <em>Unknown</em>
-        </InfoSubtitle>;
+        return (
+          <InfoSubtitle>
+            <em>Unknown</em>
+          </InfoSubtitle>
+        );
     } else {
       projectInfo.team.members.forEach((value) => {
         if (value.uid === assign_to) {
@@ -336,8 +334,8 @@ const IssueTable = (props) => {
   }, [props.rows]);
 
   return (
-    <Info useStyles={useApexInfoStyles}>
-      <div style={{ width: "100%" }}>
+    <div style={{ width: "100%" }}>
+      <Info useStyles={useApexInfoStyles}>
         <Grid container style={{ marginBottom: 10 }}>
           <Grid item xs={10} md={4}>
             <div className={classes.search}>
@@ -421,7 +419,6 @@ const IssueTable = (props) => {
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 100 }}>
                       <InfoSubtitle>
-                        {/* <b> */}
                         {Number(row.type) === 0
                           ? "NONE"
                           : Number(row.type) === 1
@@ -431,7 +428,6 @@ const IssueTable = (props) => {
                           : Number(row.type) === 3
                           ? "SECURITY"
                           : "OTHER"}
-                        {/* </b> */}
                       </InfoSubtitle>
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 150 }}>
@@ -621,8 +617,8 @@ const IssueTable = (props) => {
             </Grid>
           </Grid>
         )}
-      </div>
-    </Info>
+      </Info>
+    </div>
   );
 };
 

@@ -93,14 +93,14 @@ const Login = () => {
                   anchorOrigin: settings.snackbar.anchorOrigin,
                 });
                 if (res.status === 200 && r.success === true) {
+                  localStorage.setItem("token", r.token);
                   dispatch(setUId(r.data.id));
                   dispatch(setUserName(r.data.username));
                   dispatch(setFullName(r.data.fullname));
                   dispatch(setEmail(r.data.email));
                   dispatch(setToken(r.token));
-                  localStorage.setItem("token", r.token);
-                  goToHome();
                   dispatch(login());
+                  goToHome();
                 }
               });
             });
