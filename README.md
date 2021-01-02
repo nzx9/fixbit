@@ -20,7 +20,7 @@ Fixbit is the official front end for Fixbit API that gives power to access Fixbi
 
 ## Contributing
 
-If you discover a issue or need to request new features. File a issue at GitHub[https://github.com/krypto-i9/fixbit/issues] or Fixbit[https://fixbit-app.herokuapp.com/#/projects/8].
+If you discover a issue or need to request new features. File a issue at [GitHub](https://github.com/krypto-i9/fixbit/issues) or [Fixbit](https://fixbit-app.herokuapp.com/#/projects/8).
 
 ## Security Vulnerabilities
 
