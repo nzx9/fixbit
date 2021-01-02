@@ -346,22 +346,31 @@ const ProjectCard = (props, joined = false) => {
         </Row>
         <Row p={1} gap={2} position={"bottom"}>
           {props.data.team.info !== null ? (
-            <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
-              {props.data.team.members.map((value, index) => (
-                <Avatar
-                  style={{ backgroundColor: randomColor() }}
-                  key={index}
-                  alt={value.name}
-                  src={
-                    value.profile_pic === null ||
-                    value.profile_pic === undefined
-                      ? "broken-url.jpg"
-                      : value.profile_pic
-                  }
-                />
-              ))}
-            </AvatarGroup>
+            <Info useStyles={useApexInfoStyles}>
+              <InfoSubtitle>
+                <b>{props.data.team.info.name}</b>
+              </InfoSubtitle>
+              <InfoSubtitle>
+                {props.data.team.members.length}
+                {props.data.team.members.length === 1 ? " member" : " members"}
+              </InfoSubtitle>
+            </Info>
           ) : (
+            // <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
+            //   {props.data.team.members.map((value, index) => (
+            //     <Avatar
+            //       style={{ backgroundColor: randomColor() }}
+            //       key={index}
+            //       alt={value.name}
+            //       src={
+            //         value.profile_pic === null ||
+            //         value.profile_pic === undefined
+            //           ? "broken-url.jpg"
+            //           : value.profile_pic
+            //       }
+            //     />
+            //   ))}
+            // </AvatarGroup>
             <Info useStyles={useApexInfoStyles}>
               <InfoSubtitle>No team assigned</InfoSubtitle>
             </Info>
