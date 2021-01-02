@@ -268,7 +268,12 @@ const IssueTable = (props) => {
     ) {
       let filtered_list = [];
       props.rows.filter((item) => {
-        if (item.title.toString().indexOf(e.target.value) >= 0) {
+        if (
+          item.title
+            .toString()
+            .toLowerCase()
+            .indexOf(e.target.value.toString().toLowerCase()) >= 0
+        ) {
           filtered_list.push(item);
         }
         return 0;
