@@ -1,67 +1,31 @@
-<p align="center"><a href="#" target="_blank"><img src="https://i.ibb.co/6rVx2CF/fixbit-logo-m-removebg-preview.png" width="200"></a></p>
+<p align="center"><a href="https://fixbit-app.herokuapp.com" target="_blank"><img src="https://i.ibb.co/6rVx2CF/fixbit-logo-m-removebg-preview.png" width="200"></a></p>
 
-## REQUIREMENTS FOR BUILD
+## About Fixbit
 
-1.  -[x] [Node.js](https://nodejs.org)
-2.  -[x] [Yarn](https://yarnpkg.com/g)
-3.  -[x] [Fixbit](https://github.com/krypto-i9/Fixbit/archive/main.zip) (copy of this repo)
+Fixbit is the official front end for Fixbit API that gives power to access Fixbit API with GUI. Web front end is written using React and Material UI. User Interfaces are very simple and easy to use. So, Feel free to use and give some valuble feedbacks.
 
-## BUILD FROM SOURCE
+- [Fixbit](https://fixbit-app.herokuapp.com)
+- [Fixbit API](https://fixbit-api.herokuapp.com)
+- [Fixbit API(GitHub Repo)](https://github.com/krypto-i9/fixbit-API)
+- [API Docs](https://documenter.getpostman.com/view/13920141/TVsuETmA)
 
-1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
-2.  -[x] Download and Install Node.js
-3.  -[x] Install `yarn` using `npm install -g yarn` commond in cmd
-4.  -[x] Unzip the downloaded `Fixbit` file.
-5.  -[x] Open cmd inside the Fixbit
-6.  -[x] Run `yarn production-build`
-7.  -[x] Copy files inside production_build folder into www folder
-8.  -[x] Open browser and goto localhost
+## Fixbit Development Team
 
-## IF YOU DON'T WANT TO BUILD FROM SOURCE
+- [Navindu Dananga](https://github.com/krypto-i9)
+- [Jennive Cole](https://github.com/cole-js)
+- [Sandul Jayakody](https://github.com/sa-ndman)
+- [Gowrisha](https://github.com/Krishnamaayah)
 
-1.  -[x] Import `test_db.sql` (inside pre_build folder) in `phpmyadmin`
-2.  -[x] Open `pre_build` folder
-3.  -[x] Extract `Fixbit.zip`
-4.  -[x] Copy files inside extracted folder `Fixbit` to `www`
-5.  -[x] Open browser and goto `localhost`
+## Fixbit Sponsors
 
-## Available Scripts
+## Contributing
 
-In the project directory, you can run:
+If you discover a issue or need to request new features. File a issue at GitHub[https://github.com/krypto-i9/fixbit/issues] or Fixbit[https://fixbit-app.herokuapp.com/#/projects/8].
 
-### `yarn production-build` (USE THIS TO BUILD)
+## Security Vulnerabilities
 
-This run `yarn build`. Then copy build files and api into production_build folder.
+If you discover a security vulnerability within Fixbit. please send an e-mail to Navindu via [navindudananga123@gmail.com](mailto:navindudananga123@gmail.com). All security vulnerabilities will be promptly addressed.
 
-### `yarn start`
+## License
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The Fixbit is open-sourced software licensed under the [CC0-1.0 license](https://choosealicense.com/licenses/cc0-1.0/).
