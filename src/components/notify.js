@@ -7,9 +7,9 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  makeStyles,
   TextField,
   Box,
+  makeStyles,
 } from "@material-ui/core";
 import { Cancel, CheckCircle, Help } from "@material-ui/icons";
 import { httpReq } from "./httpRequest";
@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
   },
   error: {
     color: theme.palette.error.main,
+  },
+  grow: {
+    flexGrow: 1,
   },
 }));
 
@@ -141,7 +144,6 @@ export function AlertDialogConfirmation(props) {
 export function NewMemberAddAlert({
   alertOpen,
   handleAlertClose,
-  type,
   title,
   msg,
   resolveCallback,
@@ -193,7 +195,6 @@ export function NewMemberAddAlert({
       >
         <DialogTitle id="alert-dialog-title">
           <Grid container>
-            <Grid item style={{ marginRight: 5 }}></Grid>
             <Grid item>
               <b>{title.toUpperCase()}</b>
             </Grid>

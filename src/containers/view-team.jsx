@@ -76,10 +76,13 @@ const useStyles = makeStyles((theme) => ({
       padding: "1rem 1.5rem 1.5rem",
     };
   },
-  addNewBtn: {
-    "&:hover": {
-      transform: "scale(1.2)",
-    },
+  addNewBtn: () => {
+    return {
+      color: randomColor(),
+      "&:hover": {
+        transform: "scale(1.4)",
+      },
+    };
   },
   closeBtn: {
     color: theme.palette.error.main,
@@ -175,12 +178,12 @@ const UserCard = ({
               <InfoSubtitle className={classes.subtitle}>
                 {fullname}
               </InfoSubtitle>
-              <Grid container justify="space-evenly" style={{ marginTop: 30 }}>
+              <Grid container justify="space-between" style={{ marginTop: 30 }}>
                 <Grid item>
                   <Link
                     href={`https://twitter.com/${twitter}`}
                     target="_blank"
-                    hidden={linkedIn === null ? true : false}
+                    hidden={twitter === null ? true : false}
                   >
                     <Twitter className={classes.twitter} />
                   </Link>
@@ -235,7 +238,7 @@ const AddNewCard = ({ classes, handleOpenAddMemberAlert }) => {
                 size="medium"
                 onClick={handleOpenAddMemberAlert}
               >
-                <AddCircle fontSize="large" style={{ color: randomColor() }} />
+                <AddCircle fontSize="large" />
               </IconButton>
             </Box>
           </CardContent>
@@ -411,8 +414,7 @@ const ViewTeam = (props) => {
         </div>
         <NewMemberAddAlert
           alertOpen={addMemberAlert}
-          type="warning"
-          title="Add Member to Team"
+          title="Add Member"
           msg="Enter User ID of the member to add:"
           token={token}
           rejectCallback={() => setAddMemberAlert(false)}
