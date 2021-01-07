@@ -1,14 +1,12 @@
-import React, { useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { httpReq } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
-import { getUId } from "../reducers/userDataTracker";
 import TeamCard from "./team-card";
 import noTeamsImage from "../images/no-teams.png";
 import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
-import { Add, GroupWorkRounded } from "@material-ui/icons";
+import { GroupWorkRounded } from "@material-ui/icons";
 import TeamDialog from "./team-dialog";
 import config from "../components/config.json";
 import { NOTIFY, AlertDialog } from "../components/notify";
@@ -55,14 +53,11 @@ const useStyles = makeStyles((theme) => ({
 
 const Teams = () => {
   const classes = useStyles();
-  const uId = useSelector(getUId);
   const token = useSelector(getToken);
 
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [data, setData] = React.useState([]);
-  const [filterValue, setFilterValue] = React.useState("ALL");
-  const [newProjectAdded, setNewProjectAdded] = React.useState(false);
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertType, setAlertType] = React.useState(null);
   const [alertTitle, setAlertTitle] = React.useState(null);
@@ -72,9 +67,6 @@ const Teams = () => {
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const [open, setOpen] = React.useState(false);
-
-  const history = useHistory();
-  const goto = useCallback((path) => history.push(path), [history]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -131,7 +123,7 @@ const Teams = () => {
 
   useEffect(() => {
     fetchDataAndSet();
-  }, [filterValue, newProjectAdded]);
+  }, []);
 
   if (error) {
     return (

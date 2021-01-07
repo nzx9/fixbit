@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { httpReq } from "../components/httpRequest";
@@ -63,9 +62,6 @@ const Projects = () => {
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const [open, setOpen] = React.useState(false);
-
-  const history = useHistory();
-  const goto = useCallback((path) => history.push(path), [history]);
 
   const handleOpen = () => setOpen(true);
 

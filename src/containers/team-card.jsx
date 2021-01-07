@@ -22,7 +22,6 @@ import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
-import { randomColor } from "../components/random-color-generator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,12 +99,20 @@ const TeamCard = (props, joined = false) => {
   const handleAlertClose = () => setAlertOpen(false);
 
   const goto = useCallback((path) => history.push(path), [history]);
-  let leader = props.data.info.leader_id;
-  props.data.members.forEach((value) => {
-    if (value.is_leader === 1) {
-      leader = value.name;
+
+  const getLeaderName = () => {
+    let leader = props.data.info.leader_id;
+    if (props.data.members !== null) {
+      props.data.members.forEach((value) => {
+        if (value.uid === props.data.info.leader_id) {
+          leader = value.name;
+          return;
+        }
+      });
     }
-  });
+    return leader;
+  };
+
   return (
     <Card className={classes.root}>
       <AlertDialogConfirmation
@@ -157,7 +164,9 @@ const TeamCard = (props, joined = false) => {
             <Row>
               <InfoTitle>{props.data.info.name}</InfoTitle>
             </Row>
-            <InfoSubtitle>Leader: {leader}</InfoSubtitle>
+            <InfoSubtitle>
+              <b>Leader: </b> {getLeaderName()}
+            </InfoSubtitle>
           </Info>
           <div className={classes.grow} />
           <Column>
@@ -178,7 +187,7 @@ const TeamCard = (props, joined = false) => {
           color={"grey.600"}
           fontSize={"0.875rem"}
           fontFamily={"Ubuntu"}
-          style={{ height: 35, overflowY: "scroll" }}
+          style={{ height: 40, overflowY: "scroll" }}
         >
           {props.data.info.description}
         </Box>
@@ -187,15 +196,9 @@ const TeamCard = (props, joined = false) => {
             <AvatarGroup max={5} classes={{ avatar: classes.avatar }}>
               {props.data.members.map((value, index) => (
                 <Avatar
-                  style={{ backgroundColor: randomColor() }}
                   key={index}
                   alt={value.name}
-                  src={
-                    value.profile_pic === null ||
-                    value.profile_pic === undefined
-                      ? "broken-url.jpg"
-                      : value.profile_pic
-                  }
+                  src={`https://ui-avatars.com/api/?name=${value.name}&size=64&background=random`}
                 />
               ))}
             </AvatarGroup>

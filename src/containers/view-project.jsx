@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -33,7 +33,7 @@ import settings from "../components/settings.json";
 import NotFound from "./not-found";
 import { Info, InfoSubtitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
-import { randomColor } from "../components/random-color-generator";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,6 +78,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     borderColor: theme.palette.text.primary,
   },
+  avatarGroup: {
+    "&:hover": {
+      cursor: "pointer",
+      transform: "scale(1.1)",
+    },
+  },
 }));
 
 const ViewProject = (props) => {
@@ -100,6 +106,8 @@ const ViewProject = (props) => {
   const [alertType, setAlertType] = React.useState(null);
   const [alertTitle, setAlertTitle] = React.useState(null);
   const [alertMsg, setAlertMsg] = React.useState(null);
+  const history = useHistory();
+  const goto = useCallback((path) => history.push(path), [history]);
 
   const [projectInfo, setProjectInfo] = React.useState({
     project: {
@@ -261,6 +269,7 @@ const ViewProject = (props) => {
                 : setProjectInfo({
                     project: {
                       name: "",
+                      team_id: null,
                       description: "",
                       created_at: null,
                       updated_at: null,
@@ -472,21 +481,20 @@ const ViewProject = (props) => {
                     <Grid container justify="">
                       {projectInfo.team.info !== null &&
                       projectInfo.team.members !== null ? (
-                        <AvatarGroup>
+                        <AvatarGroup
+                          className={classes.avatarGroup}
+                          onClick={() => {
+                            goto(
+                              routes.TEAMS_VIEW_X + projectInfo.project.team_id
+                            );
+                          }}
+                        >
                           {projectInfo.team.members.map((value, index) => {
                             return (
                               <Avatar
-                                style={{
-                                  backgroundColor: randomColor(),
-                                }}
                                 key={index}
                                 alt={value.name}
-                                src={
-                                  value.profile_pic === null ||
-                                  value.profile_pic === undefined
-                                    ? "broken-url.jpg"
-                                    : value.profile_pic
-                                }
+                                src={`https://ui-avatars.com/api/?name=${value.name}&size=64&background=random`}
                               />
                             );
                           })}

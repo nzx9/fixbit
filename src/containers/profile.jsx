@@ -9,6 +9,8 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
+  IconButton,
+  Avatar,
 } from "@material-ui/core";
 import {
   getUId,
@@ -201,6 +203,10 @@ const Profile = () => {
                 </Button>
               </Grid>
               <hr />
+              <IconButton size="medium" containerElement="label">
+                {/* <Avatar></Avatar> */}
+                <input type="file" hidden />
+              </IconButton>
               <TextField
                 variant="outlined"
                 fullWidth

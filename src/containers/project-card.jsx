@@ -4,20 +4,17 @@ import {
   Box,
   Card,
   Button,
-  Avatar,
   Slider,
   Menu,
   MenuItem,
   IconButton,
   makeStyles,
 } from "@material-ui/core";
-import { AvatarGroup } from "@material-ui/lab";
 import { Column, Row, Item } from "@mui-treasury/components/flex";
 import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import {
   DeleteForever,
-  Edit,
   ExpandLessRounded,
   ExpandMoreRounded,
   FiberManualRecord,
@@ -31,7 +28,6 @@ import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
-import { randomColor } from "../components/random-color-generator";
 import { convetToLocalTime } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
@@ -168,20 +164,13 @@ const ProjectCard = (props, joined = false) => {
           }}
         >
           <Group />
-          &ensp;View Team
+          &ensp;Team
         </MenuItem>
       ) : (
         <></>
       )}
       {Number(props.data.project.admin_id) === Number(uid) ? (
         <>
-          <MenuItem
-            onClick={() => {
-              handleMenuClose();
-            }}
-          >
-            <Edit /> &ensp; Edit Project
-          </MenuItem>
           <MenuItem
             className={classes.deleteItem}
             onClick={() => {

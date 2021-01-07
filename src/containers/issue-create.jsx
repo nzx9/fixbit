@@ -17,11 +17,11 @@ import {
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 
-import { Close, FiberManualRecord } from "@material-ui/icons";
+import { Cancel, FiberManualRecord } from "@material-ui/icons";
 import { httpReq } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { NOTIFY } from "../components/notify";
@@ -39,7 +39,7 @@ const styles = (theme) => ({
     position: "absolute",
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: theme.palette.error.main,
   },
 });
 
@@ -91,7 +91,7 @@ const DialogTitle = withStyles(styles)((props) => {
           className={classes.closeButton}
           onClick={onClose}
         >
-          <Close />
+          <Cancel />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -140,8 +140,6 @@ function IssueCreateDialog(props) {
   const handleTypeChange = (e) => {
     setType(e.target.value);
   };
-
-  const dispatch = useDispatch();
 
   return (
     <div>

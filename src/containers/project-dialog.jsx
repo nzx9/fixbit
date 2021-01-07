@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 
-import { FiberManualRecord, Cancel } from "@material-ui/icons";
+import { Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 
 import { DEBUG_PRINT } from "../components/debugTools";

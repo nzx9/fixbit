@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -27,20 +27,9 @@ import settings from "../components/settings.json";
 import { NOTIFY } from "../components/notify";
 import { useSnackbar } from "notistack";
 
-import {
-  Close,
-  FiberManualRecord,
-  Description,
-  Settings,
-  Cancel,
-} from "@material-ui/icons";
-import { DEBUG_PRINT, convetToLocalTime } from "../components/debugTools";
-import {
-  Info,
-  InfoCaption,
-  InfoSubtitle,
-  InfoTitle,
-} from "@mui-treasury/components/info";
+import { Description, Settings, Cancel } from "@material-ui/icons";
+import { convetToLocalTime } from "../components/debugTools";
+import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
 const styles = (theme) => ({
@@ -449,14 +438,14 @@ function EditProjectDialog(props) {
             <DialogActions>
               <Button
                 autoFocus
-                variant="outlined"
+                variant="text"
                 type="submit"
                 color="primary"
                 disabled={
                   props.projectInfo.project.admin_id !== uId ? true : false
                 }
               >
-                <InfoTitle>save</InfoTitle>
+                save
               </Button>
             </DialogActions>
           </form>
