@@ -39,8 +39,10 @@ const useStyles = makeStyles((theme) => ({
     width: 175,
     height: 250,
     margin: 10,
-    maxWidth: 200,
-    maxHeight: 250,
+    [theme.breakpoints.down("sm")]: {
+      width: "92%",
+      height: "auto",
+    },
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 200,
@@ -56,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
   card: {
     borderRadius: 16,
     height: 250,
+    [theme.breakpoints.down("sm")]: {
+      height: "auto",
+    },
     "&:hover": {
       boxShadow: `0 6px 12px 0 #dbdb68
         .rotate(-12)
@@ -134,7 +139,6 @@ const UserCard = ({
               {showDelete ? (
                 <div style={{ position: "absolute", top: 2, right: 2 }}>
                   <IconButton
-                    className={classes.closeBtn}
                     onClick={() => {
                       openBackdrop();
                       httpReq(
@@ -168,7 +172,11 @@ const UserCard = ({
                         });
                     }}
                   >
-                    <Cancel fontSize="small" />
+                    <Cancel
+                      fontSize="small"
+                      className={classes.closeBtn}
+                      style={{ color: "red" }}
+                    />
                   </IconButton>
                 </div>
               ) : null}
