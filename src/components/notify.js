@@ -245,6 +245,7 @@ export function NewMemberAddAlert({
             Cancel
           </Button>
           <Button
+            disabled={error || !isLoaded ? true : false}
             onClick={() => {
               resolveCallback(userData);
             }}

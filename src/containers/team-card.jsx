@@ -198,7 +198,7 @@ const TeamCard = (props, joined = false) => {
                 <Avatar
                   key={index}
                   alt={value.name}
-                  src={`https://ui-avatars.com/api/?name=${value.name}&size=64&background=random`}
+                  src={`https://ui-avatars.com/api/?name=${value.name}&size=64&background=random&rounded=true`}
                 />
               ))}
             </AvatarGroup>

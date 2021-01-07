@@ -53,17 +53,16 @@ const useStyles = makeStyles((theme) => ({
       transform: "scale(1.1)",
     },
   },
-  card: ({ color }) => ({
+  card: {
     borderRadius: 16,
     height: 250,
-    boxShadow: "none",
     "&:hover": {
-      boxShadow: `0 6px 12px 0 ${color}
+      boxShadow: `0 6px 12px 0 #dbdb68
         .rotate(-12)
         .darken(0.2)
         .fade(0.5)}`,
     },
-  }),
+  },
   content: ({ color }) => {
     return {
       backgroundColor: color,
@@ -77,8 +76,6 @@ const useStyles = makeStyles((theme) => ({
       padding: "1rem 1.5rem 1.5rem",
     };
   },
-  title: {},
-  subtitle: {},
   addNewBtn: {
     "&:hover": {
       transform: "scale(1.2)",
@@ -90,22 +87,19 @@ const useStyles = makeStyles((theme) => ({
   twitter: {
     color: "#1DA1F2",
     "&:hover": {
-      transform: "scale(1.5)",
-      color: "#ffffff",
+      transform: "scale(1.4)",
     },
   },
   linkedIn: {
     color: "#0077B5",
     "&:hover": {
-      transform: "scale(1.5)",
-      color: "#ffffff",
+      transform: "scale(1.4)",
     },
   },
   github: {
     color: "#181717",
     "&:hover": {
-      transform: "scale(1.5)",
-      color: "#ffffff",
+      transform: "scale(1.4)",
     },
   },
 }));
@@ -117,6 +111,9 @@ const UserCard = ({
   fullname,
   tid,
   uid,
+  twitter = null,
+  linkedIn = null,
+  github = null,
   showDelete = false,
   openBackdrop,
   closeBackdrop,
@@ -180,17 +177,29 @@ const UserCard = ({
               </InfoSubtitle>
               <Grid container justify="space-evenly" style={{ marginTop: 30 }}>
                 <Grid item>
-                  <Link href="https://twitter.com/">
+                  <Link
+                    href={`https://twitter.com/${twitter}`}
+                    target="_blank"
+                    hidden={linkedIn === null ? true : false}
+                  >
                     <Twitter className={classes.twitter} />
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="https://linkedin.com/">
+                  <Link
+                    href={`https://linkedin.com/in/${linkedIn}`}
+                    target="_blank"
+                    hidden={linkedIn === null ? true : false}
+                  >
                     <LinkedIn className={classes.linkedIn} />
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="https://github.com/">
+                  <Link
+                    href={`https://github.com/${github}`}
+                    target="_blank"
+                    hidden={github === null ? true : false}
+                  >
                     <GitHub className={classes.github} />
                   </Link>
                 </Grid>
@@ -237,7 +246,7 @@ const AddNewCard = ({ classes, handleOpenAddMemberAlert }) => {
 };
 
 const ViewTeam = (props) => {
-  const classes = useStyles({ color: randomColor() });
+  const classes = useStyles({ color: "#fff" });
   const token = useSelector(getToken);
   const uId = useSelector(getUId);
   const [error, setError] = React.useState(false);
@@ -380,13 +389,16 @@ const ViewTeam = (props) => {
               fullname={value.info.fullname}
               uid={value.info.id}
               tid={props.match.params.tid}
+              twitter={value.info.twitter}
+              linkedIn={value.info.linkedIn}
+              github={value.info.github}
               openBackdrop={() => _setOpenBackdrop(true)}
               closeBackdrop={() => _setOpenBackdrop(false)}
               action={() => fetchMemberDataAndSet()}
               showDelete={
                 uId === tData?.leader_id && value.info.id !== uId ? true : false
               }
-              image={`https://ui-avatars.com/api/?name=${value.info.fullname}&size=512&background=random`}
+              image={`https://ui-avatars.com/api/?name=${value.info.username}&size=256&background=random`}
             />
           ))}
           {uId === tData.leader_id ? (

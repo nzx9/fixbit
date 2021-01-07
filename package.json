@@ -28,7 +28,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build-copy": "react-scripts build && cp -r build/* /var/www/html/",
     "pre-build": "react-scripts build && cd pre_build && mkdir fixbit && cd ../ && cp -r build/* pre_build/fixbit/ && cd pre_build && zip -r fixbit.zip fixbit/ && rm -r -f fixbit && cd ../"
   },
   "eslintConfig": {
