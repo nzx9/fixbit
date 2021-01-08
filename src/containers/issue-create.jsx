@@ -109,7 +109,7 @@ function IssueCreateDialog(props) {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(true);
-  const [assignTo, setAssignTo] = React.useState(null);
+  const [assignTo, setAssignTo] = React.useState(-1);
   const [priority, setPriority] = React.useState(2);
   const [type, setType] = React.useState(0);
 

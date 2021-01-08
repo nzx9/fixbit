@@ -199,6 +199,7 @@ const ProjectDialog = (props) => {
                 multiline
                 variant="outlined"
                 fullWidth
+                required
               />
             </Grid>
           </Grid>

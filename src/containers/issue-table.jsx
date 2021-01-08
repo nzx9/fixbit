@@ -309,6 +309,7 @@ const IssueTable = (props) => {
         );
     } else {
       projectInfo.team.members.forEach((value) => {
+        console.log(assign_to + "::" + value.uid);
         if (value.uid === assign_to) {
           if (Number(uid) === value.uid) {
             name = (
@@ -317,20 +318,22 @@ const IssueTable = (props) => {
                 <b>&nbsp;(Me)</b>
               </InfoSubtitle>
             );
-          } else name = value.name;
-          return;
-        } else {
-          name = (
-            <InfoSubtitle>
-              <em>
-                <b>Unknown</b>
-              </em>
-            </InfoSubtitle>
-          );
-          return;
+            return;
+          } else {
+            name = value.name;
+            return;
+          }
         }
       });
-      return name;
+      return name === null ? (
+        <InfoSubtitle>
+          <em>
+            <b>Unknown</b>
+          </em>
+        </InfoSubtitle>
+      ) : (
+        name
+      );
     }
   };
 
