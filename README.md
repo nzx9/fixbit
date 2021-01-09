@@ -1,5 +1,5 @@
 <p align="center"><a href="https://fixbit-app.herokuapp.com" target="_blank"><img src="https://i.ibb.co/6rVx2CF/fixbit-logo-m-removebg-preview.png" width="200"></a></p>
-<p align="center"><img alt="ci" href="https://travis-ci.com/krypto-i9/fixbit.svg?branch=main"/></p>
+<p align="center"><img alt="ci" src="https://travis-ci.com/krypto-i9/fixbit.svg?branch=main"/></p>
 
 ## About Fixbit
 
