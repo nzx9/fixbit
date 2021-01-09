@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - "stable"
-sudo: false
 
 branches:
   only:
@@ -12,12 +11,12 @@ cache:
     - node_modules
 
 install:
-  - npm install
+  - yarn install
 
 deploy:
   provider: heroku
-  skip_cleanup: true
-  keep-history: true
-  api-key:
+  cleanup: false
+  keep_history: true
+  api_key:
     secure: $HEROKU_API_KEY
   app: fixbit-app
