@@ -9,6 +9,11 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
+  InputAdornment,
+  FormControl,
+  OutlinedInput,
+  FormHelperText,
+  Link,
   IconButton,
   Avatar,
 } from "@material-ui/core";
@@ -17,17 +22,21 @@ import {
   getUserName,
   getFullName,
   getEmail,
+  getSocial,
   setUserName,
   setFullName,
   setEmail,
+  setSocial,
 } from "../reducers/userDataTracker";
 import { getToken } from "../reducers/tokenTracker";
 import { useSelector, useDispatch } from "react-redux";
 import { httpReq } from "../components/httpRequest";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
-import { logout } from "../reducers/loginTracker";
 import settings from "../components/settings.json";
+import { Twitter, LinkedIn, GitHub } from "@material-ui/icons";
+import config from "../components/config.json";
+import { NOTIFY } from "../components/notify";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,17 +66,17 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   updateBtnDisbled: {
-    backgroundColor: theme.palette.warning.main,
+    backgroundColor: theme.palette.error.main,
     color: theme.palette.grey[100],
     "&:hover": {
-      backgroundColor: theme.palette.warning.dark,
+      backgroundColor: theme.palette.error.dark,
     },
   },
   updateBtnActive: {
-    backgroundColor: theme.palette.info.main,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.grey[100],
     "&:hover": {
-      backgroundColor: theme.palette.info.dark,
+      backgroundColor: theme.palette.primary.dark,
     },
   },
   backdrop: {
@@ -90,15 +99,22 @@ const Profile = () => {
   const username = useSelector(getUserName);
   const fullname = useSelector(getFullName);
   const email = useSelector(getEmail);
+  const social = useSelector(getSocial);
 
   const [isUserInputDisabled, setIsUserInputDisabled] = React.useState(true);
   const [isPasswordInputDisabled, setIsPasswordInputDisabled] = React.useState(
+    true
+  );
+  const [isSocialInputDisabled, setIsSocialInputDisabled] = React.useState(
     true
   );
 
   const [_userName, _setUserName] = React.useState(username);
   const [_fullName, _setFullName] = React.useState(fullname);
   const [_email, _setEmail] = React.useState(email);
+  const [_twitter, _setTwitter] = React.useState(social.twitter);
+  const [_linkedIn, _setLinkedIn] = React.useState(social.linkedIn);
+  const [_github, _setGithub] = React.useState(social.github);
 
   const [_currentPassword, _setCurrentPassword] = React.useState("");
   const [_newPassword, _setNewPassword] = React.useState("");
@@ -108,24 +124,22 @@ const Profile = () => {
 
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
-  const userNameInputHandler = (e) => {
-    _setUserName(e.target.value);
-  };
-  const fullNameInputHandler = (e) => {
-    _setFullName(e.target.value);
-  };
-  const emailInputHandler = (e) => {
-    _setEmail(e.target.value);
-  };
-  const currentPasswordInputHandler = (e) => {
+  const userNameInputHandler = (e) => _setUserName(e.target.value);
+  const fullNameInputHandler = (e) => _setFullName(e.target.value);
+  const emailInputHandler = (e) => _setEmail(e.target.value);
+
+  const currentPasswordInputHandler = (e) =>
     _setCurrentPassword(e.target.value);
-  };
-  const newPasswordInputHandler = (e) => {
-    _setNewPassword(e.target.value);
-  };
-  const retypeNewPasswordInputHandler = (e) => {
+
+  const newPasswordInputHandler = (e) => _setNewPassword(e.target.value);
+
+  const retypeNewPasswordInputHandler = (e) =>
     _setRetypeNewPassword(e.target.value);
-  };
+
+  const twitterInputHandler = (e) => _setTwitter(e.target.value);
+  const linkedInInputHandler = (e) => _setLinkedIn(e.target.value);
+  const githubInputHandler = (e) => _setGithub(e.target.value);
+
   const dispatch = useDispatch();
 
   return (
@@ -143,36 +157,35 @@ const Profile = () => {
               onSubmit={(e) => {
                 if (!isUserInputDisabled) {
                   _setOpenBackdrop(true);
-                  httpReq(
-                    `${window.location.protocol}//${window.location.hostname}/api/users/update.php`,
-                    {
-                      uid: uId,
-                      username: _userName,
-                      fullname: _fullName,
-                      email: _email,
-                      token: token,
-                    }
-                  )
+                  let data = {};
+                  if (null !== _userName && username !== _userName)
+                    data["username"] = _userName;
+                  if (null !== _fullName && fullname !== _fullName)
+                    data["fullname"] = _fullName;
+                  if (null !== _email && email !== _email)
+                    data["email"] = _email;
+                  httpReq(`${config.URL}/api/users/user`, "PUT", data, token)
                     .then((res) => {
-                      DEBUG_PRINT(res);
-                      _setOpenBackdrop(false);
-                      if (res.success) {
-                        dispatch(setUserName(res.user_data.username));
-                        dispatch(setFullName(res.user_data.fullname));
-                        dispatch(setEmail(res.user_data.email));
-                        enqueueSnackbar(res.msg, {
-                          variant: "success",
-                          anchorOrigin: settings.snackbar.anchorOrigin,
+                      res.json().then((r) => {
+                        NOTIFY(r.msg, (msg) => {
+                          if (msg === null || msg === undefined)
+                            msg = r.message;
+                          enqueueSnackbar(msg, {
+                            variant: r.type,
+                            anchorOrigin: settings.snackbar.anchorOrigin,
+                          });
+                          if (200 === res.status && true === r.success) {
+                            dispatch(setUserName(r.data.username));
+                            dispatch(setFullName(r.data.fullname));
+                            dispatch(setEmail(r.data.email));
+                          } else {
+                            _setUserName(username);
+                            _setFullName(fullname);
+                            _setEmail(email);
+                          }
                         });
-                      } else {
-                        _setUserName(username);
-                        _setFullName(fullname);
-                        _setEmail(email);
-                        enqueueSnackbar(res.msg, {
-                          variant: res.type,
-                          anchorOrigin: settings.snackbar.anchorOrigin,
-                        });
-                      }
+                        _setOpenBackdrop(false);
+                      });
                     })
                     .catch((err) => {
                       _setOpenBackdrop(false);
@@ -184,7 +197,7 @@ const Profile = () => {
               }}
             >
               <Grid container>
-                <Grid item justify="flex-start">
+                <Grid item>
                   <Typography key="profile-header" variant="h6">
                     Profile
                   </Typography>
@@ -203,17 +216,13 @@ const Profile = () => {
                 </Button>
               </Grid>
               <hr />
-              <IconButton size="medium" containerElement="label">
-                {/* <Avatar></Avatar> */}
-                <input type="file" hidden />
-              </IconButton>
               <TextField
+                label="Username"
                 variant="outlined"
+                type="text"
                 fullWidth
                 required
                 disabled={isUserInputDisabled}
-                type="text"
-                lable="User Name"
                 value={_userName}
                 onChange={userNameInputHandler}
               />
@@ -223,7 +232,7 @@ const Profile = () => {
                 required
                 disabled={isUserInputDisabled}
                 type="text"
-                lable="Full Name"
+                label="Full Name"
                 value={_fullName}
                 onChange={fullNameInputHandler}
               />
@@ -233,7 +242,7 @@ const Profile = () => {
                 required
                 disabled={isUserInputDisabled}
                 type="email"
-                lable="Email"
+                label="Email"
                 value={_email}
                 onChange={emailInputHandler}
               />
@@ -245,13 +254,6 @@ const Profile = () => {
               validate="true"
               autoComplete="on"
               onSubmit={(e) => {
-                DEBUG_PRINT({
-                  uid: uId,
-                  currentPassword: _currentPassword,
-                  newPassword: _newPassword,
-                  confirmNewPassword: _retypeNewPassowrd,
-                  token: token,
-                });
                 if (!isPasswordInputDisabled) {
                   if (
                     _currentPassword !== null &&
@@ -259,40 +261,29 @@ const Profile = () => {
                     _retypeNewPassowrd !== null
                   ) {
                     _setOpenBackdrop(true);
-                    httpReq(
-                      `${window.location.protocol}//${window.location.hostname}/api/users/changepassword.php`,
-                      {
-                        uid: uId,
-                        currentPassword: _currentPassword,
-                        newPassword: _newPassword,
-                        confirmNewPassword: _retypeNewPassowrd,
-                        token: token,
-                      }
-                    )
+                    let data = {
+                      old_password: _currentPassword,
+                      password: _newPassword,
+                      c_password: _retypeNewPassowrd,
+                    };
+                    httpReq(`${config.URL}/api/users/user`, "PUT", data, token)
                       .then((res) => {
-                        _setOpenBackdrop(false);
-                        DEBUG_PRINT(res);
-                        if (res.success) {
-                          enqueueSnackbar(res.msg, {
-                            variant: "success",
-                            anchorOrigin: settings.snackbar.anchorOrigin,
+                        res.json().then((r) => {
+                          NOTIFY(r.msg, (msg) => {
+                            if (msg === null || msg === undefined)
+                              msg = r.message;
+                            enqueueSnackbar(msg, {
+                              variant: r.type,
+                              anchorOrigin: settings.snackbar.anchorOrigin,
+                            });
                           });
-                        } else {
-                          enqueueSnackbar(res.msg, {
-                            variant: res.type,
-                            anchorOrigin: settings.snackbar.anchorOrigin,
-                          });
-                        }
+                          _setOpenBackdrop(false);
+                        });
                       })
                       .catch((err) => {
-                        _setOpenBackdrop(true);
+                        _setOpenBackdrop(false);
                         alert(err);
                       });
-                  } else {
-                    enqueueSnackbar("All fields are required", {
-                      variant: "error",
-                      anchorOrigin: settings.snackbar.anchorOrigin,
-                    });
                   }
                 }
                 _setCurrentPassword("");
@@ -303,7 +294,7 @@ const Profile = () => {
               }}
             >
               <Grid container>
-                <Grid item justify="flex-start">
+                <Grid item>
                   <Typography key="profile-header" variant="h6">
                     Passwords
                   </Typography>
@@ -355,6 +346,176 @@ const Profile = () => {
                 value={_retypeNewPassowrd}
                 onChange={retypeNewPasswordInputHandler}
               />
+            </form>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6}>
+            <form
+              className={classes.root}
+              validate="true"
+              autoComplete="on"
+              onSubmit={(e) => {
+                if (!isSocialInputDisabled) {
+                  _setOpenBackdrop(true);
+                  let data = {};
+                  if (_twitter !== social.twitter) data["twitter"] = _twitter;
+                  if (_linkedIn !== social.linkedIn)
+                    data["linkedIn"] = _linkedIn;
+                  if (_github !== social.github) data["github"] = _github;
+                  httpReq(`${config.URL}/api/users/user`, "PUT", data, token)
+                    .then((res) => {
+                      res.json().then((r) => {
+                        NOTIFY(r.msg, (msg) => {
+                          if (msg === null || msg === undefined)
+                            msg = r.message;
+                          enqueueSnackbar(msg, {
+                            variant: r.type,
+                            anchorOrigin: settings.snackbar.anchorOrigin,
+                          });
+                          if (200 === res.status && true === r.success) {
+                            dispatch(
+                              setSocial({
+                                twitter: r.data.twitter,
+                                linkedIn: r.data.linkedIn,
+                                github: r.data.github,
+                              })
+                            );
+                            _setTwitter(r.data.twitter);
+                            _setLinkedIn(r.data.linkedIn);
+                            _setGithub(r.data.github);
+                          } else {
+                            _setTwitter(social.twitter);
+                            _setLinkedIn(social.linkedIn);
+                            _setGithub(social.github);
+                          }
+                        });
+                        _setOpenBackdrop(false);
+                      });
+                    })
+                    .catch((err) => {
+                      _setOpenBackdrop(false);
+                      alert(err);
+                    });
+                }
+                setIsSocialInputDisabled(!isSocialInputDisabled);
+                e.preventDefault();
+              }}
+            >
+              <Grid container>
+                <Grid item>
+                  <Typography key="profile-header" variant="h6">
+                    Social
+                  </Typography>
+                </Grid>
+                <div className={classes.grow} />
+                <Button
+                  className={
+                    isSocialInputDisabled
+                      ? classes.updateBtnActive
+                      : classes.updateBtnDisbled
+                  }
+                  variant="contained"
+                  type="submit"
+                >
+                  {isSocialInputDisabled ? "Edit" : "Update"}
+                </Button>
+              </Grid>
+              <hr />
+              <FormControl
+                variant="outlined"
+                fullWidth
+                style={{ marginTop: 5 }}
+              >
+                <OutlinedInput
+                  id="twitter-username"
+                  value={_twitter}
+                  placeholder="Twitter"
+                  onChange={twitterInputHandler}
+                  disabled={isSocialInputDisabled}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <Twitter style={{ color: "#1DA1F2" }} />
+                    </InputAdornment>
+                  }
+                  aria-describedby="twitter-username-helper-text"
+                  inputProps={{
+                    "aria-label": "twitter-username",
+                  }}
+                  labelWidth={0}
+                />
+                <FormHelperText id="twitter-username-helper-text">
+                  <Link
+                    href={`https://twitter.com/${_twitter}`}
+                    target="_blank"
+                    hidden={!Boolean(_twitter) ? true : false}
+                  >
+                    https://twitter.com/{_twitter}
+                  </Link>
+                </FormHelperText>
+              </FormControl>
+              <FormControl
+                variant="outlined"
+                fullWidth
+                style={{ marginTop: 5 }}
+              >
+                <OutlinedInput
+                  id="linkedIn-username"
+                  value={_linkedIn}
+                  placeholder="LinkedIn"
+                  onChange={linkedInInputHandler}
+                  disabled={isSocialInputDisabled}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <LinkedIn style={{ color: "#0077B5" }} />
+                    </InputAdornment>
+                  }
+                  aria-describedby="linkedIn-username-helper-text"
+                  inputProps={{
+                    "aria-label": "linkedIn-username",
+                  }}
+                  labelWidth={0}
+                />
+                <FormHelperText id="linkedIn-username-helper-text">
+                  <Link
+                    href={`https://linkedin.com/in/${_linkedIn}`}
+                    target="_blank"
+                    hidden={!Boolean(_linkedIn) ? true : false}
+                  >
+                    https://linkedin.com/in/{_linkedIn}
+                  </Link>
+                </FormHelperText>
+              </FormControl>
+              <FormControl
+                variant="outlined"
+                fullWidth
+                style={{ marginTop: 5 }}
+              >
+                <OutlinedInput
+                  id="github-username"
+                  value={_github}
+                  placeholder="GitHub"
+                  onChange={githubInputHandler}
+                  disabled={isSocialInputDisabled}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <GitHub style={{ color: "#181717" }} />
+                    </InputAdornment>
+                  }
+                  aria-describedby="github-username-helper-text"
+                  inputProps={{
+                    "aria-label": "github-username",
+                  }}
+                  labelWidth={0}
+                />
+                <FormHelperText id="github-username-helper-text">
+                  <Link
+                    href={`https://github.com/${_github}`}
+                    target="_blank"
+                    hidden={!Boolean(_github) ? true : false}
+                  >
+                    https://github.com/{_github}
+                  </Link>
+                </FormHelperText>
+              </FormControl>
             </form>
           </Grid>
         </Grid>

@@ -21,6 +21,7 @@ import {
   setUserName,
   setFullName,
   setEmail,
+  setSocial,
 } from "../reducers/userDataTracker";
 import { setToken } from "../reducers/tokenTracker";
 import { DEBUG_PRINT } from "../components/debugTools";
@@ -100,6 +101,13 @@ const Login = () => {
                   dispatch(setEmail(r.data.email));
                   dispatch(setToken(r.token));
                   dispatch(login());
+                  dispatch(
+                    setSocial({
+                      twitter: r.data.twitter,
+                      linkedIn: r.data.linkedIn,
+                      github: r.data.github,
+                    })
+                  );
                   goToHome();
                 }
               });

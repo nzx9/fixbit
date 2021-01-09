@@ -7,6 +7,7 @@ import {
   setUserName,
   setFullName,
   setEmail,
+  setSocial,
 } from "../reducers/userDataTracker";
 import { setToken } from "../reducers/tokenTracker";
 //Routes
@@ -124,6 +125,13 @@ export default function Router() {
               dispatch(setEmail(r.data.email));
               dispatch(setToken(token));
               dispatch(login());
+              dispatch(
+                setSocial({
+                  twitter: r.data.twitter,
+                  linkedIn: r.data.linkedIn,
+                  github: r.data.github,
+                })
+              );
               setIsLoaded(true);
             } else {
               localStorage.setItem("token", null);
