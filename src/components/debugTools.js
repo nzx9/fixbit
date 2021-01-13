@@ -4,7 +4,11 @@ export const DEBUG_PRINT = (msg) => {
   }
 };
 
-export const convetToLocalTime = (date_time) => {
-  let date = new Date(date_time);
-  return date.toString();
+export const convertToLocalTime = (date_time) => {
+  if (date_time !== null && date_time !== undefined) {
+    let date = new Date(date_time);
+    return date.toString();
+  } else {
+    return "Unknown";
+  }
 };
