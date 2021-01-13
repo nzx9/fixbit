@@ -28,7 +28,7 @@ import { NOTIFY } from "../components/notify";
 import { useSnackbar } from "notistack";
 
 import { Description, Settings, Cancel } from "@material-ui/icons";
-import { convetToLocalTime } from "../components/debugTools";
+import { convertToLocalTime } from "../components/debugTools";
 import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
@@ -228,10 +228,10 @@ function EditProjectDialog(props) {
                 <b>description:</b> {props.projectInfo.project.description}
                 <br />
                 <b>created at :</b>{" "}
-                {convetToLocalTime(props.projectInfo.project.created_at)}
+                {convertToLocalTime(props.projectInfo.project.created_at)}
                 <br />
                 <b>last update:</b>{" "}
-                {convetToLocalTime(props.projectInfo.project.updated_at)}
+                {convertToLocalTime(props.projectInfo.project.updated_at)}
                 <br />
               </InfoSubtitle>
             </Info>

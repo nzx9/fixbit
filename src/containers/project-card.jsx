@@ -28,7 +28,7 @@ import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
-import { convetToLocalTime } from "../components/debugTools";
+import { convertToLocalTime } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -216,7 +216,7 @@ const ProjectCard = (props, joined = false) => {
               });
             })
             .catch((err) => {
-              console.log(err);
+              console.error(err);
               handleAlertClose();
             });
         }}
@@ -254,11 +254,11 @@ const ProjectCard = (props, joined = false) => {
               {props.data.project.updated_at !== null &&
               props.data.project.updated_at !== undefined ? (
                 <InfoSubtitle>
-                  {convetToLocalTime(props.data.project.updated_at).substr(
+                  {convertToLocalTime(props.data.project.updated_at).substr(
                     4,
                     11
                   )}{" "}
-                  {convetToLocalTime(props.data.project.updated_at).substr(
+                  {convertToLocalTime(props.data.project.updated_at).substr(
                     16,
                     5
                   )}
