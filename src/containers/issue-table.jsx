@@ -309,7 +309,6 @@ const IssueTable = (props) => {
         );
     } else {
       projectInfo.team.members.forEach((value) => {
-        console.log(assign_to + "::" + value.uid);
         if (value.uid === assign_to) {
           if (Number(uid) === value.uid) {
             name = (
@@ -477,7 +476,6 @@ const IssueTable = (props) => {
                       )}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {console.log(rows)}
                       {row.assign_to === null ? (
                         <InfoSubtitle>
                           <em>
