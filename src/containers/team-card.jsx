@@ -143,7 +143,7 @@ const TeamCard = (props, joined = false) => {
               });
             })
             .catch((err) => {
-              console.log(err);
+              console.error(err);
             });
           props.closeBackdrop();
           handleAlertClose();
