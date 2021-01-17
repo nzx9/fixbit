@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 9999,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
+    transition: "0.2s",
+    "&:before": {
+      transition: "0.3s",
+    },
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
