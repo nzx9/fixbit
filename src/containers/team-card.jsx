@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
       "& $card": {
         boxShadow: "-12px 12px 64px 0 #bcc3d6",
       },
+      transform: "scale(1.05)",
     },
     [theme.breakpoints.down("sm")]: {
       width: "93%",
