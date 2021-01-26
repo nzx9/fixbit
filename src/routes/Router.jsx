@@ -24,6 +24,7 @@ import ViewProject from "../containers/view-project";
 import NotFound from "../containers/not-found";
 import Teams from "../containers/teams";
 import ViewTeam from "../containers/view-team";
+import Settings from "../containers/settings";
 
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
@@ -48,6 +49,7 @@ export const MAIN_APP = () => {
           <Route exact path={routes.PROFILE} component={Profile} />
           <Route exact path={routes.TEAMS_VIEW} component={ViewTeam} />
           <Route exact path={routes.TEAMS} component={Teams} />
+          <Route exact path={routes.SETTINGS} component={Settings} />
           <Route exact path={routes.HOME} component={Home} />
           <Route path="/404" component={NotFound} />
           <Redirect to="/404" />
@@ -63,6 +65,8 @@ export const LOGIN_ACTIVITY = () => {
       <Switch>
         <Route exact path={routes.LOGIN} component={Login} />
         <Route exact path={routes.REGISTER} component={Register} />
+        <Route path="/404" component={NotFound} />
+        <Redirect to={routes.LOGIN} />
       </Switch>
     </>
   );
