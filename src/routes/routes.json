@@ -10,5 +10,6 @@
     "ISSUE_VIEW_X": "/issue/",
     "TEAMS": "/teams",
     "TEAMS_VIEW": "/teams/:tid",
-    "TEAMS_VIEW_X" : "/teams/"
+    "TEAMS_VIEW_X" : "/teams/",
+    "SETTINGS": "/settings"
 }
