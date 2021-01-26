@@ -251,7 +251,7 @@ export default function SideDrawer(props) {
                 src={favicon}
                 style={{
                   float: "left",
-                  paddingRight: 5,
+                  paddingRight: 10,
                 }}
               />
               <Typography variant="h6" noWrap style={{ fontWeight: 700 }}>
