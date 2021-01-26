@@ -4,6 +4,7 @@ import {
   Card,
   Button,
   Avatar,
+  CardActionArea,
   makeStyles,
   IconButton,
 } from "@material-ui/core";
@@ -36,22 +37,12 @@ const useStyles = makeStyles((theme) => ({
       position: "absolute",
       width: "100%",
       height: "100%",
-      content: '""',
       display: "block",
-      backgroundColor: "#d9daf1",
       borderRadius: "1rem",
       zIndex: 0,
       bottom: 0,
     },
-    "&:hover": {
-      "&:before": {
-        bottom: -6,
-      },
-      "& $card": {
-        boxShadow: "-12px 12px 64px 0 #bcc3d6",
-      },
-      transform: "scale(1.05)",
-    },
+
     [theme.breakpoints.down("sm")]: {
       width: "93%",
     },
@@ -63,10 +54,15 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1,
     position: "relative",
     borderRadius: "1rem",
-    boxShadow: "0 6px 20px 0 #dbdbe8",
-    backgroundColor: "#fff",
     transition: "0.4s",
     height: "100%",
+  },
+  actionArea: {
+    borderRadius: "1rem",
+    transition: "0.2s",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
   },
   logo: {
     width: 48,
@@ -76,20 +72,14 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     fontFamily: "Ubuntu",
     fontSize: "0.875rem",
-    backgroundColor: "#6d7efc",
-  },
-  join: {
-    background: "linear-gradient(to top, #638ef0, #82e7fe)",
-    "& > *": {
-      textTransform: "none !important",
-    },
+    border: 0,
   },
   deleteBtn: {
-    color: theme.palette.error.dark,
+    color: theme.palette.error.main,
   },
 }));
 
-const TeamCard = (props, joined = false) => {
+const TeamCard = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const uId = useSelector(getUId);
@@ -115,7 +105,7 @@ const TeamCard = (props, joined = false) => {
   };
 
   return (
-    <Card className={classes.root}>
+    <div className={classes.root}>
       <AlertDialogConfirmation
         alertOpen={alertOpen}
         title={`Delete Team?`}
@@ -154,68 +144,70 @@ const TeamCard = (props, joined = false) => {
           props.closeBackdrop();
         }}
       />
-      <Column className={classes.card}>
-        <Row p={2} gap={2}>
-          <Avatar
-            className={classes.logo}
-            variant={"rounded"}
-            src={props.data.thumbnail}
-          />
-          <Info position={"middle"} useStyles={useApexInfoStyles}>
-            <Row>
-              <InfoTitle>{props.data.info.name}</InfoTitle>
-            </Row>
-            <InfoSubtitle>
-              <b>Leader: </b> {getLeaderName()}
-            </InfoSubtitle>
-          </Info>
-          <div className={classes.grow} />
-          <Column>
-            {props.data.info.leader_id === uId ? (
-              <IconButton
-                size="small"
-                className={classes.deleteBtn}
-                onClick={() => setAlertOpen(true)}
+      <CardActionArea className={classes.actionArea}>
+        <Card className={classes.card}>
+          <Row p={2} gap={2}>
+            <Avatar
+              className={classes.logo}
+              variant={"rounded"}
+              src={props.data.thumbnail}
+            />
+            <Info position={"middle"} useStyles={useApexInfoStyles}>
+              <Row>
+                <InfoTitle>{props.data.info.name}</InfoTitle>
+              </Row>
+              <InfoSubtitle>
+                <b>Leader: </b> {getLeaderName()}
+              </InfoSubtitle>
+            </Info>
+            <div className={classes.grow} />
+            <Column>
+              {props.data.info.leader_id === uId ? (
+                <IconButton
+                  size="small"
+                  className={classes.deleteBtn}
+                  onClick={() => setAlertOpen(true)}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              ) : null}
+            </Column>
+          </Row>
+          <Box
+            pb={0}
+            px={2}
+            color={"grey.600"}
+            fontSize={"0.875rem"}
+            fontFamily={"Ubuntu"}
+            style={{ height: 40, overflowY: "scroll" }}
+          >
+            {props.data.info.description}
+          </Box>
+          <Row p={1} gap={2} position={"bottom"}>
+            <Item>
+              <AvatarGroup max={5} classes={{ avatar: classes.avatar }}>
+                {props.data.members.map((value, index) => (
+                  <Avatar
+                    key={index}
+                    alt={value.name}
+                    src={`https://ui-avatars.com/api/?name=${value.name}&size=64&background=random&rounded=true`}
+                  />
+                ))}
+              </AvatarGroup>
+            </Item>
+            <Item position={"middle-right"}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => goto(routes.TEAMS_VIEW_X + props.data.info.id)}
               >
-                <Delete fontSize="small" />
-              </IconButton>
-            ) : null}
-          </Column>
-        </Row>
-        <Box
-          pb={0}
-          px={2}
-          color={"grey.600"}
-          fontSize={"0.875rem"}
-          fontFamily={"Ubuntu"}
-          style={{ height: 40, overflowY: "scroll" }}
-        >
-          {props.data.info.description}
-        </Box>
-        <Row p={1} gap={2} position={"bottom"}>
-          <Item>
-            <AvatarGroup max={5} classes={{ avatar: classes.avatar }}>
-              {props.data.members.map((value, index) => (
-                <Avatar
-                  key={index}
-                  alt={value.name}
-                  src={`https://ui-avatars.com/api/?name=${value.name}&size=64&background=random&rounded=true`}
-                />
-              ))}
-            </AvatarGroup>
-          </Item>
-          <Item position={"middle-right"}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => goto(routes.TEAMS_VIEW_X + props.data.info.id)}
-            >
-              View
-            </Button>
-          </Item>
-        </Row>
-      </Column>
-    </Card>
+                View
+              </Button>
+            </Item>
+          </Row>
+        </Card>
+      </CardActionArea>
+    </div>
   );
 };
 

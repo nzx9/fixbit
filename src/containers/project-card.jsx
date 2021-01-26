@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import {
   Box,
   Card,
+  CardActionArea,
   Button,
   Slider,
   Menu,
@@ -45,21 +46,10 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
       height: 250,
       maxHeight: 250,
-      content: '""',
       display: "block",
-      backgroundColor: "#d9daf1",
       borderRadius: "1rem",
       zIndex: 0,
       bottom: 0,
-    },
-    "&:hover": {
-      "&:before": {
-        bottom: -6,
-      },
-      "& $card": {
-        boxShadow: "-12px 12px 64px 0 #bcc3d6",
-      },
-      transform: "scale(1.05)",
     },
     [theme.breakpoints.down("sm")]: {
       width: "93%",
@@ -72,26 +62,24 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1,
     position: "relative",
     borderRadius: "1rem",
-    boxShadow: "0 6px 20px 0 #dbdbe8",
-    backgroundColor: "#fff",
     transition: "0.4s",
     height: "100%",
+  },
+  actionArea: {
+    borderRadius: "1rem",
+    transition: "0.2s",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
   },
   avatar: {
     fontFamily: "Ubuntu",
     fontSize: "0.875rem",
-    backgroundColor: "#6d7efc",
   },
   logo: {
     width: 48,
     height: 48,
     borderRadius: "0.75rem",
-  },
-  join: {
-    background: "linear-gradient(to top, #638ef0, #82e7fe)",
-    "& > *": {
-      textTransform: "none !important",
-    },
   },
   deleteItem: {
     color: theme.palette.error.dark,
@@ -123,7 +111,7 @@ const useSliderStyles = makeStyles(() => ({
   },
 }));
 
-const ProjectCard = (props, joined = false) => {
+const ProjectCard = (props) => {
   const classes = useStyles();
   const sliderStyles = useSliderStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -189,7 +177,7 @@ const ProjectCard = (props, joined = false) => {
   );
 
   return (
-    <Card className={classes.root}>
+    <div className={classes.root}>
       <AlertDialogConfirmation
         alertOpen={alertOpen}
         title="Delete Project?"
@@ -225,160 +213,164 @@ const ProjectCard = (props, joined = false) => {
           handleAlertClose();
         }}
       />
-      <Column className={classes.card}>
-        <Row px={1} gap={2}>
-          <Column>
-            <Info position={"middle"} useStyles={useApexInfoStyles}>
-              <InfoTitle>
-                {props.data.project.name}
-                <span>
-                  <IconButton
-                    size="small"
-                    onClick={null}
-                    title={
-                      props.data.project.is_public
-                        ? "Public Project"
-                        : "Private Project"
-                    }
-                  >
-                    <FiberManualRecord
-                      className={
+      <CardActionArea className={classes.actionArea}>
+        <Card className={classes.card}>
+          <Row px={1} gap={2}>
+            <Column>
+              <Info position={"middle"} useStyles={useApexInfoStyles}>
+                <InfoTitle>
+                  {props.data.project.name}
+                  <span>
+                    <IconButton
+                      size="small"
+                      onClick={null}
+                      title={
                         props.data.project.is_public
-                          ? classes.publicProject
-                          : classes.privateProject
+                          ? "Public Project"
+                          : "Private Project"
                       }
-                      fontSize="small"
-                    />
-                  </IconButton>
-                </span>
-              </InfoTitle>
-              {props.data.project.updated_at !== null &&
-              props.data.project.updated_at !== undefined ? (
-                <InfoSubtitle>
-                  {convertToLocalTime(props.data.project.updated_at).substr(
-                    4,
-                    11
-                  )}{" "}
-                  {convertToLocalTime(props.data.project.updated_at).substr(
-                    16,
-                    5
-                  )}
-                  <span> | admin: {props.data.admin.username}</span>
-                </InfoSubtitle>
-              ) : (
-                <InfoSubtitle>
-                  admin: {props.data.project.admin.username}
-                </InfoSubtitle>
-              )}
-            </Info>
-          </Column>
-          <div className={classes.grow} />
-          <Column>
-            {props.data.project.team_id !== null ||
-            props.data.project.admin_id === Number(uid) ? (
-              <IconButton
-                size="small"
-                onClick={Boolean(anchorEl) ? handleMenuClose : handleMenuOpen}
-              >
-                {Boolean(anchorEl) ? (
-                  <ExpandLessRounded fontSize="small" />
+                    >
+                      <FiberManualRecord
+                        className={
+                          props.data.project.is_public
+                            ? classes.publicProject
+                            : classes.privateProject
+                        }
+                        fontSize="small"
+                      />
+                    </IconButton>
+                  </span>
+                </InfoTitle>
+                {props.data.project.updated_at !== null &&
+                props.data.project.updated_at !== undefined ? (
+                  <InfoSubtitle>
+                    {convertToLocalTime(props.data.project.updated_at).substr(
+                      4,
+                      11
+                    )}{" "}
+                    {convertToLocalTime(props.data.project.updated_at).substr(
+                      16,
+                      5
+                    )}
+                    <span> | admin: {props.data.admin.username}</span>
+                  </InfoSubtitle>
                 ) : (
-                  <ExpandMoreRounded fontSize="small" />
+                  <InfoSubtitle>
+                    admin: {props.data.project.admin.username}
+                  </InfoSubtitle>
                 )}
-              </IconButton>
-            ) : null}
-          </Column>
-          {props.data.project.team_id !== null ||
-          props.data.project.admin_id === Number(uid)
-            ? renderMenu
-            : null}
-        </Row>
-        <Box
-          pb={1}
-          px={2}
-          color={"grey.600"}
-          fontSize={"0.875rem"}
-          fontFamily={"Ubuntu"}
-          style={{ height: 60, overflowY: "scroll" }}
-        >
-          {props.data.project.description}
-        </Box>
-        <Row px={2} gap={0}>
-          <Column style={{ width: "70%" }}>
-            <Slider
-              classes={sliderStyles}
-              value={
-                ((props.data.issue.total - props.data.issue.open) /
-                  props.data.issue.total) *
-                100
-              }
-            />
-          </Column>
-          <div className={classes.grow} />
-          <Column>
-            <Info useStyles={useApexInfoStyles}>
-              {props.data.issue.total > 0 ? (
-                <InfoSubtitle>
-                  {Math.floor(
-                    ((props.data.issue.total - props.data.issue.open) /
-                      props.data.issue.total) *
-                      100
+              </Info>
+            </Column>
+            <div className={classes.grow} />
+            <Column>
+              {props.data.project.team_id !== null ||
+              props.data.project.admin_id === Number(uid) ? (
+                <IconButton
+                  size="small"
+                  onClick={Boolean(anchorEl) ? handleMenuClose : handleMenuOpen}
+                >
+                  {Boolean(anchorEl) ? (
+                    <ExpandLessRounded fontSize="small" />
+                  ) : (
+                    <ExpandMoreRounded fontSize="small" />
                   )}
-                  % Closed
+                </IconButton>
+              ) : null}
+            </Column>
+            {props.data.project.team_id !== null ||
+            props.data.project.admin_id === Number(uid)
+              ? renderMenu
+              : null}
+          </Row>
+          <Box
+            pb={1}
+            px={2}
+            color={"grey.600"}
+            fontSize={"0.875rem"}
+            fontFamily={"Ubuntu"}
+            style={{ height: 60, overflowY: "scroll" }}
+          >
+            {props.data.project.description}
+          </Box>
+          <Row px={2} gap={0}>
+            <Column style={{ width: "70%" }}>
+              <Slider
+                classes={sliderStyles}
+                value={
+                  ((props.data.issue.total - props.data.issue.open) /
+                    props.data.issue.total) *
+                  100
+                }
+              />
+            </Column>
+            <div className={classes.grow} />
+            <Column>
+              <Info useStyles={useApexInfoStyles}>
+                {props.data.issue.total > 0 ? (
+                  <InfoSubtitle>
+                    {Math.floor(
+                      ((props.data.issue.total - props.data.issue.open) /
+                        props.data.issue.total) *
+                        100
+                    )}
+                    % Closed
+                  </InfoSubtitle>
+                ) : (
+                  <Info useStyles={useApexInfoStyles}>
+                    <InfoSubtitle>No issues</InfoSubtitle>
+                  </Info>
+                )}
+              </Info>
+            </Column>
+          </Row>
+          <Row p={1} gap={2} position={"bottom"}>
+            {props.data.team.info !== null ? (
+              <Info useStyles={useApexInfoStyles}>
+                <InfoSubtitle>
+                  <b>{props.data.team.info.name}</b>
                 </InfoSubtitle>
-              ) : (
-                <Info useStyles={useApexInfoStyles}>
-                  <InfoSubtitle>No issues</InfoSubtitle>
-                </Info>
-              )}
-            </Info>
-          </Column>
-        </Row>
-        <Row p={1} gap={2} position={"bottom"}>
-          {props.data.team.info !== null ? (
-            <Info useStyles={useApexInfoStyles}>
-              <InfoSubtitle>
-                <b>{props.data.team.info.name}</b>
-              </InfoSubtitle>
-              <InfoSubtitle>
-                {props.data.team.members.length}
-                {props.data.team.members.length === 1 ? " member" : " members"}
-              </InfoSubtitle>
-            </Info>
-          ) : (
-            // <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
-            //   {props.data.team.members.map((value, index) => (
-            //     <Avatar
-            //       style={{ backgroundColor: randomColor() }}
-            //       key={index}
-            //       alt={value.name}
-            //       src={
-            //         value.profile_pic === null ||
-            //         value.profile_pic === undefined
-            //           ? "broken-url.jpg"
-            //           : value.profile_pic
-            //       }
-            //     />
-            //   ))}
-            // </AvatarGroup>
-            <Info useStyles={useApexInfoStyles}>
-              <InfoSubtitle>No team assigned</InfoSubtitle>
-            </Info>
-          )}
-          <Item position={"middle-right"}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() =>
-                goto(routes.PROJECTS_VIEW_X + props.data.project.id)
-              }
-            >
-              View
-            </Button>
-          </Item>
-        </Row>
-      </Column>
-    </Card>
+                <InfoSubtitle>
+                  {props.data.team.members.length}
+                  {props.data.team.members.length === 1
+                    ? " member"
+                    : " members"}
+                </InfoSubtitle>
+              </Info>
+            ) : (
+              // <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
+              //   {props.data.team.members.map((value, index) => (
+              //     <Avatar
+              //       style={{ backgroundColor: randomColor() }}
+              //       key={index}
+              //       alt={value.name}
+              //       src={
+              //         value.profile_pic === null ||
+              //         value.profile_pic === undefined
+              //           ? "broken-url.jpg"
+              //           : value.profile_pic
+              //       }
+              //     />
+              //   ))}
+              // </AvatarGroup>
+              <Info useStyles={useApexInfoStyles}>
+                <InfoSubtitle>No team assigned</InfoSubtitle>
+              </Info>
+            )}
+            <Item position={"middle-right"}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() =>
+                  goto(routes.PROJECTS_VIEW_X + props.data.project.id)
+                }
+              >
+                View
+              </Button>
+            </Item>
+          </Row>
+        </Card>
+      </CardActionArea>
+    </div>
   );
 };
 
