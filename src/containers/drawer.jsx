@@ -16,6 +16,7 @@ import {
   Badge,
   Menu,
   MenuItem,
+  Tooltip,
   makeStyles,
   useTheme,
 } from "@material-ui/core";
@@ -25,19 +26,20 @@ import {
   MenuTwoTone,
   Dashboard,
   Apps,
-  Notifications,
+  // Notifications,
   AccountCircle,
   ExitToApp,
   MoreVert,
   BubbleChart,
   Group,
+  Settings,
 } from "@material-ui/icons";
 
 import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
-
+import { tipTitle } from "../components/notify";
 const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
@@ -126,6 +128,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.grey[100],
     outline: "none",
   },
+  selected: { color: theme.palette.primary.main },
+  unselected: { color: "auto" },
 }));
 
 export default function SideDrawer(props) {
@@ -133,7 +137,6 @@ export default function SideDrawer(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [topListSelected, setTopListSelected] = React.useState(1);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const dispatch = useDispatch();
@@ -147,13 +150,23 @@ export default function SideDrawer(props) {
   };
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
+  const [currentRoute, setCurrentRoute] = React.useState(
+    window.location.hash.split("#")[1]
+  );
 
   const topList = [
     { id: 1, title: "Dashboard", url: routes.HOME, icon: <Dashboard /> },
     { id: 2, title: "Projects", url: routes.PROJECTS, icon: <Apps /> },
     { id: 3, title: "Teams", url: routes.TEAMS, icon: <Group /> },
   ];
-  const bottomList = [];
+  const bottomList = [
+    {
+      id: topList.length + 1,
+      title: "Settings",
+      url: routes.SETTINGS,
+      icon: <Settings />,
+    },
+  ];
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -174,23 +187,27 @@ export default function SideDrawer(props) {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
-      <MenuItem
-        onClick={() => {
-          goto(routes.PROFILE);
-          handleMenuClose();
-        }}
-      >
-        Profile <AccountCircle />
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          localStorage.setItem("token", null);
-          dispatch(logout());
-        }}
-      >
-        Logout
-        <ExitToApp />
-      </MenuItem>
+      <Tooltip title={tipTitle("Profile")} placement="left" arrow>
+        <MenuItem
+          onClick={() => {
+            goto(routes.PROFILE);
+            handleMenuClose();
+          }}
+        >
+          Profile <AccountCircle />
+        </MenuItem>
+      </Tooltip>
+      <Tooltip title={tipTitle("Logout")} placement="left" arrow>
+        <MenuItem
+          onClick={() => {
+            localStorage.setItem("token", null);
+            dispatch(logout());
+          }}
+        >
+          Logout
+          <ExitToApp />
+        </MenuItem>
+      </Tooltip>
     </Menu>
   );
 
@@ -205,17 +222,19 @@ export default function SideDrawer(props) {
         })}
       >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
-            })}
-          >
-            <MenuTwoTone />
-          </IconButton>
+          <Tooltip title={tipTitle("Expand")} placement="bottom" arrow>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              className={clsx(classes.menuButton, {
+                [classes.hide]: open,
+              })}
+            >
+              <MenuTwoTone />
+            </IconButton>
+          </Tooltip>
           <Link to={routes.HOME} className={classes.title}>
             <Typography variant="h6" noWrap style={{ fontWeight: 700 }}>
               Fixbit
@@ -223,44 +242,48 @@ export default function SideDrawer(props) {
             </Typography>
           </Link>
           <div className={classes.grow} />
-          <IconButton title="notifications" color="inherit">
+          {/* <IconButton title="notifications" color="inherit">
             <Badge badgeContent={0} color="secondary">
               <Notifications />
             </Badge>
-          </IconButton>
+          </IconButton> */}
           <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="account of current user"
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <MoreVert />
-            </IconButton>
+            <Tooltip title={tipTitle("More")} placement="bottom" arrow>
+              <IconButton
+                aria-label="account of current user"
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <MoreVert />
+              </IconButton>
+            </Tooltip>
           </div>
           <div className={classes.sectionDesktop}>
-            <IconButton
-              title="user profile"
-              aria-label="account of current user"
-              aria-haspopup="true"
-              onClick={() => goto(routes.PROFILE)}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <IconButton
-              edge="end"
-              title="logout"
-              aria-label="logout"
-              aria-haspopup="true"
-              onClick={() => {
-                localStorage.setItem("token", null);
-                dispatch(logout());
-              }}
-              color="inherit"
-            >
-              <ExitToApp />
-            </IconButton>
+            <Tooltip title={tipTitle("Profile")} placement="bottom" arrow>
+              <IconButton
+                aria-label="account of current user"
+                aria-haspopup="true"
+                onClick={() => goto(routes.PROFILE)}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={tipTitle("Logout")} placement="bottom" arrow>
+              <IconButton
+                edge="end"
+                aria-label="logout"
+                aria-haspopup="true"
+                onClick={() => {
+                  localStorage.setItem("token", null);
+                  dispatch(logout());
+                }}
+                color="inherit"
+              >
+                <ExitToApp />
+              </IconButton>
+            </Tooltip>
           </div>
         </Toolbar>
       </AppBar>
@@ -279,42 +302,64 @@ export default function SideDrawer(props) {
         }}
       >
         <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
-          </IconButton>
+          <Tooltip title={tipTitle("Close")} placement="left" arrow>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
+            </IconButton>
+          </Tooltip>
         </div>
         <Divider />
         <List>
           {topList.map((value, index) => (
-            <ListItem
-              button
-              key={value.id}
-              onClick={() => {
-                setTopListSelected(value.id);
-                goto(value.url);
-              }}
-              selected={topListSelected === value.id ? true : false}
-            >
-              <ListItemIcon>{value.icon}</ListItemIcon>
-              <ListItemText primary={value.title} />
-            </ListItem>
+            <Tooltip title={tipTitle(value.title)} placement="right" arrow>
+              <ListItem
+                button
+                key={value.id}
+                onClick={() => {
+                  goto(value.url);
+                  setCurrentRoute(window.location.hash.split("#")[1]);
+                }}
+                selected={currentRoute === value.url ? true : false}
+              >
+                <ListItemIcon
+                  className={
+                    currentRoute === value.url
+                      ? classes.selected
+                      : classes.unselected
+                  }
+                >
+                  {value.icon}
+                </ListItemIcon>
+                <ListItemText primary={value.title} />
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
         <Divider />
         <List>
           {bottomList.map((value, index) => (
-            <ListItem
-              button
-              key={value.id}
-              onClick={() => {
-                setTopListSelected(value.id);
-                goto(value.url);
-              }}
-              selected={history.location.pathname === value.url ? true : false}
-            >
-              <ListItemIcon>{value.icon}</ListItemIcon>
-              <ListItemText primary={value.title} />
-            </ListItem>
+            <Tooltip title={tipTitle(value.title)} placement="right" arrow>
+              <ListItem
+                button
+                key={value.id}
+                onClick={() => {
+                  goto(value.url);
+                  setCurrentRoute(window.location.hash.split("#")[1]);
+                }}
+                selected={currentRoute === value.url ? true : false}
+              >
+                <ListItemIcon
+                  className={
+                    currentRoute === value.url
+                      ? classes.selected
+                      : classes.unselected
+                  }
+                >
+                  {value.icon}
+                </ListItemIcon>
+                <ListItemText primary={value.title} />
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
       </Drawer>
