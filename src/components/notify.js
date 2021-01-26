@@ -15,6 +15,9 @@ import { Cancel, CheckCircle, Help } from "@material-ui/icons";
 import { httpReq } from "./httpRequest";
 import config from "../components/config.json";
 
+import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
+
 const useStyles = makeStyles((theme) => ({
   success: {
     color: theme.palette.success.main,
@@ -266,4 +269,24 @@ export const NOTIFY = (msg, callback) => {
   } else {
     callback(msg);
   }
+};
+
+export const tipTitle = (title) => {
+  return (
+    <React.Fragment>
+      <div
+        style={{
+          fontSize: 20,
+          marginLeft: 5,
+          marginTop: 10,
+          marginBottom: 10,
+          marginRight: 5,
+        }}
+      >
+        <Info useStyles={useApexInfoStyles}>
+          <InfoTitle style={{ color: "#fff" }}>{title}</InfoTitle>
+        </Info>
+      </div>
+    </React.Fragment>
+  );
 };
