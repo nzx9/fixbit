@@ -257,7 +257,7 @@ const AddNewCard = ({ classes, handleOpenAddMemberAlert }) => {
 };
 
 const ViewTeam = (props) => {
-  const classes = useStyles({ color: "#fff" });
+  const classes = useStyles({ color: "auto" });
   const token = useSelector(getToken);
   const uId = useSelector(getUId);
   const [error, setError] = React.useState(false);
