@@ -13,7 +13,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Badge,
+  // Badge,
   Menu,
   MenuItem,
   Tooltip,
@@ -40,6 +40,8 @@ import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
 import { tipTitle } from "../components/notify";
+
+import favicon from "../images/favicon-32x32.png";
 const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
@@ -66,9 +68,9 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   menuButton: {
-    marginRight: 30,
-    [theme.breakpoints.down("sm")]: {
-      marginRight: 0,
+    marginRight: 0,
+    [theme.breakpoints.up("sm")]: {
+      display: "none",
     },
   },
   hide: {
@@ -130,6 +132,14 @@ const useStyles = makeStyles((theme) => ({
   },
   selected: { color: theme.palette.primary.main },
   unselected: { color: "auto" },
+  logo: {
+    width: "200px",
+    position: "relative",
+    left: -10,
+    [theme.breakpoints.down("sm")]: {
+      left: 0,
+    },
+  },
 }));
 
 export default function SideDrawer(props) {
@@ -235,12 +245,21 @@ export default function SideDrawer(props) {
               <MenuTwoTone />
             </IconButton>
           </Tooltip>
-          <Link to={routes.HOME} className={classes.title}>
-            <Typography variant="h6" noWrap style={{ fontWeight: 700 }}>
-              Fixbit
-              <BubbleChart />
-            </Typography>
-          </Link>
+          <div className={classes.logo}>
+            <Link to={routes.HOME} className={classes.title}>
+              <img
+                src={favicon}
+                style={{
+                  float: "left",
+                  paddingRight: 5,
+                }}
+              />
+              <Typography variant="h6" noWrap style={{ fontWeight: 700 }}>
+                Fixbit
+                <BubbleChart />
+              </Typography>
+            </Link>
+          </div>
           <div className={classes.grow} />
           {/* <IconButton title="notifications" color="inherit">
             <Badge badgeContent={0} color="secondary">
