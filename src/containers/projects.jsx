@@ -89,7 +89,7 @@ const Projects = () => {
           NOTIFY(r.msg, (msg) => {
             if (msg === null || msg === undefined) msg = r.message;
             enqueueSnackbar(msg, {
-              variant: r.type,
+              variant: r.type === "success" ? "info" : r.type,
               anchorOrigin: settings.snackbar.anchorOrigin,
             });
             if (res.status === 200 && r.success === true)
@@ -157,8 +157,8 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    fetchTeamsInfo();
     fetchDataAndSet();
+    fetchTeamsInfo();
   }, []);
 
   if (error) {
