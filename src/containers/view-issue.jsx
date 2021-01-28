@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { httpReq, getSync } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
+import { getUId } from "../reducers/userDataTracker";
 import { NOTIFY } from "../components/notify";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
@@ -21,6 +22,7 @@ import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
 import { Info, InfoTitle, InfoSubtitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import { Remarkable } from "remarkable";
+import { linkify } from "remarkable/linkify";
 import hljs from "highlight.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
 const ViewIssue = (props) => {
   const classes = useStyles();
   const token = useSelector(getToken);
+  const uid = useSelector(getUId);
   const { enqueueSnackbar } = useSnackbar();
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [issueData, setIssueData] = React.useState([]);
@@ -97,7 +100,7 @@ const ViewIssue = (props) => {
 
       return ""; // use external default escaping
     },
-  });
+  }).use(linkify);
 
   const bullet = <span className={classes.bullet}>•</span>;
 
@@ -110,17 +113,30 @@ const ViewIssue = (props) => {
       `${config.URL}/api/users/user/${issueData.creator_id}`,
       token
     );
-    if (creator?.data !== undefined) setCreatorName(creator?.data?.username);
-
-    if (issueData.assign_to !== null) {
-      const assignee = await getSync(
-        `${config.URL}/api/users/user/${issueData.assign_to}`,
-        token
+    if (creator?.data !== undefined)
+      setCreatorName(
+        creator?.data?.username + (issueData.creator_id === uid ? " (Me)" : "")
       );
-      if (assignee?.data !== undefined)
-        setAssigneeName(assignee?.data?.username);
+
+    if (
+      issueData.assign_to === issueData.creator_id &&
+      creator?.data !== undefined
+    ) {
+      setAssigneeName(creator?.data?.username + " (Me)");
     } else {
-      setAssigneeName("None");
+      if (issueData.assign_to !== null) {
+        const assignee = await getSync(
+          `${config.URL}/api/users/user/${issueData.assign_to}`,
+          token
+        );
+        if (assignee?.data !== undefined)
+          setAssigneeName(
+            assignee?.data?.username +
+              (issueData.assign_to === uid ? " (Me)" : "")
+          );
+      } else {
+        setAssigneeName("None");
+      }
     }
   })();
 
