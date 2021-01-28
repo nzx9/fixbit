@@ -20,15 +20,12 @@ import config from "../components/config.json";
 import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
 import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
-import {
-  Info,
-  InfoTitle,
-  InfoSubtitle,
-  InfoCaption,
-} from "@mui-treasury/components/info";
+import { Info, InfoTitle, InfoSubtitle } from "@mui-treasury/components/info";
 import { FiberManualRecord } from "@material-ui/icons";
 import ChatMsg from "@mui-treasury/components/chatMsg/ChatMsg";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
+import hljs from "highlight.js";
+import { Remarkable } from "remarkable";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -39,7 +36,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing(2),
+    paddingTop: theme.spacing(0),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
     width: "100%",
     color: theme.palette.text.secondary,
     marginTop: theme.spacing(1),
@@ -69,7 +69,27 @@ const ViewIssue = (props) => {
   const [error, setError] = React.useState(null);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
+  var md = new Remarkable({
+    highlight: function (str, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(lang, str).value;
+        } catch (err) {}
+      }
+
+      try {
+        return hljs.highlightAuto(str).value;
+      } catch (err) {}
+
+      return ""; // use external default escaping
+    },
+  });
+
   const bullet = <span className={classes.bullet}>•</span>;
+
+  const getRawDescription = () => {
+    return { __html: md.render(issueData.description) };
+  };
 
   const fetchDataAndSet = () => {
     setOpenBackdrop(true);
@@ -120,7 +140,7 @@ const ViewIssue = (props) => {
           <Grid container spacing={1}>
             <Grid item xs={0} md={0} lg={3}>
               <Hidden mdDown>
-                <Paper>
+                <Paper className={classes.paper}>
                   <Info useStyles={useApexInfoStyles}>
                     <Grid container style={{ paddingLeft: 5 }}>
                       <InfoTitle style={{ width: "100%" }}>
@@ -134,7 +154,7 @@ const ViewIssue = (props) => {
                           <InfoSubtitle>ISSUE ID</InfoSubtitle>
                         </Grid>
                         <Grid item xs={9}>
-                          :&nbsp; #{issueData.id}
+                          :&nbsp;#{issueData.id}
                         </Grid>
                       </Grid>
                       <Grid container style={{ paddingLeft: 5 }}>
@@ -192,7 +212,9 @@ const ViewIssue = (props) => {
                         </Grid>
                         <Grid item xs={9}>
                           :&nbsp;
-                          {issueData.assign_to}
+                          {issueData.assign_to === null
+                            ? "None"
+                            : issueData.assign_to}
                         </Grid>
                       </Grid>
                     </Grid>
@@ -233,10 +255,10 @@ const ViewIssue = (props) => {
               </Hidden>
             </Grid>
             <Grid item xs={12} md={12} lg={9}>
-              <Paper>
-                <div>
-                  {/* <ChatMsg messages={[issueData.description]} /> */}
-                </div>
+              <Paper className={classes.paper}>
+                <Grid container>
+                  <div dangerouslySetInnerHTML={getRawDescription()}></div>
+                </Grid>
               </Paper>
             </Grid>
           </Grid>
