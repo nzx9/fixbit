@@ -264,29 +264,25 @@ export function NewMemberAddAlert({
 }
 
 export const NOTIFY = (msg, callback) => {
-  if (typeof msg === "object") {
+  if (typeof msg === "object")
     Object.keys(msg).forEach((val) => callback(msg[val]));
-  } else {
-    callback(msg);
-  }
+  else callback(msg);
 };
 
 export const tipTitle = (title) => {
   return (
-    <React.Fragment>
-      <div
-        style={{
-          fontSize: 20,
-          marginLeft: 5,
-          marginTop: 10,
-          marginBottom: 10,
-          marginRight: 5,
-        }}
-      >
-        <Info useStyles={useApexInfoStyles}>
-          <InfoTitle style={{ color: "#fff" }}>{title}</InfoTitle>
-        </Info>
-      </div>
-    </React.Fragment>
+    <div
+      style={{
+        fontSize: 20,
+        marginLeft: 5,
+        marginTop: 10,
+        marginBottom: 10,
+        marginRight: 5,
+      }}
+    >
+      <Info useStyles={useApexInfoStyles}>
+        <InfoTitle style={{ color: "#fff" }}>{title}</InfoTitle>
+      </Info>
+    </div>
   );
 };
