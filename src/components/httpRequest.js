@@ -33,3 +33,20 @@ export const httpReq = (url, method, data = null, token = null) => {
       });
   });
 };
+
+export const getSync = async (url, token = null) => {
+  try {
+    const response = await (
+      await fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    ).json();
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
