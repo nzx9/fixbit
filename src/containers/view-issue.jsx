@@ -5,15 +5,13 @@ import {
   CircularProgress,
   Container,
   Paper,
-  Badge,
   Grid,
-  TextField,
   Divider,
   Hidden,
   Chip,
   makeStyles,
 } from "@material-ui/core";
-import { httpReq } from "../components/httpRequest";
+import { httpReq, getSync } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
 import { NOTIFY } from "../components/notify";
 import config from "../components/config.json";
@@ -21,8 +19,6 @@ import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
 import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
 import { Info, InfoTitle, InfoSubtitle } from "@mui-treasury/components/info";
-import { FiberManualRecord } from "@material-ui/icons";
-import ChatMsg from "@mui-treasury/components/chatMsg/ChatMsg";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import { Remarkable } from "remarkable";
 import hljs from "highlight.js";
@@ -68,6 +64,8 @@ const ViewIssue = (props) => {
   const [issueData, setIssueData] = React.useState([]);
   const [error, setError] = React.useState(null);
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [creatorName, setCreatorName] = React.useState("...");
+  const [assigneeName, setAssigneeName] = React.useState("...");
 
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
@@ -106,6 +104,25 @@ const ViewIssue = (props) => {
   const getRawDescription = () => {
     return { __html: md.render(issueData.description) };
   };
+
+  (async function () {
+    const creator = await getSync(
+      `${config.URL}/api/users/user/${issueData.creator_id}`,
+      token
+    );
+    if (creator?.data !== undefined) setCreatorName(creator?.data?.username);
+
+    if (issueData.assign_to !== null) {
+      const assignee = await getSync(
+        `${config.URL}/api/users/user/${issueData.assign_to}`,
+        token
+      );
+      if (assignee?.data !== undefined)
+        setAssigneeName(assignee?.data?.username);
+    } else {
+      setAssigneeName("None");
+    }
+  })();
 
   const fetchDataAndSet = () => {
     setOpenBackdrop(true);
@@ -219,7 +236,7 @@ const ViewIssue = (props) => {
                         </Grid>
                         <Grid item xs={9}>
                           :&nbsp;
-                          {issueData.creator_id}
+                          {creatorName}
                         </Grid>
                       </Grid>
                       <Grid container container style={{ paddingLeft: 5 }}>
@@ -228,9 +245,7 @@ const ViewIssue = (props) => {
                         </Grid>
                         <Grid item xs={9}>
                           :&nbsp;
-                          {issueData.assign_to === null
-                            ? "None"
-                            : issueData.assign_to}
+                          {assigneeName}
                         </Grid>
                       </Grid>
                     </Grid>
