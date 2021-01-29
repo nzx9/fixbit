@@ -84,6 +84,12 @@ const useStyles = makeStyles((theme) => ({
       transform: "scale(1.1)",
     },
   },
+  infoPrimary: {
+    color: theme.palette.text.primary,
+  },
+  infoSecondary: {
+    color: theme.palette.text.secondary,
+  },
 }));
 
 const ViewProject = (props) => {
@@ -321,6 +327,7 @@ const ViewProject = (props) => {
       .then((res) => {
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
+            if (msg === null || msg === undefined) msg = r.message;
             _setOpenBackdrop(false);
             enqueueSnackbar(msg, {
               variant: r.type,
@@ -465,7 +472,7 @@ const ViewProject = (props) => {
                 <Grid item xs={12}>
                   <Grid container justify="space-between">
                     <Grid item xs={8}>
-                      <Typography variant="h5">
+                      <Typography variant="h5" className={classes.infoPrimary}>
                         {projectInfo.project.name}
                       </Typography>
                     </Grid>
@@ -501,7 +508,9 @@ const ViewProject = (props) => {
                         </AvatarGroup>
                       ) : (
                         <Info useStyles={useApexInfoStyles}>
-                          <InfoSubtitle>No team assigned</InfoSubtitle>
+                          <InfoSubtitle className={classes.infoSecondary}>
+                            No team assigned
+                          </InfoSubtitle>
                         </Info>
                       )}
                     </Grid>

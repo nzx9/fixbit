@@ -12,6 +12,8 @@ import {
   FormControl,
   Select,
   IconButton,
+  FormHelperText,
+  Link,
   makeStyles,
   withStyles,
 } from "@material-ui/core";
@@ -246,15 +248,31 @@ function IssueCreateDialog(props) {
             </Grid>
             <Grid container className={classes.gridContainer}>
               <Grid item xs={12}>
-                <TextField
-                  id="description-input"
-                  label="Description"
-                  multiline
+                <FormControl
                   variant="outlined"
                   fullWidth
-                  onChange={handleDescriptionChange}
-                  required
-                />
+                  style={{ marginTop: 5 }}
+                >
+                  <TextField
+                    id="description-input"
+                    label="Description"
+                    multiline
+                    variant="outlined"
+                    fullWidth
+                    onChange={handleDescriptionChange}
+                    required
+                    aria-describedby="description-input-helper-text"
+                  />
+                  <FormHelperText id="description-input-helper-text">
+                    <Link
+                      href="https://guides.github.com/features/mastering-markdown/"
+                      target="__blank"
+                    >
+                      Markdown
+                    </Link>{" "}
+                    Supported
+                  </FormHelperText>
+                </FormControl>
               </Grid>
             </Grid>
             <Grid container className={classes.gridContainer} spacing={1}>

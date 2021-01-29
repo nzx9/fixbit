@@ -269,14 +269,14 @@ export const NOTIFY = (msg, callback) => {
   else callback(msg);
 };
 
-export const tipTitle = (title) => {
+export const tipTitle = (title, mg = 10) => {
   return (
     <div
       style={{
         fontSize: 20,
         marginLeft: 5,
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: mg,
+        marginBottom: mg,
         marginRight: 5,
       }}
     >

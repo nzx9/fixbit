@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Tooltip,
   makeStyles,
 } from "@material-ui/core";
 import { Column, Row, Item } from "@mui-treasury/components/flex";
@@ -24,7 +25,11 @@ import {
 import { useSelector } from "react-redux";
 import { getUId } from "../reducers/userDataTracker";
 import routes from "../routes/routes.json";
-import { NOTIFY, AlertDialogConfirmation } from "../components/notify";
+import {
+  NOTIFY,
+  AlertDialogConfirmation,
+  tipTitle,
+} from "../components/notify";
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
@@ -90,6 +95,14 @@ const useStyles = makeStyles((theme) => ({
   privateProject: {
     color: theme.palette.error.main,
   },
+  info: {
+    color: theme.palette.text.secondary,
+    ["& h6"]: { color: theme.palette.text.primary },
+    ["& p"]: { color: theme.palette.text.secondary },
+  },
+  box: {
+    color: theme.palette.text.secondary,
+  },
 }));
 
 const useSliderStyles = makeStyles(() => ({
@@ -146,20 +159,21 @@ const ProjectCard = (props) => {
       onClose={handleMenuClose}
     >
       {props.data.project.team_id !== null ? (
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            goto(routes.TEAMS_VIEW_X + props.data.project.team_id);
-          }}
-        >
-          <Group />
-          &ensp;Team
-        </MenuItem>
+        <Tooltip title={tipTitle("Team", 2)} placement="right" arrow>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              goto(routes.TEAMS_VIEW_X + props.data.project.team_id);
+            }}
+          >
+            <Group />
+          </MenuItem>
+        </Tooltip>
       ) : (
         <></>
       )}
       {Number(props.data.project.admin_id) === Number(uid) ? (
-        <>
+        <Tooltip title={tipTitle("Delete", 2)} placement="right" arrow>
           <MenuItem
             className={classes.deleteItem}
             onClick={() => {
@@ -167,9 +181,9 @@ const ProjectCard = (props) => {
               handleMenuClose();
             }}
           >
-            <DeleteForever /> &ensp; Delete
+            <DeleteForever />
           </MenuItem>
-        </>
+        </Tooltip>
       ) : (
         <></>
       )}
@@ -217,28 +231,35 @@ const ProjectCard = (props) => {
         <Card className={classes.card}>
           <Row px={1} gap={2}>
             <Column>
-              <Info position={"middle"} useStyles={useApexInfoStyles}>
+              <Info
+                position={"middle"}
+                useStyles={useApexInfoStyles}
+                className={classes.info}
+              >
                 <InfoTitle>
                   {props.data.project.name}
                   <span>
-                    <IconButton
-                      size="small"
-                      onClick={null}
-                      title={
+                    <Tooltip
+                      title={tipTitle(
                         props.data.project.is_public
                           ? "Public Project"
-                          : "Private Project"
-                      }
+                          : "Private Project",
+                        2
+                      )}
+                      placement="bottom-start"
+                      arrow
                     >
-                      <FiberManualRecord
-                        className={
-                          props.data.project.is_public
-                            ? classes.publicProject
-                            : classes.privateProject
-                        }
-                        fontSize="small"
-                      />
-                    </IconButton>
+                      <IconButton size="small" onClick={null}>
+                        <FiberManualRecord
+                          className={
+                            props.data.project.is_public
+                              ? classes.publicProject
+                              : classes.privateProject
+                          }
+                          fontSize="small"
+                        />
+                      </IconButton>
+                    </Tooltip>
                   </span>
                 </InfoTitle>
                 {props.data.project.updated_at !== null &&
@@ -265,16 +286,20 @@ const ProjectCard = (props) => {
             <Column>
               {props.data.project.team_id !== null ||
               props.data.project.admin_id === Number(uid) ? (
-                <IconButton
-                  size="small"
-                  onClick={Boolean(anchorEl) ? handleMenuClose : handleMenuOpen}
-                >
-                  {Boolean(anchorEl) ? (
-                    <ExpandLessRounded fontSize="small" />
-                  ) : (
-                    <ExpandMoreRounded fontSize="small" />
-                  )}
-                </IconButton>
+                <Tooltip title={tipTitle("Expand", 2)} arrow>
+                  <IconButton
+                    size="small"
+                    onClick={
+                      Boolean(anchorEl) ? handleMenuClose : handleMenuOpen
+                    }
+                  >
+                    {Boolean(anchorEl) ? (
+                      <ExpandLessRounded fontSize="small" />
+                    ) : (
+                      <ExpandMoreRounded fontSize="small" />
+                    )}
+                  </IconButton>
+                </Tooltip>
               ) : null}
             </Column>
             {props.data.project.team_id !== null ||
@@ -285,10 +310,10 @@ const ProjectCard = (props) => {
           <Box
             pb={1}
             px={2}
-            color={"grey.600"}
             fontSize={"0.875rem"}
             fontFamily={"Ubuntu"}
             style={{ height: 60, overflowY: "scroll" }}
+            className={classes.box}
           >
             {props.data.project.description}
           </Box>
@@ -305,7 +330,7 @@ const ProjectCard = (props) => {
             </Column>
             <div className={classes.grow} />
             <Column>
-              <Info useStyles={useApexInfoStyles}>
+              <Info useStyles={useApexInfoStyles} className={classes.info}>
                 {props.data.issue.total > 0 ? (
                   <InfoSubtitle>
                     {Math.floor(
@@ -316,7 +341,7 @@ const ProjectCard = (props) => {
                     % Closed
                   </InfoSubtitle>
                 ) : (
-                  <Info useStyles={useApexInfoStyles}>
+                  <Info useStyles={useApexInfoStyles} className={classes.info}>
                     <InfoSubtitle>No issues</InfoSubtitle>
                   </Info>
                 )}
@@ -325,7 +350,7 @@ const ProjectCard = (props) => {
           </Row>
           <Row p={1} gap={2} position={"bottom"}>
             {props.data.team.info !== null ? (
-              <Info useStyles={useApexInfoStyles}>
+              <Info useStyles={useApexInfoStyles} className={classes.info}>
                 <InfoSubtitle>
                   <b>{props.data.team.info.name}</b>
                 </InfoSubtitle>
@@ -337,35 +362,22 @@ const ProjectCard = (props) => {
                 </InfoSubtitle>
               </Info>
             ) : (
-              // <AvatarGroup max={4} style={{ avatar: classes.avatar }}>
-              //   {props.data.team.members.map((value, index) => (
-              //     <Avatar
-              //       style={{ backgroundColor: randomColor() }}
-              //       key={index}
-              //       alt={value.name}
-              //       src={
-              //         value.profile_pic === null ||
-              //         value.profile_pic === undefined
-              //           ? "broken-url.jpg"
-              //           : value.profile_pic
-              //       }
-              //     />
-              //   ))}
-              // </AvatarGroup>
-              <Info useStyles={useApexInfoStyles}>
+              <Info useStyles={useApexInfoStyles} className={classes.info}>
                 <InfoSubtitle>No team assigned</InfoSubtitle>
               </Info>
             )}
             <Item position={"middle-right"}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() =>
-                  goto(routes.PROJECTS_VIEW_X + props.data.project.id)
-                }
-              >
-                View
-              </Button>
+              <Tooltip title={tipTitle("View Project", 2)} arrow>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    goto(routes.PROJECTS_VIEW_X + props.data.project.id)
+                  }
+                >
+                  View
+                </Button>
+              </Tooltip>
             </Item>
           </Row>
         </Card>

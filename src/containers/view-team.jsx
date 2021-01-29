@@ -14,6 +14,7 @@ import {
   CardMedia,
   Backdrop,
   CircularProgress,
+  Tooltip,
   makeStyles,
 } from "@material-ui/core/";
 import { useFourThreeCardMediaStyles } from "@mui-treasury/styles/cardMedia/fourThree";
@@ -26,7 +27,12 @@ import {
   AddCircle,
   Cancel,
 } from "@material-ui/icons";
-import { NOTIFY, AlertDialog, NewMemberAddAlert } from "../components/notify";
+import {
+  NOTIFY,
+  AlertDialog,
+  NewMemberAddAlert,
+  tipTitle,
+} from "../components/notify";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { randomColor } from "../components/random-color-generator";
 import config from "../components/config.json";
@@ -67,6 +73,18 @@ const useStyles = makeStyles((theme) => ({
         .darken(0.2)
         .fade(0.5)}`,
     },
+  },
+  info: {
+    color: theme.palette.text.secondary,
+    ["& h6"]: {
+      color: theme.palette.text.primary,
+    },
+  },
+  title: {
+    color: theme.palette.text.primary,
+  },
+  subtitle: {
+    color: theme.palette.text.secondary,
   },
   content: ({ color }) => {
     return {
@@ -133,51 +151,53 @@ const UserCard = ({
   return (
     <div className={classes.root}>
       <CardActionArea className={classes.actionArea}>
-        <Info useStyles={useApexInfoStyles}>
+        <Info useStyles={useApexInfoStyles} className={classes.info}>
           <Card className={classes.card}>
             <CardMedia classes={mediaStyles} image={image}>
               {showDelete ? (
                 <div style={{ position: "absolute", top: 2, right: 2 }}>
-                  <IconButton
-                    onClick={() => {
-                      openBackdrop();
-                      httpReq(
-                        `${config.URL}/api/teams/${tid}/members/${uid}`,
-                        "DELETE",
-                        null,
-                        token
-                      )
-                        .then((res) => {
-                          res.json().then((r) => {
-                            NOTIFY(r.msg, (msg) => {
-                              closeBackdrop();
-                              if (msg === null || msg === undefined)
-                                msg = r.message;
-                              enqueueSnackbar(msg, {
-                                variant: r.type,
-                                anchorOrigin: settings.snackbar.anchorOrigin,
+                  <Tooltip title={tipTitle("Remove")} arrow>
+                    <IconButton
+                      onClick={() => {
+                        openBackdrop();
+                        httpReq(
+                          `${config.URL}/api/teams/${tid}/members/${uid}`,
+                          "DELETE",
+                          null,
+                          token
+                        )
+                          .then((res) => {
+                            res.json().then((r) => {
+                              NOTIFY(r.msg, (msg) => {
+                                closeBackdrop();
+                                if (msg === null || msg === undefined)
+                                  msg = r.message;
+                                enqueueSnackbar(msg, {
+                                  variant: r.type,
+                                  anchorOrigin: settings.snackbar.anchorOrigin,
+                                });
+                                DEBUG_PRINT(r);
+                                if (res.status === 200 && r.success === true)
+                                  action();
                               });
-                              DEBUG_PRINT(r);
-                              if (res.status === 200 && r.success === true)
-                                action();
+                            });
+                          })
+                          .catch((err) => {
+                            closeBackdrop();
+                            enqueueSnackbar(err?.message, {
+                              variant: "error",
+                              anchorOrigin: settings.snackbar.anchorOrigin,
                             });
                           });
-                        })
-                        .catch((err) => {
-                          closeBackdrop();
-                          enqueueSnackbar(err?.message, {
-                            variant: "error",
-                            anchorOrigin: settings.snackbar.anchorOrigin,
-                          });
-                        });
-                    }}
-                  >
-                    <Cancel
-                      fontSize="small"
-                      className={classes.closeBtn}
-                      style={{ color: "red" }}
-                    />
-                  </IconButton>
+                      }}
+                    >
+                      <Cancel
+                        fontSize="small"
+                        className={classes.closeBtn}
+                        style={{ color: "red" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </div>
               ) : null}
             </CardMedia>
@@ -188,31 +208,37 @@ const UserCard = ({
               </InfoSubtitle>
               <Grid container justify="space-between" style={{ marginTop: 30 }}>
                 <Grid item>
-                  <Link
-                    href={`https://twitter.com/${twitter}`}
-                    target="_blank"
-                    hidden={twitter === null ? true : false}
-                  >
-                    <Twitter className={classes.twitter} />
-                  </Link>
+                  <Tooltip title={tipTitle("Twitter")} arrow>
+                    <Link
+                      href={`https://twitter.com/${twitter}`}
+                      target="_blank"
+                      hidden={twitter === null ? true : false}
+                    >
+                      <Twitter className={classes.twitter} />
+                    </Link>
+                  </Tooltip>
                 </Grid>
                 <Grid item>
-                  <Link
-                    href={`https://linkedin.com/in/${linkedIn}`}
-                    target="_blank"
-                    hidden={linkedIn === null ? true : false}
-                  >
-                    <LinkedIn className={classes.linkedIn} />
-                  </Link>
+                  <Tooltip title={tipTitle("LinkedIn")} arrow>
+                    <Link
+                      href={`https://linkedin.com/in/${linkedIn}`}
+                      target="_blank"
+                      hidden={linkedIn === null ? true : false}
+                    >
+                      <LinkedIn className={classes.linkedIn} />
+                    </Link>
+                  </Tooltip>
                 </Grid>
                 <Grid item>
-                  <Link
-                    href={`https://github.com/${github}`}
-                    target="_blank"
-                    hidden={github === null ? true : false}
-                  >
-                    <GitHub className={classes.github} />
-                  </Link>
+                  <Tooltip title={tipTitle("GitHub")} arrow>
+                    <Link
+                      href={`https://github.com/${github}`}
+                      target="_blank"
+                      hidden={github === null ? true : false}
+                    >
+                      <GitHub className={classes.github} />
+                    </Link>
+                  </Tooltip>
                 </Grid>
               </Grid>
             </CardContent>
@@ -240,14 +266,19 @@ const AddNewCard = ({ classes, handleOpenAddMemberAlert }) => {
                 transform: "translate(-50%, -50%)",
               }}
             >
-              <IconButton
-                className={classes.addNewBtn}
-                title="Add New Member"
-                size="medium"
-                onClick={handleOpenAddMemberAlert}
+              <Tooltip
+                title={tipTitle("Add New Member")}
+                placement="bottom"
+                arrow
               >
-                <AddCircle fontSize="large" />
-              </IconButton>
+                <IconButton
+                  className={classes.addNewBtn}
+                  size="medium"
+                  onClick={handleOpenAddMemberAlert}
+                >
+                  <AddCircle fontSize="large" />
+                </IconButton>
+              </Tooltip>
             </Box>
           </CardContent>
         </Card>

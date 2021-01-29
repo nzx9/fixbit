@@ -90,9 +90,9 @@ const useStyles = makeStyles((theme) => ({
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
+    backgroundColor: fade(theme.palette.text.secondary, 0.15),
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+      backgroundColor: fade(theme.palette.text.secondary, 0.25),
     },
     marginLeft: 0,
     width: "100%",
@@ -118,8 +118,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    border: "1px solid black",
-    borderRadius: 10,
+    borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.up("sm")]: {
       width: "12ch",
       "&:focus": {
@@ -141,6 +140,12 @@ const useStyles = makeStyles((theme) => ({
   },
   viewBtn: {
     color: theme.palette.info.main,
+  },
+  infoPrimary: {
+    color: theme.palette.text.primary,
+  },
+  infoSecondary: {
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -289,21 +294,21 @@ const IssueTable = (props) => {
     if (projectInfo.team.members === null) {
       if (assign_to === uid && projectInfo.admin.id === uid)
         return (
-          <InfoSubtitle>
+          <InfoSubtitle className={classes.infoSecondary}>
             {projectInfo.admin.username}
             <b>&nbsp;(Me)</b>
           </InfoSubtitle>
         );
       else if (assign_to === projectInfo.admin.id)
         return (
-          <InfoSubtitle>
+          <InfoSubtitle className={classes.infoSecondary}>
             {projectInfo.admin.username}
             <b>&nbsp;(Admin)</b>
           </InfoSubtitle>
         );
       else
         return (
-          <InfoSubtitle>
+          <InfoSubtitle className={classes.infoSecondary}>
             <em>Unknown</em>
           </InfoSubtitle>
         );
@@ -312,7 +317,7 @@ const IssueTable = (props) => {
         if (value.uid === assign_to) {
           if (Number(uid) === value.uid) {
             name = (
-              <InfoSubtitle>
+              <InfoSubtitle className={classes.infoSecondary}>
                 {value.name}
                 <b>&nbsp;(Me)</b>
               </InfoSubtitle>
@@ -325,7 +330,7 @@ const IssueTable = (props) => {
         }
       });
       return name === null ? (
-        <InfoSubtitle>
+        <InfoSubtitle className={classes.infoSecondary}>
           <em>
             <b>Unknown</b>
           </em>
@@ -404,7 +409,7 @@ const IssueTable = (props) => {
                       scope="row"
                       style={{ width: "50" }}
                     >
-                      <InfoSubtitle>
+                      <InfoSubtitle className={classes.infoSecondary}>
                         <b>{row.id}</b>
                       </InfoSubtitle>
                     </StyledTableCell>
@@ -421,11 +426,13 @@ const IssueTable = (props) => {
                           );
                         }}
                       >
-                        <InfoTitle>{row.title}</InfoTitle>
+                        <InfoTitle className={classes.infoSecondary}>
+                          {row.title}
+                        </InfoTitle>
                       </Link>
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 100 }}>
-                      <InfoSubtitle>
+                      <InfoSubtitle className={classes.infoSecondary}>
                         {Number(row.type) === 0
                           ? "NONE"
                           : Number(row.type) === 1
@@ -477,7 +484,7 @@ const IssueTable = (props) => {
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {row.assign_to === null ? (
-                        <InfoSubtitle>
+                        <InfoSubtitle className={classes.infoSecondary}>
                           <em>
                             <b>None</b>
                           </em>

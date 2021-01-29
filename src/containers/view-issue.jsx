@@ -33,15 +33,44 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  paper: {
+  paperInfo: {
+    marginTop: theme.spacing(1),
     paddingTop: theme.spacing(0),
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     paddingBottom: theme.spacing(1),
+    display: "flex",
+    width: "100%",
+  },
+  paperDesc: {
+    marginTop: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    display: "flex",
     width: "100%",
     color: theme.palette.text.secondary,
-    marginTop: theme.spacing(1),
-    display: "flex",
+    ["& img"]: {
+      maxWidth: "100%",
+    },
+    ["& table"]: {
+      // border: `1px solid ${theme.palette.text.primary}`,
+      // borderRadius: 2,
+    },
+    ["& th"]: {
+      border: `1px solid ${theme.palette.text.primary}`,
+      backgroundColor: theme.palette.text.primary,
+      color: theme.palette.background.default,
+      padding: 4,
+    },
+    ["& td"]: {
+      border: `1px solid ${theme.palette.text.primary}`,
+      padding: 4,
+    },
+    ["& strong"]: {
+      color: theme.palette.text.primary,
+    },
   },
   bullet: {
     display: "inline-block",
@@ -56,6 +85,37 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.grey[200],
     backgroundColor: theme.palette.error.main,
   },
+  tag_critical: {
+    color: theme.palette.error.dark,
+    borderColor: theme.palette.error.dark,
+  },
+  tag_high: {
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+  },
+  tag_normal: {
+    color: theme.palette.warning.main,
+    borderColor: theme.palette.warning.main,
+  },
+  tag_low: {
+    color: theme.palette.success.main,
+    borderColor: theme.palette.success.main,
+  },
+  tag_no: {
+    color: theme.palette.text.primary,
+    borderColor: theme.palette.text.primary,
+  },
+  type: {
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.default,
+  },
+  info: {
+    color: theme.palette.text.secondary,
+    ["& h3"]: {
+      color: theme.palette.text.primary,
+    },
+    ["& p"]: { color: theme.palette.text.primary },
+  },
 }));
 
 const ViewIssue = (props) => {
@@ -69,14 +129,13 @@ const ViewIssue = (props) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
-
+  issueData.type = 4;
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
     xhtmlOut: false, // Use '/' to close single tags (<br />)
-    breaks: false, // Convert '\n' in paragraphs into <br>
+    breaks: true, // Convert '\n' in paragraphs into <br>
     langPrefix: "language-", // CSS language prefix for fenced blocks
-    linkify: true, // autoconvert URL-like texts to links
-    linkTarget: "", // set target to open link in
+    linkTarget: "__blank", // set target to open link in
 
     // Enable some language-neutral replacements + quotes beautification
     typographer: false,
@@ -108,38 +167,6 @@ const ViewIssue = (props) => {
     return { __html: md.render(issueData.description) };
   };
 
-  (async function () {
-    const creator = await getSync(
-      `${config.URL}/api/users/user/${issueData.creator_id}`,
-      token
-    );
-    if (creator?.data !== undefined)
-      setCreatorName(
-        creator?.data?.username + (issueData.creator_id === uid ? " (Me)" : "")
-      );
-
-    if (
-      issueData.assign_to === issueData.creator_id &&
-      creator?.data !== undefined
-    ) {
-      setAssigneeName(creator?.data?.username + " (Me)");
-    } else {
-      if (issueData.assign_to !== null) {
-        const assignee = await getSync(
-          `${config.URL}/api/users/user/${issueData.assign_to}`,
-          token
-        );
-        if (assignee?.data !== undefined)
-          setAssigneeName(
-            assignee?.data?.username +
-              (issueData.assign_to === uid ? " (Me)" : "")
-          );
-      } else {
-        setAssigneeName("None");
-      }
-    }
-  })();
-
   const fetchDataAndSet = () => {
     setOpenBackdrop(true);
     httpReq(
@@ -151,6 +178,7 @@ const ViewIssue = (props) => {
       .then((res) => {
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
+            if (msg === null || msg === undefined) msg = r.message;
             DEBUG_PRINT(r);
             setOpenBackdrop(false);
             enqueueSnackbar(msg, {
@@ -171,8 +199,42 @@ const ViewIssue = (props) => {
   };
 
   useEffect(() => {
-    fetchDataAndSet();
-  }, []);
+    if (issueData.length === 0) fetchDataAndSet();
+    (async function () {
+      if (issueData.creator_id !== undefined) {
+        const creator = await getSync(
+          `${config.URL}/api/users/user/${issueData.creator_id}`,
+          token
+        );
+        if (creator?.data !== undefined)
+          setCreatorName(
+            creator?.data?.username +
+              (issueData.creator_id === uid ? " (Me)" : "")
+          );
+
+        if (
+          issueData.assign_to === issueData.creator_id &&
+          creator?.data !== undefined
+        ) {
+          setAssigneeName(creator?.data?.username + " (Me)");
+        } else {
+          if (issueData.assign_to !== null) {
+            const assignee = await getSync(
+              `${config.URL}/api/users/user/${issueData.assign_to}`,
+              token
+            );
+            if (assignee?.data !== undefined)
+              setAssigneeName(
+                assignee?.data?.username +
+                  (issueData.assign_to === uid ? " (Me)" : "")
+              );
+          } else {
+            setAssigneeName("None");
+          }
+        }
+      }
+    })();
+  }, [issueData]);
   if (error) return <div>Error: {error}</div>;
   else if (!isLoaded)
     return (
@@ -189,8 +251,8 @@ const ViewIssue = (props) => {
           <Grid container spacing={1}>
             <Grid item xs={0} md={0} lg={3}>
               <Hidden mdDown>
-                <Paper className={classes.paper}>
-                  <Info useStyles={useApexInfoStyles}>
+                <Paper className={classes.paperInfo}>
+                  <Info useStyles={useApexInfoStyles} className={classes.info}>
                     <Grid container style={{ paddingLeft: 5 }}>
                       <InfoTitle style={{ width: "100%" }}>
                         <h3 style={{ width: "98%" }}>
@@ -215,7 +277,7 @@ const ViewIssue = (props) => {
                           {issueData.title}
                         </Grid>
                       </Grid>
-                      <Grid container style={{ paddingLeft: 5 }}>
+                      <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
                         <Grid item xs={3}>
                           <InfoSubtitle>STATUS</InfoSubtitle>
                         </Grid>
@@ -236,6 +298,76 @@ const ViewIssue = (props) => {
                               className={classes.closed}
                             />
                           )}
+                        </Grid>
+                      </Grid>
+                      <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
+                        <Grid item xs={3}>
+                          <InfoSubtitle>PRIORITY</InfoSubtitle>
+                        </Grid>
+                        <Grid item xs={9}>
+                          :&nbsp;
+                          {issueData.priority === 0 ? (
+                            <Chip
+                              size="small"
+                              label="none"
+                              variant="outlined"
+                              className={classes.tag_none}
+                            />
+                          ) : issueData.priority === 1 ? (
+                            <Chip
+                              size="small"
+                              label="low"
+                              variant="outlined"
+                              className={classes.tag_low}
+                            />
+                          ) : issueData.priority === 2 ? (
+                            <Chip
+                              size="small"
+                              label="normal"
+                              variant="outlined"
+                              className={classes.tag_normal}
+                            />
+                          ) : issueData.priority === 3 ? (
+                            <Chip
+                              size="small"
+                              label="high"
+                              variant="outlined"
+                              className={classes.tag_high}
+                            />
+                          ) : (
+                            <Chip
+                              size="small"
+                              label="critical"
+                              variant="outlined"
+                              className={classes.tag_critical}
+                            />
+                          )}
+                        </Grid>
+                      </Grid>
+                      <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
+                        <Grid item xs={3}>
+                          <InfoSubtitle>TYPE</InfoSubtitle>
+                        </Grid>
+                        <Grid item xs={9}>
+                          :&nbsp;
+                          {
+                            <Chip
+                              size="small"
+                              label={
+                                issueData.type === 0
+                                  ? "NONE"
+                                  : issueData.type === 1
+                                  ? "BUG"
+                                  : issueData.type === 2
+                                  ? "SECURITY"
+                                  : issueData.type === 3
+                                  ? "TO TEST"
+                                  : "OTHER"
+                              }
+                              variant="default"
+                              className={classes.type}
+                            />
+                          }
                         </Grid>
                       </Grid>
                     </Grid>
@@ -302,7 +434,7 @@ const ViewIssue = (props) => {
               </Hidden>
             </Grid>
             <Grid item xs={12} md={12} lg={9}>
-              <Paper className={classes.paper}>
+              <Paper className={classes.paperDesc}>
                 <Grid container>
                   <div dangerouslySetInnerHTML={getRawDescription()}></div>
                 </Grid>

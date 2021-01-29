@@ -77,6 +77,14 @@ const useStyles = makeStyles((theme) => ({
   deleteBtn: {
     color: theme.palette.error.main,
   },
+  info: {
+    color: theme.palette.text.secondary,
+    ["& h6"]: { color: theme.palette.text.primary },
+    ["& p"]: { color: theme.palette.text.secondary },
+  },
+  box: {
+    color: theme.palette.text.secondary,
+  },
 }));
 
 const TeamCard = (props) => {
@@ -152,7 +160,11 @@ const TeamCard = (props) => {
               variant={"rounded"}
               src={props.data.thumbnail}
             />
-            <Info position={"middle"} useStyles={useApexInfoStyles}>
+            <Info
+              position={"middle"}
+              useStyles={useApexInfoStyles}
+              className={classes.info}
+            >
               <Row>
                 <InfoTitle>{props.data.info.name}</InfoTitle>
               </Row>
@@ -176,10 +188,10 @@ const TeamCard = (props) => {
           <Box
             pb={0}
             px={2}
-            color={"grey.600"}
             fontSize={"0.875rem"}
             fontFamily={"Ubuntu"}
             style={{ height: 40, overflowY: "scroll" }}
+            className={classes.box}
           >
             {props.data.info.description}
           </Box>

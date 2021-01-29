@@ -84,13 +84,18 @@ const useStyles = makeStyles((theme) => ({
   },
   settingsBtn: {
     backgroundColor: theme.palette.error.main,
-    color: theme.palette.tonalOffset.light,
-    padding: 0,
-    margin: 0,
-    width: 5,
+    ["& hover"]: {
+      backgroundColor: theme.palette.error.dark,
+    },
   },
   descBtn: {
     backgroundColor: theme.palette.info.main,
+    ["& hover"]: {
+      backgroundColor: theme.palette.info.dark,
+    },
+  },
+  infoSecondary: {
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -172,11 +177,7 @@ function EditProjectDialog(props) {
 
   return (
     <div>
-      <ButtonGroup
-        disableElevation
-        variant="contained"
-        style={{ marginRight: 0 }}
-      >
+      <ButtonGroup disableElevation variant="outlined">
         <Button
           aria-label="description"
           className={classes.descBtn}
@@ -213,7 +214,7 @@ function EditProjectDialog(props) {
         <Typography className={classes.typography}>
           <Grid container>
             <Info useStyles={useApexInfoStyles}>
-              <InfoSubtitle>
+              <InfoSubtitle className={classes.infoSecondary}>
                 <b>project id:</b> {props.projectInfo.project.id}
                 <br />
                 <b>admin :</b> {props.projectInfo.admin.fullname} (
@@ -245,9 +246,7 @@ function EditProjectDialog(props) {
           className={classes.root}
           onClose={handleClose}
         >
-          <Info useStyles={useApexInfoStyles}>
-            <InfoTitle>Edit Project</InfoTitle>
-          </Info>
+          Edit Project
         </DialogTitle>
         <Info useStyles={useApexInfoStyles}>
           <form
