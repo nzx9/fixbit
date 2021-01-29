@@ -600,6 +600,7 @@ const IssueTable = (props) => {
               <TableFooter>
                 <TableRow>
                   <TablePagination
+                    style={{ width: "100%" }}
                     rowsPerPageOptions={[
                       5,
                       10,
