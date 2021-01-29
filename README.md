@@ -19,6 +19,10 @@ Fixbit is the official front end for Fixbit API that gives power to access Fixbi
 
 ## Fixbit Sponsors
 
+<a href="https://patreon.com/w0lfi" target="_blank">
+    <img alt="Patreon" src="https://img.shields.io/static/v1?message=w0lfi&logo=patreon&labelColor=fff&color=F96854&logoColor=F96854&style=for-the-badge&label=patreon" />
+</a>
+
 ## Contributing
 
 If you discover a issue or need to request new features. File a issue at [GitHub](https://github.com/krypto-i9/fixbit/issues) or [Fixbit](https://fixbit-app.herokuapp.com/#/projects/1).
