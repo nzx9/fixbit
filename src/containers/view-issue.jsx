@@ -129,7 +129,7 @@ const ViewIssue = (props) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
-  issueData.type = 4;
+  
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
     xhtmlOut: false, // Use '/' to close single tags (<br />)
