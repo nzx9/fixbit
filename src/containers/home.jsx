@@ -387,7 +387,7 @@ const Home = () => {
                     ],
                   ]}
                   options={{
-                    title: "ISSUE SUMMERY",
+                    title: "SUMMERY OF ASSIGNED ISSUES",
                     legendTextStyle: {
                       color: localStorage.theme === "dark" ? "white" : "black",
                     },
