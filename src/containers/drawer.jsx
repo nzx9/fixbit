@@ -26,13 +26,12 @@ import {
   MenuTwoTone,
   Dashboard,
   Apps,
-  // Notifications,
-  AccountCircle,
   ExitToApp,
   MoreVert,
   BubbleChart,
   Group,
   Settings,
+  Face,
 } from "@material-ui/icons";
 
 import { Link, useHistory } from "react-router-dom";
@@ -40,6 +39,8 @@ import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
 import { tipTitle } from "../components/notify";
+import { useSnackbar } from "notistack";
+import settings from "../components/settings.json";
 
 import favicon from "../images/favicon-32x32.png";
 const drawerWidth = 220;
@@ -178,6 +179,8 @@ export default function SideDrawer(props) {
     },
   ];
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -204,13 +207,17 @@ export default function SideDrawer(props) {
             handleMenuClose();
           }}
         >
-          Profile <AccountCircle />
+          Profile <Face />
         </MenuItem>
       </Tooltip>
       <Tooltip title={tipTitle("Logout")} placement="left" arrow>
         <MenuItem
           onClick={() => {
             localStorage.setItem("token", null);
+            enqueueSnackbar("Logged out", {
+              variant: "warning",
+              anchorOrigin: settings.snackbar.anchorOrigin,
+            });
             dispatch(logout());
           }}
         >
@@ -286,7 +293,7 @@ export default function SideDrawer(props) {
                 onClick={() => goto(routes.PROFILE)}
                 color="inherit"
               >
-                <AccountCircle />
+                <Face />
               </IconButton>
             </Tooltip>
             <Tooltip title={tipTitle("Logout")} placement="bottom" arrow>
@@ -296,6 +303,10 @@ export default function SideDrawer(props) {
                 aria-haspopup="true"
                 onClick={() => {
                   localStorage.setItem("token", null);
+                  enqueueSnackbar("Logged out", {
+                    variant: "warning",
+                    anchorOrigin: settings.snackbar.anchorOrigin,
+                  });
                   dispatch(logout());
                 }}
                 color="inherit"
