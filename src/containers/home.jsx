@@ -229,40 +229,45 @@ const Home = () => {
                             />
                           </Tooltip>
                           <ArrowRightAlt />
-                          {Array.isArray(project?.issues) === false
-                            ? null
-                            : project.issues.map((issue, j) => (
-                                <Tooltip title="click to view this issue" arrow>
-                                  <Chip
-                                    style={{
-                                      margin: 2,
-                                    }}
-                                    className={
-                                      issue.priority === 0
-                                        ? classes.tagNo
-                                        : issue.priority === 1
-                                        ? classes.tagLow
-                                        : issue.priority === 2
-                                        ? classes.tagNormal
-                                        : issue.priority === 3
-                                        ? classes.tagHigh
-                                        : classes.tagCritical
-                                    }
-                                    variant="default"
-                                    size="small"
-                                    label={`${issue.title}`}
-                                    clickable
-                                    onClick={() =>
-                                      goto(
-                                        routes.PROJECTS_VIEW_X +
-                                          project.pid +
-                                          routes.ISSUE_VIEW_X +
-                                          issue.iid
-                                      )
-                                    }
-                                  />
-                                </Tooltip>
-                              ))}
+                          <div style={{ display: "auto" }}>
+                            {Array.isArray(project?.issues) === false
+                              ? null
+                              : project.issues.map((issue, j) => (
+                                  <Tooltip
+                                    title="click to view this issue"
+                                    arrow
+                                  >
+                                    <Chip
+                                      style={{
+                                        margin: 2,
+                                      }}
+                                      className={
+                                        issue.priority === 0
+                                          ? classes.tagNo
+                                          : issue.priority === 1
+                                          ? classes.tagLow
+                                          : issue.priority === 2
+                                          ? classes.tagNormal
+                                          : issue.priority === 3
+                                          ? classes.tagHigh
+                                          : classes.tagCritical
+                                      }
+                                      variant="default"
+                                      size="small"
+                                      label={`${issue.title}`}
+                                      clickable
+                                      onClick={() =>
+                                        goto(
+                                          routes.PROJECTS_VIEW_X +
+                                            project.pid +
+                                            routes.ISSUE_VIEW_X +
+                                            issue.iid
+                                        )
+                                      }
+                                    />
+                                  </Tooltip>
+                                ))}
+                          </div>
                         </div>
                       </li>
                     ))
