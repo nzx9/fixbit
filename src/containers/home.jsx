@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
@@ -20,7 +20,7 @@ import { DEBUG_PRINT } from "../components/debugTools";
 import { NOTIFY } from "../components/notify";
 import { Chart } from "react-google-charts";
 import { randomColor } from "../components/random-color-generator";
-import { Stars, ArrowRightAlt } from "@material-ui/icons";
+import { Stars, ArrowRightAlt, Info } from "@material-ui/icons";
 
 const settings = require("../components/settings.json");
 
@@ -62,8 +62,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   link: {
-    color: theme.palette.text.primary,
-    textDecoration: "none",
+    color: theme.palette.success.main,
   },
   bigNum: {
     background: theme.palette.primary.main,
@@ -96,6 +95,9 @@ const useStyles = makeStyles((theme) => ({
   },
   textCol: {
     color: theme.palette.text.primary,
+  },
+  infoIcon: {
+    color: theme.palette.info.main,
   },
 }));
 
@@ -152,82 +154,107 @@ const Home = () => {
                 <Grid container>
                   <Grid item xs={10} md={11}>
                     <h3 style={{ paddingLeft: 10 }}>Open Issues</h3>
-                    <hr />
                   </Grid>
                   <Grid xs={2} md={1}>
                     <div style={{ paddingTop: 17, alignItems: "right" }}>
                       <Chip label={stats.open_issue_count} color="primary" />
-                      <hr />
                     </div>
                   </Grid>
+                  <hr style={{ width: "100%", marginTop: -1 }} />
                 </Grid>
                 <ul>
-                  {stats.open_issues.map((project, index) => (
-                    <li key={"oi_" + index} style={{ listStyleType: "dot" }}>
-                      <div
-                        style={{
-                          display: "inline-flex",
-                          overflowX: "auto",
-                          overflowY: "auto",
-                        }}
-                      >
-                        <Tooltip title={"Click to view this project"} arrow>
-                          <Chip
-                            style={{
-                              margin: 2,
-                              border: "none",
-                            }}
-                            variant="outlined"
-                            size="small"
-                            label={project.p_name}
-                            clickable
-                            onDelete={project.is_admin ? () => null : null}
-                            deleteIcon={
-                              project.is_admin ? (
-                                <Stars style={{ color: "yellow" }} />
-                              ) : null
-                            }
-                            onClick={() =>
-                              goto(routes.PROJECTS_VIEW_X + project.pid)
-                            }
-                          />
-                        </Tooltip>
-                        <ArrowRightAlt />
-                        {project.issues.map((issue, j) => (
-                          <Tooltip title="click to view this issue" arrow>
+                  {Array.isArray(stats?.open_issues) === false ||
+                  stats.open_issues.length === 0 ? (
+                    <div
+                      style={{
+                        marginLeft: 0,
+                        marginRight: 40,
+                        alignItems: "center",
+                        textAlign: "center",
+                        marginTop: 40,
+                      }}
+                    >
+                      <Grid container justify="center">
+                        <Grid item xs={12}>
+                          <Info className={classes.infoIcon} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          No open issues to show
+                          <br />
+                          Assign issues to yourself.
+                        </Grid>
+                      </Grid>
+                    </div>
+                  ) : (
+                    stats.open_issues.map((project, index) => (
+                      <li key={"oi_" + index} style={{ listStyleType: "dot" }}>
+                        <div
+                          style={{
+                            display: "inline-flex",
+                            overflowX: "auto",
+                            overflowY: "auto",
+                          }}
+                        >
+                          <Tooltip title={"Click to view this project"} arrow>
                             <Chip
                               style={{
                                 margin: 2,
+                                border: "none",
                               }}
-                              className={
-                                issue.priority === 0
-                                  ? classes.tagNo
-                                  : issue.priority === 1
-                                  ? classes.tagLow
-                                  : issue.priority === 2
-                                  ? classes.tagNormal
-                                  : issue.priority === 3
-                                  ? classes.tagHigh
-                                  : classes.tagCritical
-                              }
-                              variant="default"
+                              variant="outlined"
                               size="small"
-                              label={`${issue.title}`}
+                              label={project.p_name}
                               clickable
+                              onDelete={project.is_admin ? () => null : null}
+                              deleteIcon={
+                                project.is_admin ? (
+                                  <Stars style={{ color: "yellow" }} />
+                                ) : null
+                              }
                               onClick={() =>
-                                goto(
-                                  routes.PROJECTS_VIEW_X +
-                                    project.pid +
-                                    routes.ISSUE_VIEW_X +
-                                    issue.iid
-                                )
+                                goto(routes.PROJECTS_VIEW_X + project.pid)
                               }
                             />
                           </Tooltip>
-                        ))}
-                      </div>
-                    </li>
-                  ))}
+                          <ArrowRightAlt />
+                          {Array.isArray(project?.issues) === false
+                            ? null
+                            : project.issues.map((issue, j) => (
+                                <Tooltip title="click to view this issue" arrow>
+                                  <Chip
+                                    style={{
+                                      margin: 2,
+                                    }}
+                                    className={
+                                      issue.priority === 0
+                                        ? classes.tagNo
+                                        : issue.priority === 1
+                                        ? classes.tagLow
+                                        : issue.priority === 2
+                                        ? classes.tagNormal
+                                        : issue.priority === 3
+                                        ? classes.tagHigh
+                                        : classes.tagCritical
+                                    }
+                                    variant="default"
+                                    size="small"
+                                    label={`${issue.title}`}
+                                    clickable
+                                    onClick={() =>
+                                      goto(
+                                        routes.PROJECTS_VIEW_X +
+                                          project.pid +
+                                          routes.ISSUE_VIEW_X +
+                                          issue.iid
+                                      )
+                                    }
+                                  />
+                                </Tooltip>
+                              ))}
+                        </div>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </Paper>
             </Grid>
@@ -236,14 +263,13 @@ const Home = () => {
                 <Grid container>
                   <Grid item xs={10} md={11}>
                     <h3 style={{ paddingLeft: 10 }}>Projects Handling</h3>
-                    <hr />
                   </Grid>
                   <Grid xs={2} md={1}>
                     <div style={{ paddingTop: 17 }}>
                       <Chip label={stats.projects_in_count} color="primary" />
-                      <hr />
                     </div>
                   </Grid>
+                  <hr style={{ width: "100%", marginTop: -1 }} />
                 </Grid>
                 <ul
                   style={{
@@ -254,36 +280,63 @@ const Home = () => {
                     overflowX: "auto",
                   }}
                 >
-                  {stats.projects_in.map((project, index) => (
-                    <li style={{ width: 120 }}>
-                      <Tooltip
-                        title={`You are ${
-                          project.is_admin ? "" : "not"
-                        } an admin of this project. Click to view`}
-                        arrow
-                      >
-                        <Chip
-                          style={{
-                            margin: 2,
-                            border: "none",
-                          }}
-                          variant="outlined"
-                          size="small"
-                          label={project.name}
-                          clickable
-                          onDelete={project.is_admin ? () => null : null}
-                          deleteIcon={
-                            project.is_admin ? (
-                              <Stars style={{ color: "yellow" }} />
-                            ) : null
-                          }
-                          onClick={() =>
-                            goto(routes.PROJECTS_VIEW_X + project.id)
-                          }
-                        />
-                      </Tooltip>
-                    </li>
-                  ))}
+                  {Array.isArray(stats?.projects_in) === false ||
+                  stats.projects_in.length === 0 ? (
+                    <div
+                      style={{
+                        marginLeft: 0,
+                        marginRight: 40,
+                        alignItems: "center",
+                        textAlign: "center",
+                        marginTop: 40,
+                      }}
+                    >
+                      <Grid container justify="center">
+                        <Grid item xs={12}>
+                          <Info className={classes.infoIcon} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          No projects to show
+                          <br />
+                          Create your first{" "}
+                          <Link className={classes.link} to={routes.PROJECTS}>
+                            <b>PROJECT.</b>
+                          </Link>
+                        </Grid>
+                      </Grid>
+                    </div>
+                  ) : (
+                    stats.projects_in.map((project, index) => (
+                      <li key={"pi_" + index} style={{ width: 120 }}>
+                        <Tooltip
+                          title={`You are ${
+                            project.is_admin ? "" : "not"
+                          } the admin of this project. Click to view`}
+                          arrow
+                        >
+                          <Chip
+                            style={{
+                              margin: 2,
+                              border: "none",
+                            }}
+                            variant="outlined"
+                            size="small"
+                            label={project.name}
+                            clickable
+                            onDelete={project.is_admin ? () => null : null}
+                            deleteIcon={
+                              project.is_admin ? (
+                                <Stars style={{ color: "yellow" }} />
+                              ) : null
+                            }
+                            onClick={() =>
+                              goto(routes.PROJECTS_VIEW_X + project.id)
+                            }
+                          />
+                        </Tooltip>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </Paper>
             </Grid>
@@ -294,34 +347,71 @@ const Home = () => {
                 <Grid container>
                   <Grid item xs={10} md={11}>
                     <h3 style={{ paddingLeft: 10 }}>Teams Participating</h3>
-                    <hr />
                   </Grid>
                   <Grid xs={2} md={1}>
                     <div style={{ paddingTop: 17 }}>
                       <Chip label={stats.teams_in_count} color="primary" />
-                      <hr />
                     </div>
                   </Grid>
+                  <hr style={{ width: "100%", marginTop: -1 }} />
                 </Grid>
                 <div style={{ padding: 10 }}>
-                  {stats.teams_in.map((team, index) => (
-                    <Chip
+                  {Array.isArray(stats?.teams_in) === false ||
+                  stats.teams_in.length === 0 ? (
+                    <div
                       style={{
-                        margin: 2,
-                        borderColor: randomColor(),
+                        marginLeft: 0,
+                        marginRight: 40,
+                        alignItems: "center",
+                        textAlign: "center",
+                        marginTop: 40,
                       }}
-                      variant="outlined"
-                      size="small"
-                      label={team?.name}
-                      clickable
-                      onDelete={team.is_leader ? () => null : null}
-                      deleteIcon={
-                        team.is_leader ? (
-                          <Stars fontSize="small" style={{ color: "yellow" }} />
-                        ) : null
-                      }
-                    />
-                  ))}
+                    >
+                      <Grid container justify="center">
+                        <Grid item xs={12}>
+                          <Info className={classes.infoIcon} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          No teams to show
+                          <br />
+                          Create your first{" "}
+                          <Link className={classes.link} to={routes.TEAMS}>
+                            <b>TEAM.</b>
+                          </Link>
+                        </Grid>
+                      </Grid>
+                    </div>
+                  ) : (
+                    stats.teams_in.map((team, index) => (
+                      <Tooltip
+                        title={`You are ${
+                          team.is_leader ? "" : "not"
+                        } the leader of this project. Click to view`}
+                        arrow
+                      >
+                        <Chip
+                          style={{
+                            margin: 2,
+                            borderColor: randomColor(),
+                          }}
+                          variant="outlined"
+                          size="small"
+                          label={team?.name}
+                          clickable
+                          onDelete={team.is_leader ? () => null : null}
+                          deleteIcon={
+                            team.is_leader ? (
+                              <Stars
+                                fontSize="small"
+                                style={{ color: "yellow" }}
+                              />
+                            ) : null
+                          }
+                          onClick={() => goto(routes.TEAMS_VIEW_X + team.id)}
+                        />
+                      </Tooltip>
+                    ))
+                  )}
                 </div>
               </Paper>
             </Grid>
@@ -374,34 +464,59 @@ const Home = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <Paper className={classes.paper}>
-                <Chart
-                  style={{ overflowY: "hidden", overflowX: "hidden" }}
-                  width={"100%"}
-                  height={"100%"}
-                  chartType="PieChart"
-                  loader={<div>Loading...</div>}
-                  data={[
-                    ["Type", "Count"],
-                    ["Open", stats.open_issue_count],
-                    [
-                      "Closed",
-                      stats.total_issue_count - stats.open_issue_count,
-                    ],
-                  ]}
-                  options={{
-                    title: "SUMMERY OF ASSIGNED ISSUES",
-                    legendTextStyle: {
-                      color: localStorage.theme === "dark" ? "white" : "black",
-                    },
-                    titleTextStyle: {
-                      color: localStorage.theme === "dark" ? "white" : "black",
-                    },
-                    backgroundColor:
-                      localStorage.theme === "dark" ? "#31373d" : "#fff",
-                    is3D: false,
-                    colors: ["#4caf50", "#f44336"],
-                  }}
-                />
+                {stats.total_issue_count === 0 ? (
+                  <div
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 0,
+                      alignItems: "center",
+                      textAlign: "center",
+                      marginTop: 110,
+                    }}
+                  >
+                    <Grid container justify="center">
+                      <Grid item xs={12}>
+                        <Info className={classes.infoIcon} />
+                      </Grid>
+                      <Grid item xs={12}>
+                        Nothing to show.
+                        <br />
+                        Assign issues to yourself.
+                      </Grid>
+                    </Grid>
+                  </div>
+                ) : (
+                  <Chart
+                    style={{ overflowY: "hidden", overflowX: "hidden" }}
+                    width={"100%"}
+                    height={"100%"}
+                    chartType="PieChart"
+                    loader={<div>Loading...</div>}
+                    data={[
+                      ["Type", "Count"],
+                      ["Open", stats.open_issue_count],
+                      [
+                        "Closed",
+                        stats.total_issue_count - stats.open_issue_count,
+                      ],
+                    ]}
+                    options={{
+                      title: "SUMMERY OF ASSIGNED ISSUES",
+                      legendTextStyle: {
+                        color:
+                          localStorage.theme === "dark" ? "white" : "black",
+                      },
+                      titleTextStyle: {
+                        color:
+                          localStorage.theme === "dark" ? "white" : "black",
+                      },
+                      backgroundColor:
+                        localStorage.theme === "dark" ? "#31373d" : "#fff",
+                      is3D: false,
+                      colors: ["#4caf50", "#f44336"],
+                    }}
+                  />
+                )}
               </Paper>
             </Grid>
           </Grid>
