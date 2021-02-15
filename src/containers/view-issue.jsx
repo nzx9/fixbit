@@ -7,7 +7,6 @@ import {
   Paper,
   Grid,
   Divider,
-  Hidden,
   Chip,
   makeStyles,
 } from "@material-ui/core";
@@ -53,10 +52,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     ["& img"]: {
       maxWidth: "100%",
-    },
-    ["& table"]: {
-      // border: `1px solid ${theme.palette.text.primary}`,
-      // borderRadius: 2,
     },
     ["& th"]: {
       border: `1px solid ${theme.palette.text.primary}`,
@@ -377,7 +372,7 @@ const ViewIssue = (props) => {
                         <Divider variant="fullWidth" />
                       </h3>
                     </InfoTitle>
-                    <Grid container container style={{ paddingLeft: 5 }}>
+                    <Grid container style={{ paddingLeft: 5 }}>
                       <Grid item xs={3}>
                         <InfoSubtitle>CREATED</InfoSubtitle>
                       </Grid>
@@ -386,7 +381,7 @@ const ViewIssue = (props) => {
                         {creatorName}
                       </Grid>
                     </Grid>
-                    <Grid container container style={{ paddingLeft: 5 }}>
+                    <Grid container style={{ paddingLeft: 5 }}>
                       <Grid item xs={3}>
                         <InfoSubtitle>ASSIGNED</InfoSubtitle>
                       </Grid>
