@@ -1,19 +1,19 @@
 language: node_js
 node_js:
-  - stable
+- stable
 branches:
   only:
-    - main
+  - main
 cache:
   directories:
-    - node_modules
+  - node_modules
 install:
-  - yarn install
+- yarn install
 deploy:
   provider: heroku
   cleanup: false
   api_key:
-    secure: yiCeBpWL1eJ0Hz9UmM30ncJbopjzP3oSARMf1RzyvVsx+K5iemR5CkU3/jCN3lZy2BvQh695HJtdwp7L9I5sB4dLCZKn9SeQKPm2pIX4q01xca0H5RBTPXUIs9k3KH9F7YPsBXGtrEFUadIbeF3fy2nQL7PoM8AeZ9SE+arQazlYKtnNUy5upfF51h7fFxvDdl+rSZSRdQ0ROd9BKh5tiwplo84+nkqDyWfPRw/rOV4tTmx4uBUYuAswLV+e5llvD2yrl1hHyLvLEYiv5vozLARft91uKvwRben8qRRB0i0CLCcaagZd98O75KgXlzfQ/RJ5jLGt0MakxZYrDYpGOUDnD3ApyPLphFQ747Cwy2C652UR3zvkuqDJPmRsgStckfehgbMcToz8O9hjMiPb1JGOjCCU/NoAgx2cQ8dsexkm1/bunTf7s5sKsha8y+cmhH600VmtUOnKuzzBzmWCNrnZN1ci/7nQUCAwUnRsrWBVT3IY06JSkMbbsaG1V7wNYYjCa5lyARlaPBIrdqhChZriniSRQp5+eQoPe+X/iPCjGufn5KQLMtMLCCgFo7Fd5hOzIM/3GWYudCXhMhF86qWeKbVru9Q0mMINC6pS6bXrzTeJt/hXzAir9XT65Rl1RPcIVx1049m/2ESc+kv+r4NB4659qYB353U/AnuUUTg=
+    secure: GjT+/CHAxv4Ek2tmTweAYPUbQq9KPe3xbShrkixqXcGoZeDzV0ss6e1P50ISAIx0rRh4I3jJKcoSRb03oRVpEK7hRt/CbNvvya8VlP9Aj/NAvbISpdHEG6JYy3XqAZ2MnXB4YzvktB0iv3vxT11Hf0YMJb5hQY3qiwG12tgP+3AkqbcBAguIBcnohTAuYc9QS8LMyE8Ry+B2TfcQCq2erC59LRMfliq62761UgVlqir4krdtJ0YINRCSUoQ+juv0y2XbwZKHg4MMrOY4o1L64XSUI2ewVsCfQIesK6MVxkjuwXrdp+FneRJsxhqNPYt0j35nE9Y6nojDKPf81jCqYDfPHBj7ErQgN92IjYIYRcEyZeVYGkllcSxsn1Dz8cPmAiMYbADLzgYU1VGfTXg3BVwRXLJ3QojqZdx/zwwwpW3MoO23uslomuidLCmYrMGKhP1hpb8WbJ6TjTqcNcwAZJXP8yFhMJr+8+07t6KbrneHDlTiNgt4ejUr5yULkOpNzZrT8cIYchJVFWvXaoW0PRJus+y2xjw6w8BldV7Mjhsf0eQygovBIZ5V2ssyGLFRNoELOnfWhgn0y3vdxGEwVnMzE6ah6DlbQmg5pU80N2kedc8I1BQuai+uQSXJjCPlhNsFIcnhuIpMLLfrnORiPtL+CeNONMyRjuQZ1M7hqps=
   app: fixbit-app
   on:
     branch: main
