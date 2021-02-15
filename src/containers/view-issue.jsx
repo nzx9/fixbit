@@ -129,7 +129,7 @@ const ViewIssue = (props) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
-  
+
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
     xhtmlOut: false, // Use '/' to close single tags (<br />)
@@ -249,189 +249,181 @@ const ViewIssue = (props) => {
       <div className={classes.root}>
         <Container component="main" maxWidth="xl">
           <Grid container spacing={1}>
-            <Grid item xs={0} md={0} lg={3}>
-              <Hidden mdDown>
-                <Paper className={classes.paperInfo}>
-                  <Info useStyles={useApexInfoStyles} className={classes.info}>
+            <Grid item xs={12} md={12} lg={3}>
+              <Paper className={classes.paperInfo}>
+                <Info useStyles={useApexInfoStyles} className={classes.info}>
+                  <Grid container style={{ paddingLeft: 5 }}>
+                    <InfoTitle style={{ width: "100%" }}>
+                      <h3 style={{ width: "98%" }}>
+                        INFO
+                        <Divider variant="fullWidth" />
+                      </h3>
+                    </InfoTitle>
                     <Grid container style={{ paddingLeft: 5 }}>
-                      <InfoTitle style={{ width: "100%" }}>
-                        <h3 style={{ width: "98%" }}>
-                          INFO
-                          <Divider variant="fullWidth" />
-                        </h3>
-                      </InfoTitle>
-                      <Grid container style={{ paddingLeft: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>ISSUE ID</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;#{issueData.id}
-                        </Grid>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>ISSUE ID</InfoSubtitle>
                       </Grid>
-                      <Grid container style={{ paddingLeft: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>TITLE</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {issueData.title}
-                        </Grid>
-                      </Grid>
-                      <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>STATUS</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {issueData.is_open ? (
-                            <Chip
-                              size="small"
-                              label="OPEN"
-                              variant="default"
-                              className={classes.open}
-                            />
-                          ) : (
-                            <Chip
-                              size="small"
-                              label="CLOSED"
-                              variant="default"
-                              className={classes.closed}
-                            />
-                          )}
-                        </Grid>
-                      </Grid>
-                      <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>PRIORITY</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {issueData.priority === 0 ? (
-                            <Chip
-                              size="small"
-                              label="none"
-                              variant="outlined"
-                              className={classes.tag_none}
-                            />
-                          ) : issueData.priority === 1 ? (
-                            <Chip
-                              size="small"
-                              label="low"
-                              variant="outlined"
-                              className={classes.tag_low}
-                            />
-                          ) : issueData.priority === 2 ? (
-                            <Chip
-                              size="small"
-                              label="normal"
-                              variant="outlined"
-                              className={classes.tag_normal}
-                            />
-                          ) : issueData.priority === 3 ? (
-                            <Chip
-                              size="small"
-                              label="high"
-                              variant="outlined"
-                              className={classes.tag_high}
-                            />
-                          ) : (
-                            <Chip
-                              size="small"
-                              label="critical"
-                              variant="outlined"
-                              className={classes.tag_critical}
-                            />
-                          )}
-                        </Grid>
-                      </Grid>
-                      <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>TYPE</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {
-                            <Chip
-                              size="small"
-                              label={
-                                issueData.type === 0
-                                  ? "NONE"
-                                  : issueData.type === 1
-                                  ? "BUG"
-                                  : issueData.type === 2
-                                  ? "SECURITY"
-                                  : issueData.type === 3
-                                  ? "TO TEST"
-                                  : "OTHER"
-                              }
-                              variant="default"
-                              className={classes.type}
-                            />
-                          }
-                        </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;#{issueData.id}
                       </Grid>
                     </Grid>
                     <Grid container style={{ paddingLeft: 5 }}>
-                      <InfoTitle style={{ width: "100%" }}>
-                        <h3 style={{ width: "98%" }}>
-                          PEOPLE
-                          <Divider variant="fullWidth" />
-                        </h3>
-                      </InfoTitle>
-                      <Grid container container style={{ paddingLeft: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>CREATED</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {creatorName}
-                        </Grid>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>TITLE</InfoSubtitle>
                       </Grid>
-                      <Grid container container style={{ paddingLeft: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>ASSIGNED</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {assigneeName}
-                        </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {issueData.title}
+                      </Grid>
+                    </Grid>
+                    <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>STATUS</InfoSubtitle>
+                      </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {issueData.is_open ? (
+                          <Chip
+                            size="small"
+                            label="OPEN"
+                            variant="default"
+                            className={classes.open}
+                          />
+                        ) : (
+                          <Chip
+                            size="small"
+                            label="CLOSED"
+                            variant="default"
+                            className={classes.closed}
+                          />
+                        )}
+                      </Grid>
+                    </Grid>
+                    <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>PRIORITY</InfoSubtitle>
+                      </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {issueData.priority === 0 ? (
+                          <Chip
+                            size="small"
+                            label="none"
+                            variant="outlined"
+                            className={classes.tag_none}
+                          />
+                        ) : issueData.priority === 1 ? (
+                          <Chip
+                            size="small"
+                            label="low"
+                            variant="outlined"
+                            className={classes.tag_low}
+                          />
+                        ) : issueData.priority === 2 ? (
+                          <Chip
+                            size="small"
+                            label="normal"
+                            variant="outlined"
+                            className={classes.tag_normal}
+                          />
+                        ) : issueData.priority === 3 ? (
+                          <Chip
+                            size="small"
+                            label="high"
+                            variant="outlined"
+                            className={classes.tag_high}
+                          />
+                        ) : (
+                          <Chip
+                            size="small"
+                            label="critical"
+                            variant="outlined"
+                            className={classes.tag_critical}
+                          />
+                        )}
+                      </Grid>
+                    </Grid>
+                    <Grid container style={{ paddingLeft: 5, marginTop: 5 }}>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>TYPE</InfoSubtitle>
+                      </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {
+                          <Chip
+                            size="small"
+                            label={
+                              issueData.type === 0
+                                ? "NONE"
+                                : issueData.type === 1
+                                ? "BUG"
+                                : issueData.type === 2
+                                ? "SECURITY"
+                                : issueData.type === 3
+                                ? "TO TEST"
+                                : "OTHER"
+                            }
+                            variant="default"
+                            className={classes.type}
+                          />
+                        }
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid container style={{ paddingLeft: 5 }}>
+                    <InfoTitle style={{ width: "100%" }}>
+                      <h3 style={{ width: "98%" }}>
+                        PEOPLE
+                        <Divider variant="fullWidth" />
+                      </h3>
+                    </InfoTitle>
+                    <Grid container container style={{ paddingLeft: 5 }}>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>CREATED</InfoSubtitle>
+                      </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {creatorName}
+                      </Grid>
+                    </Grid>
+                    <Grid container container style={{ paddingLeft: 5 }}>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>ASSIGNED</InfoSubtitle>
+                      </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {assigneeName}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid container style={{ paddingLeft: 5 }}>
+                    <InfoTitle style={{ width: "100%" }}>
+                      <h3 style={{ width: "98%" }}>
+                        DATES
+                        <Divider variant="fullWidth" />
+                      </h3>
+                    </InfoTitle>
+                    <Grid container style={{ paddingLeft: 5 }}>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>CREATED</InfoSubtitle>
+                      </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {convertToLocalTime(issueData.created_at).substr(0, 21)}
                       </Grid>
                     </Grid>
                     <Grid container style={{ paddingLeft: 5 }}>
-                      <InfoTitle style={{ width: "100%" }}>
-                        <h3 style={{ width: "98%" }}>
-                          DATES
-                          <Divider variant="fullWidth" />
-                        </h3>
-                      </InfoTitle>
-                      <Grid container style={{ paddingLeft: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>CREATED</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {convertToLocalTime(issueData.created_at).substr(
-                            0,
-                            21
-                          )}
-                        </Grid>
+                      <Grid item xs={3}>
+                        <InfoSubtitle>UPDATED</InfoSubtitle>
                       </Grid>
-                      <Grid container style={{ paddingLeft: 5 }}>
-                        <Grid item xs={3}>
-                          <InfoSubtitle>UPDATED</InfoSubtitle>
-                        </Grid>
-                        <Grid item xs={9}>
-                          :&nbsp;
-                          {convertToLocalTime(issueData.updated_at).substr(
-                            0,
-                            21
-                          )}
-                        </Grid>
+                      <Grid item xs={9}>
+                        :&nbsp;
+                        {convertToLocalTime(issueData.updated_at).substr(0, 21)}
                       </Grid>
                     </Grid>
-                  </Info>
-                </Paper>
-              </Hidden>
+                  </Grid>
+                </Info>
+              </Paper>
             </Grid>
             <Grid item xs={12} md={12} lg={9}>
               <Paper className={classes.paperDesc}>
