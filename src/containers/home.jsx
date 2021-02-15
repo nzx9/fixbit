@@ -79,10 +79,15 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   tagCritical: {
+    color: theme.palette.grey[100],
     backgroundColor: theme.palette.error.dark,
   },
   tagHigh: {
+    color: theme.palette.grey[100],
     backgroundColor: theme.palette.error.main,
+    "&:hover": {
+      color: theme.palette.text.primary,
+    },
   },
   tagNormal: {
     backgroundColor: theme.palette.warning.main,
@@ -91,7 +96,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.success.main,
   },
   tagNo: {
+    color:
+      localStorage.getItem("theme") === "dark"
+        ? theme.palette.grey.A700
+        : theme.palette.grey[100],
     backgroundColor: theme.palette.text.primary,
+    "&:hover": {
+      color: "black",
+    },
   },
   textCol: {
     color: theme.palette.text.primary,
