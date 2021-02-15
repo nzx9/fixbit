@@ -1,33 +1,26 @@
 import React, { useCallback } from "react";
-import {
-  getUId,
-  getUserName,
-  getFullName,
-  getEmail,
-} from "../reducers/userDataTracker";
 import { getToken } from "../reducers/tokenTracker";
 import {
-  Button,
   Container,
   Paper,
-  makeStyles,
   Grid,
   Chip,
   Tooltip,
+  Backdrop,
+  CircularProgress,
+  makeStyles,
 } from "@material-ui/core";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import { DEBUG_PRINT } from "../components/debugTools";
-import { NOTIFY, tipTitle } from "../components/notify";
+import { NOTIFY } from "../components/notify";
 import { Chart } from "react-google-charts";
 import { randomColor } from "../components/random-color-generator";
-import { Done, Stars, Cancel } from "@material-ui/icons";
-import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
-import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
+import { Stars, ArrowRightAlt } from "@material-ui/icons";
 
 const settings = require("../components/settings.json");
 
@@ -68,13 +61,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.warning.dark,
     },
   },
-  treeView: {
-    height: 216,
-    flexGrow: 1,
-    maxWidth: 400,
-  },
   link: {
-    color: theme.palette.primary.main,
+    color: theme.palette.text.primary,
+    textDecoration: "none",
   },
   bigNum: {
     background: theme.palette.primary.main,
@@ -85,6 +74,10 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "1.6em",
     textAlign: "center",
     padding: 10,
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 200,
+    color: theme.palette.primary.main,
   },
   tagCritical: {
     backgroundColor: theme.palette.error.dark,
@@ -101,22 +94,18 @@ const useStyles = makeStyles((theme) => ({
   tagNo: {
     backgroundColor: theme.palette.text.primary,
   },
+  textCol: {
+    color: theme.palette.text.primary,
+  },
 }));
 
 const Home = () => {
-  const uid = useSelector(getUId);
-  const username = useSelector(getUserName);
-  const fullname = useSelector(getFullName);
-  const email = useSelector(getEmail);
-  const token = useSelector(getToken);
-
   const classes = useStyles();
+  const token = useSelector(getToken);
   const { enqueueSnackbar } = useSnackbar();
   const [stats, setStats] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [error, setError] = React.useState(null);
-
-  const dispath = useDispatch();
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
 
@@ -145,51 +134,67 @@ const Home = () => {
   }, []);
 
   if (error) return <div>Error: {error}</div>;
-  else if (!isLoaded) return <div>Loading...</div>;
+  else if (!isLoaded)
+    return (
+      <div>
+        <Backdrop className={classes.backdrop} open="true">
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </div>
+    );
   else
     return (
       <div>
         <Container component="main" maxWidth="xl">
           <Grid container spacing={2}>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <Grid container>
-                  <Grid item xs={11}>
+                  <Grid item xs={10} md={11}>
                     <h3 style={{ paddingLeft: 10 }}>Open Issues</h3>
                     <hr />
                   </Grid>
-                  <Grid xs={1}>
-                    <div style={{ paddingTop: 17 }}>
+                  <Grid xs={2} md={1}>
+                    <div style={{ paddingTop: 17, alignItems: "right" }}>
                       <Chip label={stats.open_issue_count} color="primary" />
                       <hr />
                     </div>
                   </Grid>
                 </Grid>
-                <div style={{ padding: 5 }}>
+                <ul>
                   {stats.open_issues.map((project, index) => (
-                    <div
-                      style={{
-                        // border: "0.5px solid black",
-                        width: "auto",
-                        display: "flex",
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        overflowX: "auto",
-                        float: "left",
-                        margin: 1,
-                        borderRadius: 10,
-                      }}
-                    >
-                      <Grid container>
-                        <Grid item xs={12}>
-                          <Info useStyles={useApexInfoStyles}>
-                            <InfoSubtitle style={{ paddingLeft: 2 }}>
-                              {project.p_name}
-                            </InfoSubtitle>
-                          </Info>
-                        </Grid>
-                        <Grid item xs={12}>
-                          {project.issues.map((issue, j) => (
+                    <li key={"oi_" + index} style={{ listStyleType: "dot" }}>
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          overflowX: "auto",
+                          overflowY: "auto",
+                        }}
+                      >
+                        <Tooltip title={"Click to view this project"} arrow>
+                          <Chip
+                            style={{
+                              margin: 2,
+                              border: "none",
+                            }}
+                            variant="outlined"
+                            size="small"
+                            label={project.p_name}
+                            clickable
+                            onDelete={project.is_admin ? () => null : null}
+                            deleteIcon={
+                              project.is_admin ? (
+                                <Stars style={{ color: "yellow" }} />
+                              ) : null
+                            }
+                            onClick={() =>
+                              goto(routes.PROJECTS_VIEW_X + project.pid)
+                            }
+                          />
+                        </Tooltip>
+                        <ArrowRightAlt />
+                        {project.issues.map((issue, j) => (
+                          <Tooltip title="click to view this issue" arrow>
                             <Chip
                               style={{
                                 margin: 2,
@@ -209,12 +214,6 @@ const Home = () => {
                               size="small"
                               label={`${issue.title}`}
                               clickable
-                              // onDelete={project.is_admin ? () => null : null}
-                              // deleteIcon={
-                              //   project.is_admin ? (
-                              //     <Stars style={{ color: "yellow" }} />
-                              //   ) : null
-                              // }
                               onClick={() =>
                                 goto(
                                   routes.PROJECTS_VIEW_X +
@@ -224,22 +223,22 @@ const Home = () => {
                                 )
                               }
                             />
-                          ))}
-                        </Grid>
-                      </Grid>
-                    </div>
+                          </Tooltip>
+                        ))}
+                      </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </Paper>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <Grid container>
-                  <Grid item xs={11}>
+                  <Grid item xs={10} md={11}>
                     <h3 style={{ paddingLeft: 10 }}>Projects Handling</h3>
                     <hr />
                   </Grid>
-                  <Grid xs={1}>
+                  <Grid xs={2} md={1}>
                     <div style={{ paddingTop: 17 }}>
                       <Chip label={stats.projects_in_count} color="primary" />
                       <hr />
@@ -266,7 +265,6 @@ const Home = () => {
                         <Chip
                           style={{
                             margin: 2,
-                            // color: randomColor(),
                             border: "none",
                           }}
                           variant="outlined"
@@ -291,14 +289,14 @@ const Home = () => {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <Grid container>
-                  <Grid item xs={11}>
+                  <Grid item xs={10} md={11}>
                     <h3 style={{ paddingLeft: 10 }}>Teams Participating</h3>
                     <hr />
                   </Grid>
-                  <Grid xs={1}>
+                  <Grid xs={2} md={1}>
                     <div style={{ paddingTop: 17 }}>
                       <Chip label={stats.teams_in_count} color="primary" />
                       <hr />
@@ -310,20 +308,24 @@ const Home = () => {
                     <Chip
                       style={{
                         margin: 2,
-                        color: randomColor(),
+                        borderColor: randomColor(),
                       }}
                       variant="outlined"
                       size="small"
                       label={team?.name}
                       clickable
                       onDelete={team.is_leader ? () => null : null}
-                      deleteIcon={team.is_leader ? <Stars /> : null}
+                      deleteIcon={
+                        team.is_leader ? (
+                          <Stars fontSize="small" style={{ color: "yellow" }} />
+                        ) : null
+                      }
                     />
                   ))}
                 </div>
               </Paper>
             </Grid>
-            <Grid item md={1}>
+            <Grid item xs={4} md={1}>
               <Paper className={classes.paper}>
                 <h3>
                   <span style={{ paddingLeft: 10 }}>Project</span>
@@ -340,7 +342,7 @@ const Home = () => {
                 </div>
               </Paper>
             </Grid>
-            <Grid item md={1}>
+            <Grid item xs={4} md={1}>
               <Paper className={classes.paper}>
                 <h3>
                   <span style={{ paddingLeft: 10 }}>Team</span>
@@ -355,7 +357,7 @@ const Home = () => {
                 </div>
               </Paper>
             </Grid>
-            <Grid item md={1}>
+            <Grid item xs={4} md={1}>
               <Paper className={classes.paper}>
                 <h3>
                   <span style={{ paddingLeft: 10 }}>Total</span>
@@ -370,7 +372,7 @@ const Home = () => {
                 </div>
               </Paper>
             </Grid>
-            <Grid item md={3}>
+            <Grid item xs={12} md={3}>
               <Paper className={classes.paper}>
                 <Chart
                   style={{ overflowY: "hidden", overflowX: "hidden" }}
