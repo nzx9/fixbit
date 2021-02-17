@@ -146,6 +146,7 @@ const ViewProject = (props) => {
     unassigned: 0,
     closed: 0,
   });
+  const [isNewIssue, setIsNewIssue] = React.useState(false);
 
   const top_action_list = [
     {
@@ -436,6 +437,9 @@ const ViewProject = (props) => {
     setProjectData(tmp_list);
   };
 
+  const setNewIssue = () => setIsNewIssue(true);
+  const setNewIssueNot = () => setIsNewIssue(false);
+
   useEffect(() => {
     fetchTeamsInfo();
     fetchProjectInfo();
@@ -520,6 +524,7 @@ const ViewProject = (props) => {
                       projectInfo={projectInfo}
                       token={token}
                       action={() => fetchDataAndSet()}
+                      newIssue={() => setNewIssue()}
                       setOpenBackdrop={() => setOpenBackdrop()}
                     />
                   </List>
@@ -631,6 +636,8 @@ const ViewProject = (props) => {
                       projectInfo={projectInfo}
                       rows={projectData}
                       pId={props.match.params.pid}
+                      noNewIssue={() => setNewIssueNot()}
+                      newIssue={isNewIssue}
                     />
                   }
                 />

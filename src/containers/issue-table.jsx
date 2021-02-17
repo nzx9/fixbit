@@ -343,6 +343,10 @@ const IssueTable = (props) => {
 
   useEffect(() => {
     setRows(props.rows);
+    if (props.newIssue) {
+      setPage(Math.max(0, Math.ceil(props.rows.length / rowsPerPage) - 1));
+      props.noNewIssue();
+    }
   }, [props.rows]);
 
   return (

@@ -194,6 +194,7 @@ function IssueCreateDialog(props) {
                     });
                     if (res.status === 201 && r.success === true) {
                       props.action();
+                      props.newIssue();
                     }
                   });
                 });
