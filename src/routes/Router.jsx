@@ -126,12 +126,12 @@ export default function Router() {
             DEBUG_PRINT(token);
             DEBUG_PRINT(r);
             if (res.status === 200 && r.success === true) {
+              dispatch(setToken(token));
               dispatch(login());
               dispatch(setUId(r.data.id));
               dispatch(setUserName(r.data.username));
               dispatch(setFullName(r.data.fullname));
               dispatch(setEmail(r.data.email));
-              dispatch(setToken(token));
               dispatch(
                 setSocial({
                   twitter: r.data.twitter,
