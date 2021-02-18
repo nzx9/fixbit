@@ -14,8 +14,6 @@ import {
   OutlinedInput,
   FormHelperText,
   Link,
-  IconButton,
-  Avatar,
 } from "@material-ui/core";
 import {
   getUId,
@@ -31,7 +29,6 @@ import {
 import { getToken } from "../reducers/tokenTracker";
 import { useSelector, useDispatch } from "react-redux";
 import { httpReq } from "../components/httpRequest";
-import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
 import settings from "../components/settings.json";
 import { Twitter, LinkedIn, GitHub } from "@material-ui/icons";
@@ -147,9 +144,9 @@ const Profile = () => {
       <Backdrop className={classes.backdrop} open={_openBackdrop}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Paper className={classes.paper}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={6}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} md={6}>
+          <Paper className={classes.paper}>
             <form
               className={classes.root}
               validate="true"
@@ -247,8 +244,10 @@ const Profile = () => {
                 onChange={emailInputHandler}
               />
             </form>
-          </Grid>
-          <Grid item xs={12} sm={12} md={6}>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={12} md={6}>
+          <Paper className={classes.paper}>
             <form
               className={classes.root}
               validate="true"
@@ -347,8 +346,10 @@ const Profile = () => {
                 onChange={retypeNewPasswordInputHandler}
               />
             </form>
-          </Grid>
-          <Grid item xs={12} sm={12} md={6}>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={12} md={6}>
+          <Paper className={classes.paperForm}>
             <form
               className={classes.root}
               validate="true"
@@ -517,9 +518,9 @@ const Profile = () => {
                 </FormHelperText>
               </FormControl>
             </form>
-          </Grid>
+          </Paper>
         </Grid>
-      </Paper>
+      </Grid>
     </Container>
   );
 };
