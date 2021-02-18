@@ -187,6 +187,7 @@ function IssueCreateDialog(props) {
                 DEBUG_PRINT(res);
                 res.json().then((r) => {
                   NOTIFY(r.msg, (msg) => {
+                    if (msg === null || msg === undefined) msg = r.message;
                     props.setOpenBackdrop(false);
                     enqueueSnackbar(msg, {
                       variant: r.type,
@@ -267,7 +268,7 @@ function IssueCreateDialog(props) {
                   <FormHelperText id="description-input-helper-text">
                     <Link
                       href="https://guides.github.com/features/mastering-markdown/"
-                      target="__blank"
+                      target="_blank"
                     >
                       Markdown
                     </Link>{" "}
