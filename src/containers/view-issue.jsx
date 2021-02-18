@@ -8,11 +8,15 @@ import {
   Grid,
   Divider,
   Chip,
+  TextField,
+  Button,
+  Link,
+  Typography,
   makeStyles,
 } from "@material-ui/core";
 import { httpReq, getSync } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
-import { getUId } from "../reducers/userDataTracker";
+import { getUId, getUserName } from "../reducers/userDataTracker";
 import { NOTIFY } from "../components/notify";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
@@ -23,6 +27,25 @@ import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import { Remarkable } from "remarkable";
 import { linkify } from "remarkable/linkify";
 import hljs from "highlight.js";
+import {
+  Send,
+  InfoRounded,
+  Fastfood,
+  LaptopMac,
+  Hotel,
+  Repeat,
+  Add,
+  Face,
+} from "@material-ui/icons";
+import {
+  Timeline,
+  TimelineItem,
+  TimelineOppositeContent,
+  TimelineSeparator,
+  TimelineDot,
+  TimelineConnector,
+  TimelineContent,
+} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -49,7 +72,52 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1),
     display: "flex",
     width: "100%",
+    minHeight: window.screen.availHeight - 370,
+    maxHeight: window.screen.availHeight - 186,
+    overflowY: "auto",
     color: theme.palette.text.secondary,
+    ["& img"]: {
+      maxWidth: "100%",
+    },
+    ["& th"]: {
+      border: `1px solid ${theme.palette.text.primary}`,
+      backgroundColor: theme.palette.text.primary,
+      color: theme.palette.background.default,
+      padding: 4,
+    },
+    ["& td"]: {
+      border: `1px solid ${theme.palette.text.primary}`,
+      padding: 4,
+    },
+    ["& strong"]: {
+      color: theme.palette.text.primary,
+    },
+  },
+  paperCommentWriter: {
+    marginTop: theme.spacing(1),
+    paddingTop: theme.spacing(0),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    display: "flex",
+    width: "100%",
+  },
+  paperCommentReader: {
+    paddingTop: theme.spacing(0),
+    paddingLeft: theme.spacing(0),
+    paddingRight: theme.spacing(0),
+    marginRight: theme.spacing(0),
+    marginLeft: theme.spacing(0),
+    display: "flex",
+    width: "100%",
+  },
+  paperComment: {
+    padding: "6px 16px",
+    width: "100%",
+    overflowX: "auto",
+    color: theme.palette.text.secondary,
+    ["& all"]: {
+      maxWidth: "100%",
+    },
     ["& img"]: {
       maxWidth: "100%",
     },
@@ -111,12 +179,16 @@ const useStyles = makeStyles((theme) => ({
     },
     ["& p"]: { color: theme.palette.text.primary },
   },
+  infoPrime: {
+    color: theme.palette.text.primary,
+  },
 }));
 
 const ViewIssue = (props) => {
   const classes = useStyles();
   const token = useSelector(getToken);
   const uid = useSelector(getUId);
+  const username = useSelector(getUserName);
   const { enqueueSnackbar } = useSnackbar();
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [issueData, setIssueData] = React.useState([]);
@@ -124,6 +196,7 @@ const ViewIssue = (props) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
+  const [comment, setComment] = React.useState("");
 
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
@@ -161,6 +234,12 @@ const ViewIssue = (props) => {
   const getRawDescription = () => {
     return { __html: md.render(issueData.description) };
   };
+
+  const getRawComment = (comment) => {
+    return { __html: md.render(comment) };
+  };
+
+  const handleCommentChange = (e) => setComment(e.target.value);
 
   const fetchDataAndSet = () => {
     setOpenBackdrop(true);
@@ -419,6 +498,7 @@ const ViewIssue = (props) => {
                   </Grid>
                 </Info>
               </Paper>
+              <Paper className={classes.paperCommentWriter}></Paper>
             </Grid>
             <Grid item xs={12} md={12} lg={9}>
               <Paper className={classes.paperDesc}>
@@ -426,6 +506,166 @@ const ViewIssue = (props) => {
                   <div dangerouslySetInnerHTML={getRawDescription()}></div>
                 </Grid>
               </Paper>
+            </Grid>
+            <Grid item xs={12} justify="flex-start" style={{ width: "100%" }}>
+              <div className={classes.paperCommentReader}>
+                <Timeline
+                  align="left"
+                  style={{
+                    paddingLeft: 0,
+                  }}
+                >
+                  {issueData.comments === null
+                    ? null
+                    : issueData.comments.map((value, index) => (
+                        <TimelineItem>
+                          <TimelineOppositeContent
+                            style={{
+                              flex: 0.1,
+                            }}
+                          >
+                            <Info useStyles={useApexInfoStyles}>
+                              <InfoTitle className={classes.infoPrime}>
+                                <b>
+                                  {value.username}{" "}
+                                  {value.uId === uid ? "(Me)" : ""}
+                                </b>
+                              </InfoTitle>
+                              <InfoSubtitle className={classes.info}>
+                                {convertToLocalTime(value.time).substr(4, 17)}
+                              </InfoSubtitle>
+                            </Info>
+                          </TimelineOppositeContent>
+                          <TimelineSeparator>
+                            <TimelineDot>
+                              <Face />
+                            </TimelineDot>
+                            <TimelineConnector />
+                          </TimelineSeparator>
+                          <TimelineContent style={{ width: 1 }}>
+                            <Paper className={classes.paperComment}>
+                              <div
+                                dangerouslySetInnerHTML={getRawComment(
+                                  value.comment
+                                )}
+                              ></div>
+                            </Paper>
+                          </TimelineContent>
+                        </TimelineItem>
+                      ))}
+                  <TimelineItem>
+                    <TimelineOppositeContent
+                      style={{
+                        flex: issueData.comments === null ? 0.0 : 0.1,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                      ></Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                      ></Typography>
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                      <TimelineDot>
+                        <Add color="primary" />
+                      </TimelineDot>
+                    </TimelineSeparator>
+                    <TimelineContent>
+                      <Paper elevation={3} className={classes.paperComment}>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            setIsLoaded(false);
+                            let data = issueData;
+                            if (data.comments === null) {
+                              data.comments = [];
+                            }
+                            let newComment = {
+                              uId: uid,
+                              username: username,
+                              time: Date.now(),
+                              comment: comment,
+                            };
+                            data.comments.push(newComment);
+                            setIssueData(data);
+                            httpReq(
+                              `${config.URL}/api/projects/${props.match.params.pid}/issues/${props.match.params.iid}`,
+                              "PUT",
+                              { comments: newComment },
+                              token
+                            )
+                              .then((res) => {
+                                DEBUG_PRINT(res);
+                                res.json().then((r) => {
+                                  NOTIFY(r.msg, (msg) => {
+                                    if (msg === null || msg === undefined)
+                                      msg = r.message;
+                                    enqueueSnackbar(msg, {
+                                      variant: r.type,
+                                      anchorOrigin:
+                                        settings.snackbar.anchorOrigin,
+                                    });
+                                  });
+                                });
+                              })
+                              .catch((err) => {
+                                console.error(err);
+                              });
+                            setIsLoaded(true);
+                            setComment("");
+                          }}
+                        >
+                          <Grid container justify="space-between">
+                            <Grid item xs={12}>
+                              <TextField
+                                fullWidth
+                                multiline
+                                variant="outlined"
+                                rows={2}
+                                rowsMax={100}
+                                placeholder="Type your comments here..."
+                                value={comment}
+                                onChange={handleCommentChange}
+                                required
+                              />
+                            </Grid>
+                            <Grid item xs={6} style={{ paddingTop: 5 }}>
+                              <Info useStyles={useApexInfoStyles}>
+                                <InfoSubtitle className={classes.info}>
+                                  <Link
+                                    href="https://guides.github.com/features/mastering-markdown/"
+                                    target="_blank"
+                                  >
+                                    Markdown
+                                  </Link>{" "}
+                                  Supported
+                                </InfoSubtitle>
+                              </Info>
+                            </Grid>
+                            <Grid
+                              item
+                              style={{ paddingTop: 5, paddingBottom: 5 }}
+                            >
+                              <Button
+                                size="small"
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                              >
+                                Comment &nbsp;
+                                <Send fontSize="small" />
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </form>
+                      </Paper>
+                    </TimelineContent>
+                  </TimelineItem>
+                </Timeline>
+              </div>
             </Grid>
           </Grid>
         </Container>
