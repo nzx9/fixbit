@@ -111,6 +111,9 @@ const useStyles = makeStyles((theme) => ({
   infoIcon: {
     color: theme.palette.info.main,
   },
+  starIcon: {
+    color: theme.palette.warning.main,
+  },
 }));
 
 const Home = () => {
@@ -220,7 +223,7 @@ const Home = () => {
                               onDelete={project.is_admin ? () => null : null}
                               deleteIcon={
                                 project.is_admin ? (
-                                  <Stars style={{ color: "yellow" }} />
+                                  <Stars className={classes.starIcon} />
                                 ) : null
                               }
                               onClick={() =>
@@ -343,7 +346,7 @@ const Home = () => {
                             onDelete={project.is_admin ? () => null : null}
                             deleteIcon={
                               project.is_admin ? (
-                                <Stars style={{ color: "yellow" }} />
+                                <Stars className={classes.starIcon} />
                               ) : null
                             }
                             onClick={() =>
@@ -420,7 +423,7 @@ const Home = () => {
                             team.is_leader ? (
                               <Stars
                                 fontSize="small"
-                                style={{ color: "yellow" }}
+                                className={classes.starIcon}
                               />
                             ) : null
                           }
