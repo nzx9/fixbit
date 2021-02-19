@@ -15,6 +15,8 @@ import {
   Backdrop,
   CircularProgress,
   Tooltip,
+  Button,
+  Paper,
   makeStyles,
 } from "@material-ui/core/";
 import { useFourThreeCardMediaStyles } from "@mui-treasury/styles/cardMedia/fourThree";
@@ -37,6 +39,8 @@ import { DEBUG_PRINT } from "../components/debugTools";
 import { randomColor } from "../components/random-color-generator";
 import config from "../components/config.json";
 import settings from "../components/settings.json";
+import { Chart } from "react-google-charts";
+import { drawerOpenStatus } from "../reducers/drawerOpenTracker";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,8 +50,28 @@ const useStyles = makeStyles((theme) => ({
     height: 250,
     margin: 10,
     [theme.breakpoints.down("sm")]: {
-      width: "92%",
-      height: "auto",
+      width: "42%",
+    },
+  },
+  rootDrawerOpen: {
+    float: "left",
+    display: "block",
+    width: 175,
+    height: 250,
+    margin: 10,
+    [theme.breakpoints.down("sm")]: {
+      width: "85%",
+    },
+  },
+  ctrlRoot: {
+    float: "left",
+    display: "block",
+    width: 175,
+    height: 250,
+    margin: 10,
+    [theme.breakpoints.down("sm")]: {
+      height: 200,
+      width: "90%",
     },
   },
   backdrop: {
@@ -65,13 +89,51 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 16,
     height: 250,
     [theme.breakpoints.down("sm")]: {
-      height: "auto",
+      height: 250,
     },
     "&:hover": {
       boxShadow: `0 6px 12px 0 #dbdb68
         .rotate(-12)
         .darken(0.2)
         .fade(0.5)}`,
+    },
+  },
+  ctrlCard: {
+    height: 250,
+    width: 175,
+    borderRadius: 50,
+    "&:hover": {
+      boxShadow: `0 6px 12px 0 #dbdb68
+      .rotate(-12)
+      .darken(0.2)
+      .fade(0.5)}`,
+    },
+    float: "left",
+    paddingTop: 20,
+    paddingBottom: 20,
+    marginTop: 20,
+    [theme.breakpoints.down("sm")]: {
+      height: 200,
+    },
+  },
+  ctrlBtnBase: {
+    display: "flex",
+    flexDirection: "column",
+    zoom: 1,
+    borderRadius: 50,
+    width: "90%",
+    height: 250,
+    margin: "0 auto",
+    paddingBottom: 10,
+    paddingTop: 10,
+    [theme.breakpoints.down("sm")]: {
+      height: 200,
+    },
+  },
+  ctrlBtn: {
+    marginBottom: 25,
+    [theme.breakpoints.down("sm")]: {
+      marginBottom: 10,
     },
   },
   info: {
@@ -149,7 +211,11 @@ const UserCard = ({
   const { enqueueSnackbar } = useSnackbar();
   const token = useSelector(getToken);
   return (
-    <div className={classes.root}>
+    <div
+      className={
+        useSelector(drawerOpenStatus) ? classes.rootDrawerOpen : classes.root
+      }
+    >
       <CardActionArea className={classes.actionArea}>
         <Info useStyles={useApexInfoStyles} className={classes.info}>
           <Card className={classes.card}>
@@ -251,7 +317,11 @@ const UserCard = ({
 
 const AddNewCard = ({ classes, handleOpenAddMemberAlert }) => {
   return (
-    <div className={classes.root}>
+    <div
+      className={
+        useSelector(drawerOpenStatus) ? classes.rootDrawerOpen : classes.root
+      }
+    >
       <CardActionArea className={classes.actionArea}>
         <Card className={classes.card}>
           <CardContent className={classes.addNewContent}>
@@ -423,6 +493,39 @@ const ViewTeam = (props) => {
           handleAlertClose={() => setAlertOpen(false)}
         />
         <div style={{ marginLeft: "3%" }}>
+          <div className={classes.ctrlRoot}>
+            <Paper className={classes.ctrlCard}>
+              <div className={classes.ctrlBtnBase}>
+                <Button
+                  className={classes.ctrlBtn}
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Statistics
+                </Button>
+                <Button
+                  className={classes.ctrlBtn}
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                >
+                  Edit Team
+                </Button>
+                <Button
+                  className={classes.ctrlBtn}
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Statistics
+                </Button>
+                <Button variant="contained" fullWidth color="secondary">
+                  Leave Team
+                </Button>
+              </div>
+            </Paper>
+          </div>
           {mData.map((value, index) => (
             <UserCard
               key={index}

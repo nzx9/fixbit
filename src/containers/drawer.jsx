@@ -41,6 +41,7 @@ import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
 import { tipTitle } from "../components/notify";
 import { useSnackbar } from "notistack";
+import { drawerOpen, drawerClose } from "../reducers/drawerOpenTracker";
 import settings from "../components/settings.json";
 
 import favicon from "../images/favicon-32x32.png";
@@ -154,8 +155,14 @@ export default function SideDrawer(props) {
 
   const dispatch = useDispatch();
 
-  const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
+  const handleDrawerOpen = () => {
+    dispatch(drawerOpen());
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    dispatch(drawerClose());
+    setOpen(false);
+  };
 
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
