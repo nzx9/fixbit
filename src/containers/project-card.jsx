@@ -38,10 +38,9 @@ import { convertToLocalTime } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: 250,
+    height: "100%",
     float: "left",
-    width: 275,
-    maxHeight: 250,
+    width: "275px",
     transition: "0.3s",
     margin: theme.spacing(1),
     position: "relative",
@@ -49,8 +48,7 @@ const useStyles = makeStyles((theme) => ({
       transition: "0.2s",
       position: "absolute",
       width: "100%",
-      height: 250,
-      maxHeight: 250,
+      height: "100%",
       display: "block",
       borderRadius: "1rem",
       zIndex: 0,
