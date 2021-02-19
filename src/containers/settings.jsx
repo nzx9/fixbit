@@ -9,6 +9,7 @@ import {
   Switch,
   Select,
   MenuItem,
+  Button,
   makeStyles,
 } from "@material-ui/core";
 
@@ -17,6 +18,7 @@ import {
   NotificationsActive,
   CallToAction,
   FormatListNumbered,
+  Refresh,
 } from "@material-ui/icons/";
 
 const useStyles = makeStyles((theme) => ({
@@ -167,6 +169,26 @@ const Settings = () => {
               <MenuItem value={"BL"}>Bottom Left</MenuItem>
               <MenuItem value={"BR"}>Bottom Right</MenuItem>
             </Select>
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
+      <List
+        subheader={<ListSubheader>Reload to Take effect</ListSubheader>}
+        className={classes.root}
+      >
+        <ListItem>
+          <ListItemIcon>
+            <Refresh />
+          </ListItemIcon>
+          <ListItemText primary="Reload Application" />
+          <ListItemSecondaryAction>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => window.location.reload()}
+            >
+              Reload
+            </Button>
           </ListItemSecondaryAction>
         </ListItem>
       </List>
