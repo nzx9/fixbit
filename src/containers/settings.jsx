@@ -145,7 +145,7 @@ const Settings = () => {
           </ListItemIcon>
           <ListItemText
             primary="Max Snacks Count"
-            secondary="maximum snacks at a time"
+            secondary="Maximum snacks at a time"
           />
           <ListItemSecondaryAction>
             <Select

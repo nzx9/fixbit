@@ -38,11 +38,15 @@ import {
 import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { tipTitle, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
 import { drawerOpen, drawerClose } from "../reducers/drawerOpenTracker";
 import favicon from "../images/favicon-32x32.png";
+
+import { getUId } from "../reducers/userDataTracker";
+import { getLoginStatus } from "../reducers/loginTracker";
+
 const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
@@ -145,6 +149,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SideDrawer(props) {
   const { children } = props;
+  const uid = useSelector(getUId);
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -251,7 +256,11 @@ export default function SideDrawer(props) {
             </IconButton>
           </Tooltip>
           <div className={classes.logo}>
-            <Link to={routes.HOME} className={classes.title}>
+            <Link
+              to={routes.HOME}
+              className={classes.title}
+              onClick={() => setCurrentRoute(routes.HOME)}
+            >
               <img
                 src={favicon}
                 style={{

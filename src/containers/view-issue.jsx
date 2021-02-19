@@ -45,6 +45,7 @@ import {
   TimelineConnector,
   TimelineContent,
 } from "@material-ui/lab";
+import { newCommentStatus } from "../reducers/newCommentTracker";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -196,6 +197,7 @@ const ViewIssue = (props) => {
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
   const [comment, setComment] = React.useState("");
+  const newCommentDetector = useSelector(newCommentStatus);
 
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
@@ -307,7 +309,7 @@ const ViewIssue = (props) => {
         }
       }
     })();
-  }, [issueData]);
+  }, [newCommentDetector, issueData]);
   if (error) return <div>Error: {error}</div>;
   else if (!isLoaded)
     return (

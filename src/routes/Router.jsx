@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, Fragment } from "react";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getLoginStatus, login } from "../reducers/loginTracker";
@@ -8,6 +8,7 @@ import {
   setFullName,
   setEmail,
   setSocial,
+  getUId,
 } from "../reducers/userDataTracker";
 import { setToken } from "../reducers/tokenTracker";
 //Routes
@@ -36,11 +37,74 @@ import {
   Backdrop,
   CircularProgress,
   Typography,
-  makeStyles,
   Box,
+  Button,
+  IconButton,
+  makeStyles,
 } from "@material-ui/core";
 
+import { Cancel, Visibility } from "@material-ui/icons";
+import { toggleNewComment } from "../reducers/newCommentTracker";
+
+const useColors = makeStyles((theme) => ({
+  green: {
+    backgroundColor: "#4caf50",
+  },
+  red: {
+    color: "#f44336",
+  },
+}));
+
 export const MAIN_APP = () => {
+  const classes = useColors();
+  const uid = useSelector(getUId);
+  const history = useHistory();
+  const goto = useCallback((path) => history.push(path), [history]);
+  const dispatch = useDispatch();
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  React.useEffect(() => {
+    let channel = window.Echo.channel("comment." + uid);
+    channel.listen(".comment-created", function (data) {
+      dispatch(toggleNewComment());
+      const onClickDismiss = (key) => () => {
+        closeSnackbar(key);
+      };
+
+      const action = (key) => (
+        <Fragment>
+          <Button
+            size="small"
+            className={classes.green}
+            style={{ marginRight: 5 }}
+            onClick={() => {
+              goto(
+                routes.PROJECTS_VIEW_X +
+                  data?.pid +
+                  routes.ISSUE_VIEW_X +
+                  data?.iid
+              );
+              closeSnackbar(key);
+            }}
+          >
+            <Visibility fontSize="small" style={{ marginRight: 5 }} />
+            View
+          </Button>
+          <IconButton onClick={onClickDismiss(key)} size="small">
+            <Cancel className={classes.red} fontSize="small" />
+          </IconButton>
+        </Fragment>
+      );
+      enqueueSnackbar(
+        data?.comment?.username + " commented on an issue, you assigned",
+        {
+          preventDuplicate: true,
+          persist: true,
+          action,
+        }
+      );
+    });
+  }, []);
   return (
     <>
       <SideDrawer>
