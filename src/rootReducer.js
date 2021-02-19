@@ -4,7 +4,7 @@ import { connectRouter } from "connected-react-router";
 import loginReducer from "./reducers/loginTracker";
 import userDataReducer from "./reducers/userDataTracker";
 import tokenReducer from "./reducers/tokenTracker";
-import dataChangeReducer from "./reducers/dataChangeTracker";
+import drawerOpenReducer from "./reducers/drawerOpenTracker";
 import projectDataReducer from "./reducers/projectDataTracker";
 
 export default function createRootReducer(history) {
@@ -13,7 +13,7 @@ export default function createRootReducer(history) {
     isLogged: loginReducer,
     userData: userDataReducer,
     token: tokenReducer,
-    isDataChanged: dataChangeReducer,
+    isDrawerOpen: drawerOpenReducer,
     projectData: projectDataReducer,
   });
 }
