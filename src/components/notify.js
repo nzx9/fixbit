@@ -17,6 +17,7 @@ import config from "../components/config.json";
 
 import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
+import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
   success: {
@@ -285,4 +286,14 @@ export const tipTitle = (title, mg = 10) => {
       </Info>
     </div>
   );
+};
+
+export const snackPosition = () => {
+  if (localStorage.getItem("snack_pos") === "TL")
+    return settings.snackbar.anchorOrigin.TL;
+  else if (localStorage.getItem("snack_pos") === "TR")
+    return settings.snackbar.anchorOrigin.TR;
+  else if (localStorage.getItem("snack_pos") === "BR")
+    return settings.snackbar.anchorOrigin.BR;
+  else return settings.snackbar.anchorOrigin.BL;
 };
