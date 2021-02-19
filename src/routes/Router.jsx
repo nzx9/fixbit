@@ -66,43 +66,45 @@ export const MAIN_APP = () => {
   React.useEffect(() => {
     let channel = window.Echo.channel("comment." + uid);
     channel.listen(".comment-created", function (data) {
-      dispatch(toggleNewComment());
-      const onClickDismiss = (key) => () => {
-        closeSnackbar(key);
-      };
+      if (data?.assigneeId === uid) {
+        dispatch(toggleNewComment());
+        const onClickDismiss = (key) => () => {
+          closeSnackbar(key);
+        };
 
-      const action = (key) => (
-        <Fragment>
-          <Button
-            size="small"
-            className={classes.green}
-            style={{ marginRight: 5 }}
-            onClick={() => {
-              goto(
-                routes.PROJECTS_VIEW_X +
-                  data?.pid +
-                  routes.ISSUE_VIEW_X +
-                  data?.iid
-              );
-              closeSnackbar(key);
-            }}
-          >
-            <Visibility fontSize="small" style={{ marginRight: 5 }} />
-            View
-          </Button>
-          <IconButton onClick={onClickDismiss(key)} size="small">
-            <Cancel className={classes.red} fontSize="small" />
-          </IconButton>
-        </Fragment>
-      );
-      enqueueSnackbar(
-        data?.comment?.username + " commented on an issue, you assigned",
-        {
-          preventDuplicate: true,
-          persist: true,
-          action,
-        }
-      );
+        const action = (key) => (
+          <Fragment>
+            <Button
+              size="small"
+              className={classes.green}
+              style={{ marginRight: 5 }}
+              onClick={() => {
+                goto(
+                  routes.PROJECTS_VIEW_X +
+                    data?.pid +
+                    routes.ISSUE_VIEW_X +
+                    data?.iid
+                );
+                closeSnackbar(key);
+              }}
+            >
+              <Visibility fontSize="small" style={{ marginRight: 5 }} />
+              View
+            </Button>
+            <IconButton onClick={onClickDismiss(key)} size="small">
+              <Cancel className={classes.red} fontSize="small" />
+            </IconButton>
+          </Fragment>
+        );
+        enqueueSnackbar(
+          data?.comment?.username + " commented on an issue, you assigned",
+          {
+            preventDuplicate: true,
+            persist: true,
+            action,
+          }
+        );
+      }
     });
   }, []);
   return (
