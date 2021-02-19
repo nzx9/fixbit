@@ -17,6 +17,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  SwipeableDrawer,
   makeStyles,
   useTheme,
 } from "@material-ui/core";
@@ -150,15 +151,12 @@ export default function SideDrawer(props) {
   const [open, setOpen] = React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
   const dispatch = useDispatch();
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
   const [currentRoute, setCurrentRoute] = React.useState(
@@ -181,13 +179,8 @@ export default function SideDrawer(props) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   const renderMenu = (
     <Menu
@@ -316,10 +309,12 @@ export default function SideDrawer(props) {
             </Tooltip>
           </div>
         </Toolbar>
+        {renderMenu}
       </AppBar>
-      {renderMenu}
       <Drawer
         variant="permanent"
+        anchor={"left"}
+        open={open}
         className={clsx(classes.drawer, {
           [classes.drawerOpen]: open,
           [classes.drawerClose]: !open,
@@ -331,7 +326,7 @@ export default function SideDrawer(props) {
           }),
         }}
       >
-        <div className={classes.toolbar}>
+        <div className={classes.toolbar} role="presentation">
           <Tooltip title={tipTitle("Close")} placement="left" arrow>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
@@ -348,6 +343,7 @@ export default function SideDrawer(props) {
                 onClick={() => {
                   goto(value.url);
                   setCurrentRoute(window.location.hash.split("#")[1]);
+                  handleDrawerClose();
                 }}
                 selected={currentRoute === value.url ? true : false}
               >
@@ -375,6 +371,7 @@ export default function SideDrawer(props) {
                 onClick={() => {
                   goto(value.url);
                   setCurrentRoute(window.location.hash.split("#")[1]);
+                  handleDrawerClose();
                 }}
                 selected={currentRoute === value.url ? true : false}
               >
