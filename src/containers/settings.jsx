@@ -9,7 +9,10 @@ import {
   Switch,
   Select,
   MenuItem,
+  Hidden,
   Button,
+  IconButton,
+  Tooltip,
   makeStyles,
 } from "@material-ui/core";
 
@@ -19,6 +22,7 @@ import {
   CallToAction,
   FormatListNumbered,
   Refresh,
+  Info,
 } from "@material-ui/icons/";
 
 const useStyles = makeStyles((theme) => ({
@@ -100,7 +104,10 @@ const Settings = () => {
           <ListItemIcon>
             <Brightness4 />
           </ListItemIcon>
-          <ListItemText primary="Dark Theme" />
+          <ListItemText
+            primary="Dark Theme"
+            secondary="Turn on/off dark theme"
+          />
           <ListItemSecondaryAction>
             <Switch
               edge="end"
@@ -119,7 +126,10 @@ const Settings = () => {
           <ListItemIcon>
             <NotificationsActive />
           </ListItemIcon>
-          <ListItemText primary="Notifications" />
+          <ListItemText
+            primary="Notifications"
+            secondary="Turn on/off snack notifications"
+          />
           <ListItemSecondaryAction>
             <Switch
               edge="end"
@@ -133,7 +143,10 @@ const Settings = () => {
           <ListItemIcon>
             <FormatListNumbered />
           </ListItemIcon>
-          <ListItemText primary="Max Snacks Count" />
+          <ListItemText
+            primary="Max Snacks Count"
+            secondary="maximum snacks at a time"
+          />
           <ListItemSecondaryAction>
             <Select
               variant="outlined"
@@ -156,7 +169,7 @@ const Settings = () => {
           <ListItemIcon>
             <CallToAction />
           </ListItemIcon>
-          <ListItemText primary="Snacks Position" />
+          <ListItemText primary="Snacks Position" secondary="Place snacks in" />
           <ListItemSecondaryAction>
             <Select
               variant="outlined"
@@ -178,17 +191,35 @@ const Settings = () => {
       >
         <ListItem>
           <ListItemIcon>
-            <Refresh />
+            <Info />
           </ListItemIcon>
-          <ListItemText primary="Reload Application" />
+          <ListItemText
+            primary="Reload Application"
+            secondary="Some settings need to reload application to take effect"
+          />
           <ListItemSecondaryAction>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => window.location.reload()}
-            >
-              Reload
-            </Button>
+            <Hidden smDown>
+              <Tooltip title="click to reload" arrow>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => window.location.reload()}
+                >
+                  Reload
+                  <Refresh />
+                </Button>
+              </Tooltip>
+            </Hidden>
+            <Hidden mdUp>
+              <Tooltip title="click to reload" arrow>
+                <IconButton
+                  color="secondary"
+                  onClick={() => window.location.reload()}
+                >
+                  <Refresh />
+                </IconButton>
+              </Tooltip>
+            </Hidden>
           </ListItemSecondaryAction>
         </ListItem>
       </List>
