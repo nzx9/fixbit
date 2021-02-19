@@ -17,12 +17,10 @@ import routes from "../routes/routes.json";
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import { DEBUG_PRINT } from "../components/debugTools";
-import { NOTIFY } from "../components/notify";
+import { NOTIFY, snackPosition } from "../components/notify";
 import { Chart } from "react-google-charts";
 import { randomColor } from "../components/random-color-generator";
 import { Stars, ArrowRightAlt, Info } from "@material-ui/icons";
-
-const settings = require("../components/settings.json");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -135,7 +133,7 @@ const Home = () => {
             if (msg === null || msg === undefined) msg = r.message;
             enqueueSnackbar(msg, {
               variant: r.type === "success" ? "info" : r.type,
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             if (res.status === 200 && r.success === true)
               r.data !== null

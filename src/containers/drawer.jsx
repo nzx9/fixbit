@@ -39,11 +39,9 @@ import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
-import { tipTitle } from "../components/notify";
+import { tipTitle, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
 import { drawerOpen, drawerClose } from "../reducers/drawerOpenTracker";
-import settings from "../components/settings.json";
-
 import favicon from "../images/favicon-32x32.png";
 const drawerWidth = 220;
 
@@ -216,7 +214,7 @@ export default function SideDrawer(props) {
             localStorage.setItem("token", null);
             enqueueSnackbar("Logged out", {
               variant: "warning",
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             dispatch(logout());
           }}
@@ -305,7 +303,7 @@ export default function SideDrawer(props) {
                   localStorage.setItem("token", null);
                   enqueueSnackbar("Logged out", {
                     variant: "warning",
-                    anchorOrigin: settings.snackbar.anchorOrigin,
+                    anchorOrigin: snackPosition(),
                   });
                   dispatch(logout());
                 }}

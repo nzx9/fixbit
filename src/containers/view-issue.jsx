@@ -17,9 +17,8 @@ import {
 import { httpReq, getSync } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
 import { getUId, getUserName } from "../reducers/userDataTracker";
-import { NOTIFY } from "../components/notify";
+import { NOTIFY, snackPosition } from "../components/notify";
 import config from "../components/config.json";
-import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
 import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
 import { Info, InfoTitle, InfoSubtitle } from "@mui-treasury/components/info";
@@ -257,7 +256,7 @@ const ViewIssue = (props) => {
             setOpenBackdrop(false);
             enqueueSnackbar(msg, {
               variant: r.type,
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             if (201 === res.status && true === r.success) {
               setIssueData(r.data);
@@ -605,8 +604,7 @@ const ViewIssue = (props) => {
                                       msg = r.message;
                                     enqueueSnackbar(msg, {
                                       variant: r.type,
-                                      anchorOrigin:
-                                        settings.snackbar.anchorOrigin,
+                                      anchorOrigin: snackPosition(),
                                     });
                                   });
                                 });

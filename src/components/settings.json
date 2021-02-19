@@ -1,8 +1,22 @@
 {
   "snackbar": {
     "anchorOrigin": {
-      "vertical": "bottom",
-      "horizontal": "left"
+      "TL": {
+        "vertical": "top",
+        "horizontal": "left"
+      },
+      "TR": {
+        "vertical": "top",
+        "horizontal": "right"
+      },
+      "BL": {
+        "vertical": "bottom",
+        "horizontal": "left"
+      },
+      "BR": {
+        "vertical": "bottom",
+        "horizontal": "right"
+      }
     }
   }
 }

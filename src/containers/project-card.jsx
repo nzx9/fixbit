@@ -29,10 +29,10 @@ import {
   NOTIFY,
   AlertDialogConfirmation,
   tipTitle,
+  snackPosition,
 } from "../components/notify";
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
-import settings from "../components/settings.json";
 import { useSnackbar } from "notistack";
 import { convertToLocalTime } from "../components/debugTools";
 
@@ -208,7 +208,7 @@ const ProjectCard = (props) => {
                   if (msg === null || msg === undefined) msg = r.message;
                   enqueueSnackbar(msg, {
                     variant: r.type,
-                    anchorOrigin: settings.snackbar.anchorOrigin,
+                    anchorOrigin: snackPosition(),
                   });
                   if (res.status === 200 && r.success === true)
                     props.refetchData();

@@ -9,9 +9,8 @@ import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
 import { GroupWorkRounded } from "@material-ui/icons";
 import TeamDialog from "./team-dialog";
 import config from "../components/config.json";
-import { NOTIFY, AlertDialog } from "../components/notify";
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
-import settings from "../components/settings.json";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -96,7 +95,7 @@ const Teams = () => {
             if (msg === null || msg === undefined) msg = r.message;
             enqueueSnackbar(msg, {
               variant: r.type,
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             DEBUG_PRINT(r);
             if (res.status === 200 && r.success === true)

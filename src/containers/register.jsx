@@ -16,9 +16,7 @@ import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { DEBUG_PRINT } from "../components/debugTools";
 import config from "../components/config.json";
-import { NOTIFY, AlertDialog } from "../components/notify";
-
-const settings = require("../components/settings.json");
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +89,7 @@ const Register = () => {
                   _setOpenBackdrop(false);
                   enqueueSnackbar(msg, {
                     variant: r.type,
-                    anchorOrigin: settings.snackbar.anchorOrigin,
+                    anchorOrigin: snackPosition(),
                   });
                   if (res.status === 201 && r.success === true) {
                     goToLogin();
@@ -120,7 +118,7 @@ const Register = () => {
           _setOpenBackdrop(false);
           enqueueSnackbar("Password and Confirm Password not match", {
             variant: "error",
-            anchorOrigin: settings.snackbar.anchorOrigin,
+            anchorOrigin: snackPosition(),
           });
         }
         e.preventDefault();

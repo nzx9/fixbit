@@ -27,9 +27,8 @@ import IssueTable from "./issue-table";
 import ViewIssue from "./view-issue";
 import routes from "../routes/routes.json";
 import config from "../components/config.json";
-import { NOTIFY, AlertDialog } from "../components/notify";
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
-import settings from "../components/settings.json";
 import NotFound from "./not-found";
 import { Info, InfoSubtitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
@@ -224,7 +223,7 @@ const ViewProject = (props) => {
             }
             enqueueSnackbar(msg, {
               variant: r.type !== "error" ? "info" : "error",
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             if (res.status === 200 && r.success === true)
               r.data !== null ? setTeamsInfo(r.data) : setTeamsInfo([]);
@@ -268,7 +267,7 @@ const ViewProject = (props) => {
             }
             enqueueSnackbar(msg, {
               variant: r.type !== "error" ? "info" : "error",
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             if (res.status === 200 && r.success === true)
               r.data !== null
@@ -332,7 +331,7 @@ const ViewProject = (props) => {
             _setOpenBackdrop(false);
             enqueueSnackbar(msg, {
               variant: r.type,
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             if (res.status === 200 && r.success === true) {
               setProjectDataAll(r.data);

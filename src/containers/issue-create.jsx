@@ -25,8 +25,7 @@ import { DEBUG_PRINT } from "../components/debugTools";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import config from "../components/config.json";
-import settings from "../components/settings.json";
-import { NOTIFY } from "../components/notify";
+import { NOTIFY, snackPosition } from "../components/notify";
 import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
 
@@ -191,7 +190,7 @@ function IssueCreateDialog(props) {
                     props.setOpenBackdrop(false);
                     enqueueSnackbar(msg, {
                       variant: r.type,
-                      anchorOrigin: settings.snackbar.anchorOrigin,
+                      anchorOrigin: snackPosition(),
                     });
                     if (res.status === 201 && r.success === true) {
                       props.action();

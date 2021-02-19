@@ -25,8 +25,7 @@ import {
 } from "../reducers/userDataTracker";
 import { setToken } from "../reducers/tokenTracker";
 import { DEBUG_PRINT } from "../components/debugTools";
-import { NOTIFY, AlertDialog } from "../components/notify";
-import settings from "../components/settings.json";
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 import config from "../components/config.json";
 
 const useStyles = makeStyles((theme) => ({
@@ -91,7 +90,7 @@ const Login = () => {
                 _setOpenBackdrop(false);
                 enqueueSnackbar(msg, {
                   variant: r.type,
-                  anchorOrigin: settings.snackbar.anchorOrigin,
+                  anchorOrigin: snackPosition(),
                 });
                 if (res.status === 200 && r.success === true) {
                   localStorage.setItem("token", r.token);

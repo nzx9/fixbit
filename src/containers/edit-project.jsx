@@ -23,8 +23,7 @@ import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
-import settings from "../components/settings.json";
-import { NOTIFY } from "../components/notify";
+import { NOTIFY, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
 
 import { Description, Settings, Cancel } from "@material-ui/icons";
@@ -282,7 +281,7 @@ function EditProjectDialog(props) {
                     NOTIFY(r.msg, (msg) => {
                       enqueueSnackbar(msg, {
                         variant: r.type,
-                        anchorOrigin: settings.snackbar.anchorOrigin,
+                        anchorOrigin: snackPosition(),
                       });
                       if (res.status === 200 && r.success === true) {
                         props.action();

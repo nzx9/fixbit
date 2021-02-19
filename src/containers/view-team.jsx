@@ -34,11 +34,11 @@ import {
   AlertDialog,
   NewMemberAddAlert,
   tipTitle,
+  snackPosition,
 } from "../components/notify";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { randomColor } from "../components/random-color-generator";
 import config from "../components/config.json";
-import settings from "../components/settings.json";
 import { Chart } from "react-google-charts";
 import { drawerOpenStatus } from "../reducers/drawerOpenTracker";
 
@@ -240,7 +240,7 @@ const UserCard = ({
                                   msg = r.message;
                                 enqueueSnackbar(msg, {
                                   variant: r.type,
-                                  anchorOrigin: settings.snackbar.anchorOrigin,
+                                  anchorOrigin: snackPosition(),
                                 });
                                 DEBUG_PRINT(r);
                                 if (res.status === 200 && r.success === true)
@@ -252,7 +252,7 @@ const UserCard = ({
                             closeBackdrop();
                             enqueueSnackbar(err?.message, {
                               variant: "error",
-                              anchorOrigin: settings.snackbar.anchorOrigin,
+                              anchorOrigin: snackPosition(),
                             });
                           });
                       }}
@@ -392,7 +392,7 @@ const ViewTeam = (props) => {
             if (msg === null || msg === undefined) msg = r.message;
             enqueueSnackbar(msg, {
               variant: r.type,
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             DEBUG_PRINT(r);
             if (res.status === 200 && r.success === true)
@@ -438,7 +438,7 @@ const ViewTeam = (props) => {
             if (msg === null || msg === undefined) msg = r.message;
             enqueueSnackbar(msg, {
               variant: r.type === "success" ? "info" : "error",
-              anchorOrigin: settings.snackbar.anchorOrigin,
+              anchorOrigin: snackPosition(),
             });
             DEBUG_PRINT(r);
             if (res.status === 200 && r.success === true)
@@ -576,7 +576,7 @@ const ViewTeam = (props) => {
                       if (msg === null || msg === undefined) msg = r.message;
                       enqueueSnackbar(msg, {
                         variant: r.type,
-                        anchorOrigin: settings.snackbar.anchorOrigin,
+                        anchorOrigin: snackPosition(),
                       });
                       DEBUG_PRINT(r);
                       if (res.status === 201 && r.success === true)
@@ -589,7 +589,7 @@ const ViewTeam = (props) => {
                   _setOpenBackdrop(false);
                   enqueueSnackbar(err?.message, {
                     variant: "error",
-                    anchorOrigin: settings.snackbar.anchorOrigin,
+                    anchorOrigin: snackPosition(),
                   });
                 });
               setAddMemberAlert(false);

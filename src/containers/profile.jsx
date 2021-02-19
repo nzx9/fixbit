@@ -30,10 +30,9 @@ import { getToken } from "../reducers/tokenTracker";
 import { useSelector, useDispatch } from "react-redux";
 import { httpReq } from "../components/httpRequest";
 import { useSnackbar } from "notistack";
-import settings from "../components/settings.json";
 import { Twitter, LinkedIn, GitHub } from "@material-ui/icons";
 import config from "../components/config.json";
-import { NOTIFY } from "../components/notify";
+import { NOTIFY, snackPosition } from "../components/notify";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -169,7 +168,7 @@ const Profile = () => {
                             msg = r.message;
                           enqueueSnackbar(msg, {
                             variant: r.type,
-                            anchorOrigin: settings.snackbar.anchorOrigin,
+                            anchorOrigin: snackPosition(),
                           });
                           if (200 === res.status && true === r.success) {
                             dispatch(setUserName(r.data.username));
@@ -273,7 +272,7 @@ const Profile = () => {
                               msg = r.message;
                             enqueueSnackbar(msg, {
                               variant: r.type,
-                              anchorOrigin: settings.snackbar.anchorOrigin,
+                              anchorOrigin: snackPosition(),
                             });
                           });
                           _setOpenBackdrop(false);
@@ -370,7 +369,7 @@ const Profile = () => {
                             msg = r.message;
                           enqueueSnackbar(msg, {
                             variant: r.type,
-                            anchorOrigin: settings.snackbar.anchorOrigin,
+                            anchorOrigin: snackPosition(),
                           });
                           if (200 === res.status && true === r.success) {
                             dispatch(

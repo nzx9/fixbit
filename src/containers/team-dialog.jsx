@@ -16,11 +16,10 @@ import { Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { httpReq } from "../components/httpRequest";
-import settings from "../components/settings.json";
 import { useSelector } from "react-redux";
 import { getToken } from "../reducers/tokenTracker";
 import config from "../components/config.json";
-import { NOTIFY, AlertDialog } from "../components/notify";
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 
 const styles = (theme) => ({
   root: {
@@ -121,7 +120,7 @@ const TeamDialog = (props) => {
                     if (msg === null || msg === undefined) msg = r.message;
                     enqueueSnackbar(msg, {
                       variant: r.type,
-                      anchorOrigin: settings.snackbar.anchorOrigin,
+                      anchorOrigin: snackPosition(),
                     });
                     DEBUG_PRINT(r);
                     if (res.status === 201 && r.success === true)

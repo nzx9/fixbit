@@ -45,9 +45,8 @@ import {
 } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import config from "../components/config.json";
-import settings from "../components/settings.json";
 import { httpReq } from "../components/httpRequest";
-import { NOTIFY } from "../components/notify";
+import { NOTIFY, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
@@ -541,8 +540,7 @@ const IssueTable = (props) => {
                                     NOTIFY(r.msg, (msg) => {
                                       enqueueSnackbar(msg, {
                                         variant: r.type,
-                                        anchorOrigin:
-                                          settings.snackbar.anchorOrigin,
+                                        anchorOrigin: snackPosition(),
                                       });
                                       if (
                                         res.status === 200 &&
@@ -578,8 +576,7 @@ const IssueTable = (props) => {
                                     NOTIFY(r.msg, (msg) => {
                                       enqueueSnackbar(msg, {
                                         variant: r.type,
-                                        anchorOrigin:
-                                          settings.snackbar.anchorOrigin,
+                                        anchorOrigin: snackPosition(),
                                       });
                                       if (
                                         res.status === 200 &&

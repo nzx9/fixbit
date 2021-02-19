@@ -22,9 +22,8 @@ import { useSnackbar } from "notistack";
 
 import { DEBUG_PRINT } from "../components/debugTools";
 import { httpReq } from "../components/httpRequest";
-import settings from "../components/settings.json";
 import config from "../components/config.json";
-import { NOTIFY, AlertDialog } from "../components/notify";
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 
 const styles = (theme) => ({
   root: {
@@ -122,7 +121,7 @@ const ProjectDialog = (props) => {
                   if (msg === null || msg === undefined) msg = r.message;
                   enqueueSnackbar(msg, {
                     variant: r.type,
-                    anchorOrigin: settings.snackbar.anchorOrigin,
+                    anchorOrigin: snackPosition(),
                   });
                   if (res.status === 201 && r.success === true) props.action();
                 });
