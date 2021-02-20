@@ -101,7 +101,7 @@ export const MAIN_APP = () => {
           "@" +
             data?.comment?.username +
             " commented on an issue #(" +
-            convertToLocalTime(data?.comment?.time).substr(16, 8) +
+            convertToLocalTime(data?.comment?.time, false).substr(16, 8) +
             ")",
           {
             preventDuplicate: true,
