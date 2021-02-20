@@ -557,7 +557,7 @@ const ViewIssue = (props) => {
                           action={() => fetchDataAndSet()}
                         />
                       </Grid>
-                      <Grid item>
+                      <Grid item xs={6}>
                         <Button
                           variant="outlined"
                           fullWidth
@@ -607,7 +607,10 @@ const ViewIssue = (props) => {
                                 </b>
                               </InfoTitle>
                               <InfoSubtitle className={classes.info}>
-                                {convertToLocalTime(value.time).substr(4, 17)}
+                                {convertToLocalTime(value.time, false).substr(
+                                  4,
+                                  17
+                                )}
                               </InfoSubtitle>
                             </Info>
                           </TimelineOppositeContent>
