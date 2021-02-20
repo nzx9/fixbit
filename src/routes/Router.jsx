@@ -67,7 +67,12 @@ export const MAIN_APP = () => {
   React.useEffect(() => {
     let channel = window.Echo.channel("comment." + uid);
     channel.listen(".comment-created", function (data) {
-      if (data?.assigneeId === uid && Number(data?.comment?.uId) !== uid) {
+      if (
+        data?.assigneeId === uid &&
+        data?.comment?.uId !== undefined &&
+        Number(data?.comment?.uId) !== uid &&
+        data?.comment?.time !== undefined
+      ) {
         dispatch(newComment());
         const onClickDismiss = (key) => () => {
           closeSnackbar(key);
