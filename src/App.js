@@ -36,6 +36,8 @@ const App = () => {
     localStorage.getItem("max_snacks") <= 5
       ? localStorage.getItem("max_snacks")
       : 3;
+  const snackDense =
+    localStorage.getItem("snack_dense") === "true" ? true : false;
 
   const theme = createMuiTheme({
     palette: {
@@ -55,7 +57,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <SnackbarProvider
         maxSnack={maxSnacks}
-        dense
+        dense={snackDense}
         preventDuplicate
         ref={notistackRef}
         action={(key) => (

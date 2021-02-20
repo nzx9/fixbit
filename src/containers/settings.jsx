@@ -9,10 +9,9 @@ import {
   Switch,
   Select,
   MenuItem,
-  Hidden,
   Button,
   IconButton,
-  Tooltip,
+  Fab,
   makeStyles,
 } from "@material-ui/core";
 
@@ -24,8 +23,10 @@ import {
   Refresh,
   Info,
   Cancel,
+  Dehaze,
 } from "@material-ui/icons/";
 import { useSnackbar } from "notistack";
+import { snackPosition } from "../components/notify";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +39,17 @@ const useStyles = makeStyles((theme) => ({
   },
   red: {
     color: "#f44336",
+  },
+  fab: {
+    display: "flex",
+    position: "fixed",
+    zIndex: 5,
+    bottom: theme.spacing(3),
+    right: theme.spacing(2),
+    transition: "0.2s",
+    "&:before": {
+      transition: "0.3s",
+    },
   },
 }));
 
@@ -78,6 +90,9 @@ const Settings = () => {
       ? true
       : false
   );
+  const [dense, setDense] = React.useState(
+    localStorage.getItem("snack_dense") === "true" ? true : false
+  );
   const [notificationCount, setNotificationCount] = React.useState(
     localStorage.getItem("max_snacks") === null
       ? 3
@@ -105,6 +120,7 @@ const Settings = () => {
     enqueueSnackbar("Reload Application to Take Effect", {
       preventDuplicate: true,
       persist: true,
+      anchorOrigin: snackPosition(),
       action,
     });
   };
@@ -120,6 +136,19 @@ const Settings = () => {
     setNotification(!notification);
     enqueueSnackbar("Reload Application to Take Effect", {
       preventDuplicate: true,
+      anchorOrigin: snackPosition(),
+      persist: true,
+      action,
+    });
+  };
+
+  const handleToggleDense = () => {
+    localStorage.setItem("snack_dense", !dense);
+    setDense(!dense);
+
+    enqueueSnackbar("Reload Application to Take Effect", {
+      preventDuplicate: true,
+      anchorOrigin: snackPosition(),
       persist: true,
       action,
     });
@@ -132,6 +161,7 @@ const Settings = () => {
     enqueueSnackbar("Reload Application to Take Effect", {
       preventDuplicate: true,
       persist: true,
+      anchorOrigin: snackPosition(),
       action,
     });
   };
@@ -143,6 +173,14 @@ const Settings = () => {
 
   return (
     <>
+      <Fab
+        className={classes.fab}
+        variant="round"
+        color="secondary"
+        onClick={() => window.location.reload()}
+      >
+        <Refresh />
+      </Fab>
       <List
         subheader={<ListSubheader>Theme Settings</ListSubheader>}
         className={classes.root}
@@ -160,7 +198,6 @@ const Settings = () => {
               edge="end"
               onChange={handleToggleDarkTheme}
               checked={darkTheme}
-              inputProps={{ "aria-labelledby": "switch-list-label-wifi" }}
             />
           </ListItemSecondaryAction>
         </ListItem>
@@ -182,7 +219,23 @@ const Settings = () => {
               edge="end"
               onChange={handleToggleNotifications}
               checked={notification}
-              inputProps={{ "aria-labelledby": "switch-list-label-bluetooth" }}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemIcon>
+            <Dehaze />
+          </ListItemIcon>
+          <ListItemText
+            primary="Dense Margins"
+            secondary="Less margin between snacks"
+          />
+          <ListItemSecondaryAction>
+            <Switch
+              edge="end"
+              onChange={handleToggleDense}
+              disabled={!notification}
+              checked={dense}
             />
           </ListItemSecondaryAction>
         </ListItem>
@@ -244,30 +297,6 @@ const Settings = () => {
             primary="Reload Application"
             secondary="Some settings need to reload application to take effect"
           />
-          <ListItemSecondaryAction>
-            <Hidden smDown>
-              <Tooltip title="click to reload" arrow>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => window.location.reload()}
-                >
-                  Reload
-                  <Refresh />
-                </Button>
-              </Tooltip>
-            </Hidden>
-            <Hidden mdUp>
-              <Tooltip title="click to reload" arrow>
-                <IconButton
-                  color="secondary"
-                  onClick={() => window.location.reload()}
-                >
-                  <Refresh />
-                </IconButton>
-              </Tooltip>
-            </Hidden>
-          </ListItemSecondaryAction>
         </ListItem>
       </List>
     </>
