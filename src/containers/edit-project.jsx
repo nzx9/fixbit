@@ -228,10 +228,16 @@ function EditProjectDialog(props) {
                 <b>description:</b> {props.projectInfo.project.description}
                 <br />
                 <b>created at :</b>{" "}
-                {convertToLocalTime(props.projectInfo.project.created_at)}
+                {convertToLocalTime(
+                  props.projectInfo.project.created_at,
+                  false
+                )}
                 <br />
                 <b>last update:</b>{" "}
-                {convertToLocalTime(props.projectInfo.project.updated_at)}
+                {convertToLocalTime(
+                  props.projectInfo.project.updated_at,
+                  false
+                )}
                 <br />
               </InfoSubtitle>
             </Info>

@@ -263,14 +263,14 @@ const ProjectCard = (props) => {
                 {props.data.project.updated_at !== null &&
                 props.data.project.updated_at !== undefined ? (
                   <InfoSubtitle>
-                    {convertToLocalTime(props.data.project.updated_at).substr(
-                      4,
-                      11
-                    )}{" "}
-                    {convertToLocalTime(props.data.project.updated_at).substr(
-                      16,
-                      5
-                    )}
+                    {convertToLocalTime(
+                      props.data.project.updated_at,
+                      false
+                    ).substr(4, 11)}{" "}
+                    {convertToLocalTime(
+                      props.data.project.updated_at,
+                      false
+                    ).substr(16, 5)}
                     <span> | admin: {props.data.admin.username}</span>
                   </InfoSubtitle>
                 ) : (
