@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Backdrop,
   CircularProgress,
@@ -45,7 +45,7 @@ import {
   TimelineConnector,
   TimelineContent,
 } from "@material-ui/lab";
-import { newCommentStatus } from "../reducers/newCommentTracker";
+import { newCommentStatus, noNewComment } from "../reducers/newCommentTracker";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -198,6 +198,7 @@ const ViewIssue = (props) => {
   const [assigneeName, setAssigneeName] = React.useState("...");
   const [comment, setComment] = React.useState("");
   const newCommentDetector = useSelector(newCommentStatus);
+  const dispatch = useDispatch();
 
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
@@ -274,6 +275,10 @@ const ViewIssue = (props) => {
   };
 
   useEffect(() => {
+    if (newCommentDetector) {
+      fetchDataAndSet();
+      dispatch(noNewComment());
+    }
     if (issueData.length === 0) fetchDataAndSet();
     (async function () {
       if (issueData.creator_id !== undefined) {
