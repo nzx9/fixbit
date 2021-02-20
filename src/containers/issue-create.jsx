@@ -114,34 +114,14 @@ function IssueCreateDialog(props) {
   const [priority, setPriority] = React.useState(2);
   const [type, setType] = React.useState(0);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-
-  const handleIsOpenChange = (e) => {
-    setIsOpen(e.target.value);
-  };
-  const handleAssignToChange = (e) => {
-    setAssignTo(e.target.value);
-  };
-  const handlePriorityChange = (e) => {
-    setPriority(e.target.value);
-  };
-  const handleTypeChange = (e) => {
-    setType(e.target.value);
-  };
-
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleTitleChange = (e) => setTitle(e.target.value);
+  const handleDescriptionChange = (e) => setDescription(e.target.value);
+  const handleIsOpenChange = (e) => setIsOpen(e.target.value);
+  const handleAssignToChange = (e) => setAssignTo(e.target.value);
+  const handlePriorityChange = (e) => setPriority(e.target.value);
+  const handleTypeChange = (e) => setType(e.target.value);
   return (
     <div>
       <Button
@@ -284,13 +264,13 @@ function IssueCreateDialog(props) {
                   fullWidth
                   required
                 >
-                  <InputLabel id="isOpen-select">Assign To</InputLabel>
+                  <InputLabel id="assignee-select">Assign To</InputLabel>
                   <Select
-                    labelId="isOpen-select"
-                    id="isOpen-select"
+                    labelId="assignee-select"
+                    id="assignee-select"
                     value={assignTo}
                     onChange={handleAssignToChange}
-                    label="Open/Close"
+                    label="Assignee"
                     required
                   >
                     <MenuItem index={-1} value={-1}>
@@ -331,10 +311,10 @@ function IssueCreateDialog(props) {
                   fullWidth
                   required
                 >
-                  <InputLabel id="isOpen-select">Priority</InputLabel>
+                  <InputLabel id="priority-select">Priority</InputLabel>
                   <Select
-                    labelId="isOpen-select"
-                    id="isOpen-select"
+                    labelId="priority-select"
+                    id="priority-select"
                     value={priority}
                     onChange={handlePriorityChange}
                     label="Priority"
@@ -400,10 +380,10 @@ function IssueCreateDialog(props) {
                   fullWidth
                   required
                 >
-                  <InputLabel id="isOpen-select">Type</InputLabel>
+                  <InputLabel id="type-select">Type</InputLabel>
                   <Select
-                    labelId="isOpen-select"
-                    id="isOpen-select"
+                    labelId="type-select"
+                    id="type-select"
                     value={type}
                     onChange={handleTypeChange}
                     label="Type"
