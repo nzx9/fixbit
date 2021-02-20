@@ -45,6 +45,7 @@ import {
 
 import { Cancel, Visibility } from "@material-ui/icons";
 import { newComment } from "../reducers/newCommentTracker";
+import { snackPosition } from "../components/notify";
 
 const useColors = makeStyles((theme) => ({
   green: {
@@ -105,6 +106,7 @@ export const MAIN_APP = () => {
           {
             preventDuplicate: true,
             persist: true,
+            anchorOrigin: snackPosition(),
             action,
           }
         );
