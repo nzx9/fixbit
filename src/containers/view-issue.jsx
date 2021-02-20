@@ -91,6 +91,10 @@ const useStyles = makeStyles((theme) => ({
     ["& strong"]: {
       color: theme.palette.text.primary,
     },
+    [theme.breakpoints.down("sm")]: {
+      maxHeight: "auto",
+      minHeight: "auto",
+    },
   },
   paperCommentWriter: {
     marginTop: theme.spacing(1),
