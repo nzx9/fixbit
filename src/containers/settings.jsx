@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
   List,
   ListItem,
@@ -23,7 +23,9 @@ import {
   FormatListNumbered,
   Refresh,
   Info,
+  Cancel,
 } from "@material-ui/icons/";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,10 +36,39 @@ const useStyles = makeStyles((theme) => ({
       paddingRight: 20,
     },
   },
+  red: {
+    color: "#f44336",
+  },
 }));
 
 const Settings = () => {
   const classes = useStyles();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const onClickDismiss = (key) => () => {
+    closeSnackbar(key);
+  };
+  const action = (key) => (
+    <Fragment>
+      <Button
+        size="small"
+        className={classes.green}
+        variant="outlined"
+        color="secondary"
+        style={{ marginRight: 5 }}
+        onClick={() => {
+          closeSnackbar(key);
+          window.location.reload();
+        }}
+      >
+        <Refresh fontSize="small" style={{ marginRight: 5 }} />
+        Reload
+      </Button>
+      <IconButton onClick={onClickDismiss(key)} size="small">
+        <Cancel className={classes.red} fontSize="small" />
+      </IconButton>
+    </Fragment>
+  );
+
   const [darkTheme, setDarkTheme] = React.useState(
     localStorage.getItem("theme") === "dark" ? true : false
   );
@@ -71,6 +102,11 @@ const Settings = () => {
     if (darkTheme) localStorage.setItem("theme", "light");
     else localStorage.setItem("theme", "dark");
     setDarkTheme(!darkTheme);
+    enqueueSnackbar("Reload Application to Take Effect", {
+      preventDuplicate: true,
+      persist: true,
+      action,
+    });
   };
 
   const handleToggleNotifications = () => {
@@ -82,11 +118,22 @@ const Settings = () => {
       setNotificationCount(3);
     }
     setNotification(!notification);
+    enqueueSnackbar("Reload Application to Take Effect", {
+      preventDuplicate: true,
+      persist: true,
+      action,
+    });
   };
 
   const handleNotificationCountChange = (e) => {
     localStorage.setItem("max_snacks", e.target.value);
     setNotificationCount(e.target.value);
+
+    enqueueSnackbar("Reload Application to Take Effect", {
+      preventDuplicate: true,
+      persist: true,
+      action,
+    });
   };
 
   const handleNotificationPositionChange = (e) => {
