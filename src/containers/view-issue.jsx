@@ -19,7 +19,11 @@ import {
 import { httpReq, getSync } from "../components/httpRequest";
 import { getToken } from "../reducers/tokenTracker";
 import { getUId, getUserName } from "../reducers/userDataTracker";
-import { NOTIFY, snackPosition } from "../components/notify";
+import {
+  NOTIFY,
+  snackPosition,
+  AlertDialogConfirmation,
+} from "../components/notify";
 import config from "../components/config.json";
 import { useSnackbar } from "notistack";
 import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
@@ -28,18 +32,7 @@ import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import { Remarkable } from "remarkable";
 import { linkify } from "remarkable/linkify";
 import hljs from "highlight.js";
-import {
-  Send,
-  InfoRounded,
-  Fastfood,
-  LaptopMac,
-  Hotel,
-  Repeat,
-  Add,
-  Face,
-  Reply,
-  ArrowBackIos,
-} from "@material-ui/icons";
+import { Send, Add, Face, ArrowBackIos } from "@material-ui/icons";
 import {
   Timeline,
   TimelineItem,
@@ -51,6 +44,7 @@ import {
 } from "@material-ui/lab";
 import { newCommentStatus, noNewComment } from "../reducers/newCommentTracker";
 import routes from "../routes/routes.json";
+import IssueEditDialog from "./issue-edit";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -208,11 +202,14 @@ const ViewIssue = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [issueData, setIssueData] = React.useState([]);
+  const [teamData, setTeamData] = React.useState([]);
+  const [adminData, setAdminData] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
   const [comment, setComment] = React.useState("");
+  const [alertOpen, setAlertOpen] = React.useState(false);
   const newCommentDetector = useSelector(newCommentStatus);
   const dispatch = useDispatch();
 
@@ -261,6 +258,7 @@ const ViewIssue = (props) => {
   };
 
   const handleCommentChange = (e) => setComment(e.target.value);
+  const handleAlertClose = () => setAlertOpen(false);
 
   const fetchDataAndSet = () => {
     setOpenBackdrop(true);
@@ -280,8 +278,11 @@ const ViewIssue = (props) => {
               variant: r.type,
               anchorOrigin: snackPosition(),
             });
-            if (201 === res.status && true === r.success) {
-              setIssueData(r.data);
+            if (200 === res.status && true === r.success) {
+              DEBUG_PRINT(r.data);
+              setIssueData(r.data.issue);
+              setAdminData(r.data.admin);
+              setTeamData(r.data.team);
             }
           });
           setIsLoaded(true);
@@ -537,7 +538,41 @@ const ViewIssue = (props) => {
                   </Grid>
                 </Info>
               </Paper>
-              <Paper className={classes.paperCommentWriter}></Paper>
+              <Paper className={classes.paperCommentWriter}>
+                {issueData.creator_id === uid || adminData?.id === uid ? (
+                  <>
+                    <Grid
+                      container
+                      spacing={1}
+                      style={{ paddingTop: 10, paddingBottom: 10 }}
+                    >
+                      <Grid item xs={6}>
+                        <IssueEditDialog
+                          teamInfo={teamData}
+                          adminInfo={adminData}
+                          issueInfo={issueData}
+                          pid={props.match.params.pid}
+                          iid={props.match.params.iid}
+                          setOpenBackdrop={setOpenBackdrop}
+                          action={() => fetchDataAndSet()}
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Button
+                          variant="outlined"
+                          fullWidth
+                          onClick={() => {
+                            setAlertOpen(true);
+                          }}
+                          className={classes.tag_high}
+                        >
+                          Delete Issue
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </>
+                ) : null}
+              </Paper>
             </Grid>
             <Grid item xs={12} md={12} lg={9}>
               <Paper className={classes.paperDesc}>
@@ -554,7 +589,8 @@ const ViewIssue = (props) => {
                     paddingLeft: 0,
                   }}
                 >
-                  {issueData.comments === null
+                  {issueData.comments === undefined ||
+                  issueData?.comments === null
                     ? null
                     : issueData.comments.map((value, index) => (
                         <TimelineItem>
@@ -618,9 +654,9 @@ const ViewIssue = (props) => {
                           onSubmit={(e) => {
                             e.preventDefault();
                             setIsLoaded(false);
-                            let data = issueData;
-                            if (data.comments === null) {
-                              data.comments = [];
+                            let _data = issueData;
+                            if (_data.comments === null) {
+                              _data.comments = [];
                             }
                             let newComment = {
                               uId: uid,
@@ -628,8 +664,8 @@ const ViewIssue = (props) => {
                               time: Date.now(),
                               comment: comment,
                             };
-                            data.comments.push(newComment);
-                            setIssueData(data);
+                            _data.comments.push(newComment);
+                            setIssueData(_data);
                             httpReq(
                               `${config.URL}/api/projects/${props.match.params.pid}/issues/${props.match.params.iid}`,
                               "PUT",
@@ -706,6 +742,44 @@ const ViewIssue = (props) => {
               </div>
             </Grid>
           </Grid>
+          <AlertDialogConfirmation
+            alertOpen={alertOpen}
+            title={`Delete Issue?`}
+            type="error"
+            msg={`You are going to delete (${issueData.title}). after deleting this issue, it can't be recovered.`}
+            resolveCallback={() => {
+              httpReq(
+                `${config.URL}/api/projects/${props.match.params.pid}/issues/${props.match.params.iid}`,
+                "DELETE",
+                null,
+                token
+              )
+                .then((res) => {
+                  setOpenBackdrop(true);
+                  res.json().then((r) => {
+                    NOTIFY(r.msg, (msg) => {
+                      if (msg === null || msg === undefined) msg = r.message;
+                      enqueueSnackbar(msg, {
+                        variant: r.type,
+                        anchorOrigin: snackPosition(),
+                      });
+                      if (res.status === 200 && r.success === true)
+                        goto(routes.PROJECTS_VIEW_X + props.match.params.pid);
+                      setOpenBackdrop(false);
+                    });
+                  });
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+              setOpenBackdrop(false);
+              handleAlertClose();
+            }}
+            rejectCallback={() => {
+              handleAlertClose();
+              setOpenBackdrop(false);
+            }}
+          />
         </Container>
       </div>
     );
