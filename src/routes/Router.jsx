@@ -29,7 +29,7 @@ import Settings from "../containers/settings";
 
 import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
-import { DEBUG_PRINT } from "../components/debugTools";
+import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
 import { useSnackbar } from "notistack";
 import settings from "../components/settings.json";
 
@@ -44,7 +44,7 @@ import {
 } from "@material-ui/core";
 
 import { Cancel, Visibility } from "@material-ui/icons";
-import { toggleNewComment } from "../reducers/newCommentTracker";
+import { newComment } from "../reducers/newCommentTracker";
 
 const useColors = makeStyles((theme) => ({
   green: {
@@ -66,8 +66,8 @@ export const MAIN_APP = () => {
   React.useEffect(() => {
     let channel = window.Echo.channel("comment." + uid);
     channel.listen(".comment-created", function (data) {
-      if (data?.assigneeId === uid) {
-        dispatch(toggleNewComment());
+      if (data?.assigneeId === uid && Number(data?.comment?.uId) !== uid) {
+        dispatch(newComment());
         const onClickDismiss = (key) => () => {
           closeSnackbar(key);
         };
@@ -97,7 +97,11 @@ export const MAIN_APP = () => {
           </Fragment>
         );
         enqueueSnackbar(
-          data?.comment?.username + " commented on an issue, you assigned",
+          "@" +
+            data?.comment?.username +
+            " commented on an issue #(" +
+            convertToLocalTime(data?.comment?.time).substr(16, 8) +
+            ")",
           {
             preventDuplicate: true,
             persist: true,
