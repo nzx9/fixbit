@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   Backdrop,
   CircularProgress,
@@ -12,6 +13,7 @@ import {
   Button,
   Link,
   Typography,
+  Fab,
   makeStyles,
 } from "@material-ui/core";
 import { httpReq, getSync } from "../components/httpRequest";
@@ -35,6 +37,8 @@ import {
   Repeat,
   Add,
   Face,
+  Reply,
+  ArrowBackIos,
 } from "@material-ui/icons";
 import {
   Timeline,
@@ -46,6 +50,7 @@ import {
   TimelineContent,
 } from "@material-ui/lab";
 import { newCommentStatus, noNewComment } from "../reducers/newCommentTracker";
+import routes from "../routes/routes.json";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -182,6 +187,17 @@ const useStyles = makeStyles((theme) => ({
   infoPrime: {
     color: theme.palette.text.primary,
   },
+  fab: {
+    display: "flex",
+    position: "fixed",
+    zIndex: 9999,
+    bottom: theme.spacing(3),
+    left: theme.spacing(2),
+    transition: "0.2s",
+    "&:before": {
+      transition: "0.3s",
+    },
+  },
 }));
 
 const ViewIssue = (props) => {
@@ -199,6 +215,9 @@ const ViewIssue = (props) => {
   const [comment, setComment] = React.useState("");
   const newCommentDetector = useSelector(newCommentStatus);
   const dispatch = useDispatch();
+
+  const history = useHistory();
+  const goto = useCallback((path) => history.push(path), [history]);
 
   var md = new Remarkable("full", {
     html: false, // Enable HTML tags in source
@@ -289,14 +308,17 @@ const ViewIssue = (props) => {
         if (creator?.data !== undefined)
           setCreatorName(
             creator?.data?.username +
-              (issueData.creator_id === uid ? " (Me)" : "")
+              (Number(issueData.creator_id) === uid ? " (Me)" : "")
           );
 
         if (
           issueData.assign_to === issueData.creator_id &&
           creator?.data !== undefined
         ) {
-          setAssigneeName(creator?.data?.username + " (Me)");
+          setAssigneeName(
+            creator?.data?.username +
+              (Number(issueData.assign_to) === uid ? " (Me)" : "")
+          );
         } else {
           if (issueData.assign_to !== null) {
             const assignee = await getSync(
@@ -306,7 +328,7 @@ const ViewIssue = (props) => {
             if (assignee?.data !== undefined)
               setAssigneeName(
                 assignee?.data?.username +
-                  (issueData.assign_to === uid ? " (Me)" : "")
+                  (Number(issueData.assign_to) === uid ? " (Me)" : "")
               );
           } else {
             setAssigneeName("None");
@@ -328,6 +350,17 @@ const ViewIssue = (props) => {
     return (
       <div className={classes.root}>
         <Container component="main" maxWidth="xl">
+          <Fab
+            className={classes.fab}
+            variant="extended"
+            color="primary"
+            onClick={() =>
+              goto(routes.PROJECTS_VIEW_X + props.match.params.pid)
+            }
+          >
+            <ArrowBackIos />
+            Back
+          </Fab>
           <Grid container spacing={1}>
             <Grid item xs={12} md={12} lg={3}>
               <Paper className={classes.paperInfo}>

@@ -13,6 +13,7 @@ import {
   Chip,
   Backdrop,
   CircularProgress,
+  Fab,
 } from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
 import IssueCreateDialog from "./issue-create";
@@ -33,6 +34,7 @@ import NotFound from "./not-found";
 import { Info, InfoSubtitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import { useHistory } from "react-router-dom";
+import { ArrowBackIos } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,6 +90,17 @@ const useStyles = makeStyles((theme) => ({
   },
   infoSecondary: {
     color: theme.palette.text.secondary,
+  },
+  fab: {
+    display: "flex",
+    position: "fixed",
+    zIndex: 9999,
+    bottom: theme.spacing(3),
+    left: theme.spacing(2),
+    transition: "0.2s",
+    "&:before": {
+      transition: "0.3s",
+    },
   },
 }));
 
@@ -461,6 +474,15 @@ const ViewProject = (props) => {
         <Backdrop className={classes.backdrop} open={_openBackdrop}>
           <CircularProgress color="inherit" />
         </Backdrop>
+        <Fab
+          className={classes.fab}
+          variant="extended"
+          color="primary"
+          onClick={() => goto(routes.PROJECTS)}
+        >
+          <ArrowBackIos />
+          Back
+        </Fab>
         <AlertDialog
           alertOpen={alertOpen}
           title={alertTitle}

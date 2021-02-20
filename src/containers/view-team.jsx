@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { IconButton, Link } from "@material-ui/core";
 import { httpReq } from "../components/httpRequest";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { getUId } from "../reducers/userDataTracker";
 import { getToken } from "../reducers/tokenTracker";
 import {
@@ -17,6 +18,7 @@ import {
   Tooltip,
   Button,
   Paper,
+  Fab,
   makeStyles,
 } from "@material-ui/core/";
 import { useFourThreeCardMediaStyles } from "@mui-treasury/styles/cardMedia/fourThree";
@@ -28,6 +30,7 @@ import {
   LinkedIn,
   AddCircle,
   Cancel,
+  ArrowBackIos,
 } from "@material-ui/icons";
 import {
   NOTIFY,
@@ -41,6 +44,7 @@ import { randomColor } from "../components/random-color-generator";
 import config from "../components/config.json";
 import { Chart } from "react-google-charts";
 import { drawerOpenStatus } from "../reducers/drawerOpenTracker";
+import routes from "../routes/routes.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -188,6 +192,17 @@ const useStyles = makeStyles((theme) => ({
     color: "#181717",
     "&:hover": {
       transform: "scale(1.4)",
+    },
+  },
+  fab: {
+    display: "flex",
+    position: "fixed",
+    zIndex: 9999,
+    bottom: theme.spacing(3),
+    left: theme.spacing(2),
+    transition: "0.2s",
+    "&:before": {
+      transition: "0.3s",
     },
   },
 }));
@@ -375,6 +390,9 @@ const ViewTeam = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
+  const history = useHistory();
+  const goto = useCallback((path) => history.push(path), [history]);
+
   const fetchMemberDataAndSet = () => {
     _setOpenBackdrop(true);
     httpReq(
@@ -485,6 +503,15 @@ const ViewTeam = (props) => {
         <Backdrop className={classes.backdrop} open={_openBackdrop}>
           <CircularProgress color="inherit" />
         </Backdrop>
+        <Fab
+          className={classes.fab}
+          variant="extended"
+          color="primary"
+          onClick={() => goto(routes.TEAMS)}
+        >
+          <ArrowBackIos />
+          Back
+        </Fab>
         <AlertDialog
           alertOpen={alertOpen}
           title={alertTitle}
