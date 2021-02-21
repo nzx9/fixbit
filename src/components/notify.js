@@ -15,7 +15,7 @@ import { Cancel, CheckCircle, Help } from "@material-ui/icons";
 import { httpReq } from "./httpRequest";
 import config from "../components/config.json";
 
-import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
+import { Info, InfoTitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import settings from "../components/settings.json";
 

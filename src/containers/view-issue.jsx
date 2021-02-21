@@ -251,8 +251,6 @@ const ViewIssue = (props) => {
     },
   }).use(linkify);
 
-  const bullet = <span className={classes.bullet}>•</span>;
-
   const getRawDescription = () => {
     return { __html: md.render(issueData.description) };
   };

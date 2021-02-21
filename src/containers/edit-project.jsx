@@ -28,7 +28,7 @@ import { useSnackbar } from "notistack";
 
 import { Description, Settings, Cancel } from "@material-ui/icons";
 import { convertToLocalTime } from "../components/debugTools";
-import { Info, InfoSubtitle, InfoTitle } from "@mui-treasury/components/info";
+import { Info, InfoSubtitle } from "@mui-treasury/components/info";
 import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
 const styles = (theme) => ({
@@ -83,13 +83,13 @@ const useStyles = makeStyles((theme) => ({
   },
   settingsBtn: {
     backgroundColor: theme.palette.error.main,
-    ["& hover"]: {
+    "&:hover": {
       backgroundColor: theme.palette.error.dark,
     },
   },
   descBtn: {
     backgroundColor: theme.palette.info.main,
-    ["& hover"]: {
+    "&:hover": {
       backgroundColor: theme.palette.info.dark,
     },
   },

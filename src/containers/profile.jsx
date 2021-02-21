@@ -16,7 +16,6 @@ import {
   Link,
 } from "@material-ui/core";
 import {
-  getUId,
   getUserName,
   getFullName,
   getEmail,
@@ -90,7 +89,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = () => {
   const classes = useStyles();
-  const uId = useSelector(getUId);
   const token = useSelector(getToken);
   const username = useSelector(getUserName);
   const fullname = useSelector(getFullName);

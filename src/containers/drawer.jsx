@@ -13,11 +13,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  // Badge,
   Menu,
   MenuItem,
   Tooltip,
-  SwipeableDrawer,
   makeStyles,
   useTheme,
 } from "@material-ui/core";
@@ -38,14 +36,11 @@ import {
 import { Link, useHistory } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { logout } from "../reducers/loginTracker";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { tipTitle, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
 import { drawerOpen, drawerClose } from "../reducers/drawerOpenTracker";
 import favicon from "../images/favicon-32x32.png";
-
-import { getUId } from "../reducers/userDataTracker";
-import { getLoginStatus } from "../reducers/loginTracker";
 
 const drawerWidth = 220;
 
@@ -138,7 +133,7 @@ const useStyles = makeStyles((theme) => ({
   selected: { color: theme.palette.primary.main },
   unselected: { color: "auto" },
   logo: {
-    width: "200px",
+    width: "120px",
     position: "relative",
     left: -10,
     [theme.breakpoints.down("sm")]: {
@@ -149,7 +144,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SideDrawer(props) {
   const { children } = props;
-  const uid = useSelector(getUId);
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -263,6 +257,7 @@ export default function SideDrawer(props) {
             >
               <img
                 src={favicon}
+                alt="fixbit-icon"
                 style={{
                   float: "left",
                   paddingRight: 10,
