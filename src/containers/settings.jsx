@@ -110,7 +110,11 @@ const Settings = () => {
       ? "TR"
       : localStorage.getItem("snack_pos") === "BR"
       ? "BR"
-      : "BL"
+      : localStorage.getItem("snack_pos") === "BL"
+      ? "BL"
+      : localStorage.getItem("snack_pos") === "BC"
+      ? "BC"
+      : "TC"
   );
 
   const handleToggleDarkTheme = () => {
@@ -277,8 +281,10 @@ const Settings = () => {
               onChange={handleNotificationPositionChange}
               value={notificationPosition}
             >
+              <MenuItem value={"TC"}>Top Center</MenuItem>
               <MenuItem value={"TL"}>Top Left</MenuItem>
               <MenuItem value={"TR"}>Top Right</MenuItem>
+              <MenuItem value={"BC"}>Bottom Center</MenuItem>
               <MenuItem value={"BL"}>Bottom Left</MenuItem>
               <MenuItem value={"BR"}>Bottom Right</MenuItem>
             </Select>

@@ -295,5 +295,9 @@ export const snackPosition = () => {
     return settings.snackbar.anchorOrigin.TR;
   else if (localStorage.getItem("snack_pos") === "BR")
     return settings.snackbar.anchorOrigin.BR;
-  else return settings.snackbar.anchorOrigin.BL;
+  else if (localStorage.getItem("snack_pos") === "BL")
+    return settings.snackbar.anchorOrigin.BL;
+  else if (localStorage.getItem("snack_pos") === "BC")
+    return settings.snackbar.anchorOrigin.BC;
+  else return settings.snackbar.anchorOrigin.TC;
 };
