@@ -16,6 +16,14 @@
       "BR": {
         "vertical": "bottom",
         "horizontal": "right"
+      },
+      "TC": {
+        "vertical": "top",
+        "horizontal": "center"
+      },
+      "BC": {
+        "vertical": "bottom",
+        "horizontal": "center"
       }
     }
   }
