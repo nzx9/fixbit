@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 
-import { Cancel } from "@material-ui/icons";
+import { Cancel, Info } from "@material-ui/icons";
 
 import { DEBUG_PRINT } from "../components/debugTools";
 import { httpReq } from "../components/httpRequest";
@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   },
   gridContainer: {
     marginBottom: theme.spacing(2),
+  },
+  infoIcon: {
+    color: theme.palette.info.main,
   },
 }));
 
@@ -84,7 +87,7 @@ const TeamStatistics = (props) => {
               anchorOrigin: snackPosition(),
             });
             if (res.status === 200 && r.success === true)
-              if (r.data !== null) {
+              if (r.data !== null && r.data.length > 0) {
                 let tmp = [["Project", "Open", "Closed"]];
                 r.data.forEach((value) => {
                   tmp.push([
@@ -263,7 +266,27 @@ const TeamStatistics = (props) => {
               </Grid>
             </Grid>
           ) : (
-            "Nothing to show"
+            <div
+              style={{
+                marginLeft: 0,
+                marginRight: 0,
+                alignItems: "center",
+                textAlign: "center",
+                marginTop: 40,
+                marginBottom: 80,
+              }}
+            >
+              <Grid container justify="center">
+                <Grid item xs={12}>
+                  <Info className={classes.infoIcon} />
+                </Grid>
+                <Grid item xs={12}>
+                  No data to show
+                  <br />
+                  Assign team to some projects
+                </Grid>
+              </Grid>
+            </div>
           )}
         </DialogContent>
       </Dialog>
