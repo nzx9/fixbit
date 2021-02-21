@@ -11,7 +11,6 @@ export const convertToLocalTime = (dateTime, notStanderdFormat = true) => {
       // convert to 2021-02-21T04:01:19.000000Z format before convert to local time
       const splited = dateTime.split(" ");
       let convertedDateTime = `${splited[0]}T${splited[1]}.000000Z`;
-      console.log(convertedDateTime);
       const date = new Date(convertedDateTime);
       return date.toString();
     } else {
