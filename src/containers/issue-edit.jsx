@@ -138,7 +138,7 @@ function IssueEditDialog(props) {
     <div>
       <Button
         variant="outlined"
-        color="primary"
+        color="inherit"
         onClick={handleClickOpen}
         fullWidth
       >
@@ -416,7 +416,7 @@ function IssueEditDialog(props) {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button type="submit" autoFocus color="primary">
+            <Button type="submit" autoFocus color="inherit" variant="outlined">
               Save
             </Button>
           </DialogActions>

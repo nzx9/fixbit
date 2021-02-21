@@ -442,9 +442,9 @@ function EditProjectDialog(props) {
             <DialogActions>
               <Button
                 autoFocus
-                variant="text"
+                variant="outlined"
                 type="submit"
-                color="primary"
+                color="inherit"
                 disabled={
                   props.projectInfo.project.admin_id !== uId ? true : false
                 }

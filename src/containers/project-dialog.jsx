@@ -235,7 +235,7 @@ const ProjectDialog = (props) => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus type="submit" color="primary">
+          <Button autoFocus type="submit" color="inherit" variant="outlined">
             Create
           </Button>
         </DialogActions>
