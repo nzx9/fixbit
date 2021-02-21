@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback } from "react";
-import { IconButton, Link } from "@material-ui/core";
+import React, { useEffect, useCallback, useMemo } from "react";
 import { httpReq } from "../components/httpRequest";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
@@ -7,6 +6,8 @@ import { useHistory } from "react-router-dom";
 import { getUId } from "../reducers/userDataTracker";
 import { getToken } from "../reducers/tokenTracker";
 import {
+  IconButton,
+  Link,
   Grid,
   Box,
   CardActionArea,
@@ -19,6 +20,7 @@ import {
   Button,
   Paper,
   Fab,
+  Divider,
   makeStyles,
 } from "@material-ui/core/";
 import { useFourThreeCardMediaStyles } from "@mui-treasury/styles/cardMedia/fourThree";
@@ -38,6 +40,7 @@ import {
   NewMemberAddAlert,
   tipTitle,
   snackPosition,
+  AlertDialogConfirmation,
 } from "../components/notify";
 import { DEBUG_PRINT } from "../components/debugTools";
 import { randomColor } from "../components/random-color-generator";
@@ -45,6 +48,11 @@ import config from "../components/config.json";
 import { Chart } from "react-google-charts";
 import { drawerOpenStatus } from "../reducers/drawerOpenTracker";
 import routes from "../routes/routes.json";
+import TeamStatistics from "./team-statistics";
+import TeamDetails from "./team-details";
+import TeamEdit from "./team-edit";
+import MemberEdit from "./member-info";
+import NotFound from "./not-found";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -117,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 20,
     marginTop: 20,
     [theme.breakpoints.down("sm")]: {
-      height: 200,
+      height: 180,
     },
   },
   ctrlBtnBase: {
@@ -131,11 +139,10 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 10,
     paddingTop: 10,
     [theme.breakpoints.down("sm")]: {
-      height: 200,
+      height: 180,
     },
   },
   ctrlBtn: {
-    marginBottom: 25,
     [theme.breakpoints.down("sm")]: {
       marginBottom: 10,
     },
@@ -205,6 +212,18 @@ const useStyles = makeStyles((theme) => ({
       transition: "0.3s",
     },
   },
+  detailsBtn: {
+    borderColor: theme.palette.info.main,
+    color: theme.palette.info.main,
+  },
+  leaveBtn: {
+    borderColor: theme.palette.error.main,
+    color: theme.palette.error.main,
+  },
+  editBtn: {
+    borderColor: theme.palette.warning.main,
+    color: theme.palette.warning.main,
+  },
 }));
 
 const UserCard = ({
@@ -220,6 +239,8 @@ const UserCard = ({
   showDelete = false,
   openBackdrop,
   closeBackdrop,
+  handleOpenMemberEdit,
+  info,
   action,
 }) => {
   const mediaStyles = useFourThreeCardMediaStyles();
@@ -231,7 +252,10 @@ const UserCard = ({
         useSelector(drawerOpenStatus) ? classes.rootDrawerOpen : classes.root
       }
     >
-      <CardActionArea className={classes.actionArea}>
+      <CardActionArea
+        className={classes.actionArea}
+        onClick={() => handleOpenMemberEdit(info)}
+      >
         <Info useStyles={useApexInfoStyles} className={classes.info}>
           <Card className={classes.card}>
             <CardMedia classes={mediaStyles} image={image}>
@@ -375,7 +399,7 @@ const AddNewCard = ({ classes, handleOpenAddMemberAlert }) => {
 const ViewTeam = (props) => {
   const classes = useStyles({ color: "auto" });
   const token = useSelector(getToken);
-  const uId = useSelector(getUId);
+  const uid = useSelector(getUId);
   const [error, setError] = React.useState(false);
   const [isMDLoaded, setIsMDLoaded] = React.useState(false);
   const [isTDLoaded, setIsTDLoaded] = React.useState(false);
@@ -386,12 +410,25 @@ const ViewTeam = (props) => {
   const [alertMsg, setAlertMsg] = React.useState();
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [addMemberAlert, setAddMemberAlert] = React.useState(false);
+  const [notFoundError, setNotFoundError] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
   const [_openBackdrop, _setOpenBackdrop] = React.useState(false);
 
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
+
+  const [tdOpen, setTdOpen] = React.useState(false);
+  const [tsOpen, setTsOpen] = React.useState(false);
+  const [teOpen, setTeOpen] = React.useState(false);
+  const [tlAlertOpen, setTlAlertOpen] = React.useState(false);
+  const [meOpen, setMeOpen] = React.useState(false);
+  const [selectedMemberInfo, setSelectedMemberInfo] = React.useState(null);
+
+  const handleOpenMemberEdit = (info) => {
+    setSelectedMemberInfo(info);
+    setMeOpen(true);
+  };
 
   const fetchMemberDataAndSet = () => {
     _setOpenBackdrop(true);
@@ -402,7 +439,6 @@ const ViewTeam = (props) => {
       token
     )
       .then((res) => {
-        setIsMDLoaded(true);
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
@@ -413,15 +449,15 @@ const ViewTeam = (props) => {
               anchorOrigin: snackPosition(),
             });
             DEBUG_PRINT(r);
-            if (res.status === 200 && r.success === true)
+            if (res.status === 200 && r.success === true) {
               r.data !== null ? setMData(r.data) : setMData([]);
-            else setError(r.msg);
+            } else setError(r.msg);
+            setIsMDLoaded(true);
           });
         });
       })
       .catch((err) => {
         _setOpenBackdrop(false);
-        setIsMDLoaded(true);
         setAlertType("error");
         const parsedError = err.toString().split(":");
         if (parsedError.length >= 1) {
@@ -436,6 +472,7 @@ const ViewTeam = (props) => {
         }
         setAlertOpen(true);
         setError(err.message);
+        setIsMDLoaded(true);
       });
   };
 
@@ -448,7 +485,6 @@ const ViewTeam = (props) => {
       token
     )
       .then((res) => {
-        setIsTDLoaded(true);
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
@@ -462,11 +498,14 @@ const ViewTeam = (props) => {
             if (res.status === 200 && r.success === true)
               r.data !== null ? setTData(r.data) : setTData({});
             else setError(r.msg);
+            if (res.status === 404 || res.status === 401) {
+              setNotFoundError(true);
+            }
+            setIsTDLoaded(true);
           });
         });
       })
       .catch((err) => {
-        setIsTDLoaded(true);
         _setOpenBackdrop(false);
         setAlertType("error");
         const parsedError = err.toString().split(":");
@@ -482,15 +521,17 @@ const ViewTeam = (props) => {
         }
         setAlertOpen(true);
         setError(err.message);
+        setIsTDLoaded(true);
       });
   };
 
   useEffect(() => {
-    fetchMemberDataAndSet();
     fetchTeamDataAndSet();
+    fetchMemberDataAndSet();
   }, []);
 
-  if (error) return <p>Error: {error}</p>;
+  if (notFoundError) return <NotFound />;
+  else if (error) return <p>Error: {error}</p>;
   else if (!isMDLoaded || !isTDLoaded)
     return (
       <Backdrop className={classes.backdrop} open="true">
@@ -523,33 +564,66 @@ const ViewTeam = (props) => {
           <div className={classes.ctrlRoot}>
             <Paper className={classes.ctrlCard}>
               <div className={classes.ctrlBtnBase}>
-                <Button
-                  className={classes.ctrlBtn}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Statistics
-                </Button>
-                <Button
-                  className={classes.ctrlBtn}
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                >
-                  Edit Team
-                </Button>
-                <Button
-                  className={classes.ctrlBtn}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Statistics
-                </Button>
-                <Button variant="contained" fullWidth color="secondary">
-                  Leave Team
-                </Button>
+                <Grid container spacing={1}>
+                  <Grid item xs={12}>
+                    <div
+                      className={classes.ctrlBtn}
+                      style={{
+                        width: " 100%",
+                        textAlign: "center",
+                        marginBottom: 12,
+                      }}
+                    >
+                      <Info useStyles={useApexInfoStyles}>
+                        <InfoTitle className={classes.title}>ACTIONS</InfoTitle>
+                        <Divider />
+                      </Info>
+                    </div>
+                  </Grid>
+                  <Grid item xs={6} md={12}>
+                    <Button
+                      // className={classes.detailsBtn}
+                      variant="outlined"
+                      color="inherit"
+                      fullWidth
+                      onClick={() => setTdOpen(true)}
+                    >
+                      Details
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6} md={12}>
+                    <Button
+                      className={classes.ctrlBtn}
+                      variant="outlined"
+                      color="inherit"
+                      fullWidth
+                      onClick={() => setTsOpen(true)}
+                    >
+                      Statistics
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6} md={12}>
+                    <Button
+                      // className={classes.editBtn}
+                      variant="outlined"
+                      color="inherit"
+                      fullWidth
+                      onClick={() => setTeOpen(true)}
+                    >
+                      Edit Team
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6} md={12}>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      className={classes.leaveBtn}
+                      onClick={() => setTlAlertOpen(true)}
+                    >
+                      Leave Team
+                    </Button>
+                  </Grid>
+                </Grid>
               </div>
             </Paper>
           </div>
@@ -568,12 +642,14 @@ const ViewTeam = (props) => {
               closeBackdrop={() => _setOpenBackdrop(false)}
               action={() => fetchMemberDataAndSet()}
               showDelete={
-                uId === tData?.leader_id && value.info.id !== uId ? true : false
+                uid === tData?.leader_id && value.info.id !== uid ? true : false
               }
               image={`https://ui-avatars.com/api/?name=${value.info.username}&size=256&background=random`}
+              info={value}
+              handleOpenMemberEdit={handleOpenMemberEdit}
             />
           ))}
-          {uId === tData.leader_id ? (
+          {uid === tData.leader_id ? (
             <AddNewCard
               key={mData.length + 1}
               classes={classes}
@@ -621,6 +697,78 @@ const ViewTeam = (props) => {
                 });
               setAddMemberAlert(false);
             }
+          }}
+        />
+
+        <TeamDetails
+          open={tdOpen}
+          memberCount={mData.length}
+          teamData={tData}
+          handleClose={() => setTdOpen(false)}
+        />
+        <TeamStatistics
+          open={tsOpen}
+          tid={props.match.params.tid}
+          handleClose={() => setTsOpen(false)}
+        />
+        <TeamEdit
+          open={teOpen}
+          tid={props.match.params.tid}
+          teamName={tData.name}
+          teamDescription={tData.description}
+          teamIsActive={tData.is_active}
+          action={() => fetchTeamDataAndSet()}
+          setOpenBackdrop={_setOpenBackdrop}
+          handleClose={() => setTeOpen(false)}
+        />
+        <MemberEdit
+          open={meOpen}
+          memberData={selectedMemberInfo}
+          uid={uid}
+          leaderId={tData?.leader_id}
+          handleClose={() => {
+            setMeOpen(false);
+            setSelectedMemberInfo(null);
+          }}
+        />
+        <AlertDialogConfirmation
+          alertOpen={tlAlertOpen}
+          title={`Leave Team?`}
+          type="error"
+          msg={`You about to leave the team. 
+                After leaving this team, you can't join again until leader add you as member. 
+                Also you will lost access to all the private projects this team has assigned.`}
+          resolveCallback={() => {
+            httpReq(
+              `${config.URL}/api/teams/${props.match.params.tid}/members/${uid}`,
+              "DELETE",
+              null,
+              token
+            )
+              .then((res) => {
+                _setOpenBackdrop(true);
+                res.json().then((r) => {
+                  NOTIFY(r.msg, (msg) => {
+                    if (msg === null || msg === undefined) msg = r.message;
+                    enqueueSnackbar(msg, {
+                      variant: r.type,
+                      anchorOrigin: snackPosition(),
+                    });
+                    if (res.status === 200 && r.success === true)
+                      goto(routes.TEAMS);
+                    _setOpenBackdrop(false);
+                  });
+                });
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+            _setOpenBackdrop(false);
+            setTlAlertOpen(false);
+          }}
+          rejectCallback={() => {
+            _setOpenBackdrop(false);
+            setTlAlertOpen(false);
           }}
         />
       </div>
