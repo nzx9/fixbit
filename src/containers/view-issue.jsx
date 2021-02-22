@@ -45,6 +45,7 @@ import {
 import { newCommentStatus, noNewComment } from "../reducers/newCommentTracker";
 import routes from "../routes/routes.json";
 import IssueEditDialog from "./issue-edit";
+import NotFound from "./not-found";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -209,6 +210,7 @@ const ViewIssue = (props) => {
   const [teamData, setTeamData] = React.useState([]);
   const [adminData, setAdminData] = React.useState(null);
   const [error, setError] = React.useState(null);
+  const [notFoundError, setNotFoundError] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [creatorName, setCreatorName] = React.useState("...");
   const [assigneeName, setAssigneeName] = React.useState("...");
@@ -286,6 +288,13 @@ const ViewIssue = (props) => {
               setAdminData(r.data.admin);
               setTeamData(r.data.team);
             }
+            if (
+              res.status === 404 ||
+              res.status === 401 ||
+              res.status === 500
+            ) {
+              setNotFoundError(true);
+            }
           });
           setIsLoaded(true);
         });
@@ -340,7 +349,8 @@ const ViewIssue = (props) => {
       }
     })();
   }, [newCommentDetector, issueData]);
-  if (error) return <div>Error: {error}</div>;
+  if (notFoundError) return <NotFound />;
+  else if (error) return <div>Error: {error}</div>;
   else if (!isLoaded)
     return (
       <div>
