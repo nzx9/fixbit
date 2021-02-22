@@ -31,7 +31,6 @@ import { httpReq } from "../components/httpRequest";
 import config from "../components/config.json";
 import { DEBUG_PRINT, convertToLocalTime } from "../components/debugTools";
 import { useSnackbar } from "notistack";
-import settings from "../components/settings.json";
 
 import {
   Backdrop,
@@ -189,7 +188,6 @@ export default function Router() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   const goToLogin = useCallback(() => history.push(routes.LOGIN), [history]);
   const token = localStorage.getItem("token");
@@ -228,10 +226,6 @@ export default function Router() {
           DEBUG_PRINT(err);
           setIsLoaded(true);
           setIsError(true);
-          enqueueSnackbar(err.message(), {
-            variant: "error",
-            anchorOrigin: settings.snackbar.anchorOrigin,
-          });
         });
     } else {
       setIsLoaded(true);
