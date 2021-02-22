@@ -71,6 +71,7 @@ const TeamStatistics = (props) => {
   const classes = useStyles();
   const token = useSelector(getToken);
   const [stats, setStats] = React.useState([]);
+  const [timeline, setTimeLine] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [error, setError] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -87,16 +88,30 @@ const TeamStatistics = (props) => {
               anchorOrigin: snackPosition(),
             });
             if (res.status === 200 && r.success === true)
-              if (r.data !== null && r.data.length > 0) {
-                let tmp = [["Project", "Open", "Closed"]];
-                r.data.forEach((value) => {
-                  tmp.push([
-                    value?.info?.name,
-                    value?.open_issue_count,
-                    value?.closed_issue_count,
-                  ]);
-                });
-                setStats(tmp);
+              if (r.data !== null) {
+                if (r.data.data.length > 0) {
+                  let tmp = [["Project", "Open", "Closed"]];
+                  r.data.data.forEach((value) => {
+                    tmp.push([
+                      value?.info?.name,
+                      value?.open_issue_count,
+                      value?.closed_issue_count,
+                    ]);
+                  });
+                  setStats(tmp);
+                }
+                const keys = Object.keys(r.data.timeline);
+                if (keys !== null && keys.length > 0) {
+                  let timeline = [["Year-Month", "Open", "Closed"]];
+                  keys.forEach((key) => {
+                    timeline.push([
+                      key,
+                      r.data.timeline[key]["open"],
+                      r.data.timeline[key]["closed"],
+                    ]);
+                  });
+                  setTimeLine(timeline);
+                }
               } else console.error("STAT DATA NULL");
             else setError(r.msg);
             DEBUG_PRINT(r.data);
@@ -144,9 +159,9 @@ const TeamStatistics = (props) => {
         </DialogTitle>
         <Divider />
         <DialogContent>
-          {stats !== undefined && stats !== null && stats.length !== 0 ? (
-            <Grid container>
-              <Grid item xs={12}>
+          <Grid container>
+            <Grid item xs={12}>
+              {Array.isArray(stats) && stats.length !== 0 ? (
                 <Chart
                   width={"100%"}
                   height={"auto"}
@@ -168,7 +183,7 @@ const TeamStatistics = (props) => {
                     chartArea: { width: "70%" },
                     hAxis: {
                       minValue: 0,
-                      title: "TOTAL ISSUES",
+                      title: "Total Issues",
                       baselineColor:
                         localStorage.theme === "dark" ? "white" : "black",
                       titleTextStyle: {
@@ -181,7 +196,7 @@ const TeamStatistics = (props) => {
                       },
                     },
                     vAxis: {
-                      title: "PROJECT",
+                      title: "Project",
                       titleTextStyle: {
                         color:
                           localStorage.theme === "dark" ? "white" : "black",
@@ -207,12 +222,37 @@ const TeamStatistics = (props) => {
                     },
                   }}
                 />
-                <br />
-                <Divider />
-              </Grid>
-              <Grid item xs={12}>
-                <Divider />
-                <br />
+              ) : (
+                <div
+                  style={{
+                    marginLeft: 0,
+                    marginRight: 0,
+                    alignItems: "center",
+                    textAlign: "center",
+                    marginTop: 40,
+                    marginBottom: 80,
+                  }}
+                >
+                  <Grid container justify="center">
+                    <Grid item xs={12}>
+                      <Info className={classes.infoIcon} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      No data to show
+                      <br />
+                      Assign team to some projects
+                    </Grid>
+                  </Grid>
+                </div>
+              )}
+              <br />
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <Divider />
+              <br />
+
+              {Array.isArray(timeline) && timeline.length !== 0 ? (
                 <Chart
                   width={"100%"}
                   height={"auto"}
@@ -228,12 +268,13 @@ const TeamStatistics = (props) => {
                       <CircularProgress color="inherit" />
                     </div>
                   }
-                  data={stats}
+                  data={timeline}
                   options={{
-                    title: "PROJECTS COMPARISON",
+                    title: "ISSUE TIMELINE",
                     hAxis: {
-                      title: "PROJECT",
-                      color: localStorage.theme === "dark" ? "white" : "black",
+                      title: "Month",
+                      titleColor:
+                        localStorage.theme === "dark" ? "white" : "black",
                       textStyle: {
                         color:
                           localStorage.theme === "dark" ? "white" : "black",
@@ -245,6 +286,9 @@ const TeamStatistics = (props) => {
                     },
                     vAxis: {
                       minValue: 0,
+                      title: "Number of Issues",
+                      titleColor:
+                        localStorage.theme === "dark" ? "white" : "black",
                       textStyle: {
                         color:
                           localStorage.theme === "dark" ? "white" : "black",
@@ -262,32 +306,32 @@ const TeamStatistics = (props) => {
                     colors: ["#4caf50", "#f44336"],
                   }}
                 />
-                <br />
-              </Grid>
+              ) : (
+                <div
+                  style={{
+                    marginLeft: 0,
+                    marginRight: 0,
+                    alignItems: "center",
+                    textAlign: "center",
+                    marginTop: 40,
+                    marginBottom: 80,
+                  }}
+                >
+                  <Grid container justify="center">
+                    <Grid item xs={12}>
+                      <Info className={classes.infoIcon} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      No issues yet
+                      <br />
+                      Create some issues
+                    </Grid>
+                  </Grid>
+                </div>
+              )}
+              <br />
             </Grid>
-          ) : (
-            <div
-              style={{
-                marginLeft: 0,
-                marginRight: 0,
-                alignItems: "center",
-                textAlign: "center",
-                marginTop: 40,
-                marginBottom: 80,
-              }}
-            >
-              <Grid container justify="center">
-                <Grid item xs={12}>
-                  <Info className={classes.infoIcon} />
-                </Grid>
-                <Grid item xs={12}>
-                  No data to show
-                  <br />
-                  Assign team to some projects
-                </Grid>
-              </Grid>
-            </div>
-          )}
+          </Grid>
         </DialogContent>
       </Dialog>
     );
