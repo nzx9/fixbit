@@ -509,7 +509,18 @@ const Home = () => {
                     width={"100%"}
                     height={"100%"}
                     chartType="PieChart"
-                    loader={<div>Loading...</div>}
+                    loader={
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginTop: "40%",
+                        }}
+                      >
+                        <CircularProgress color="inherit" />
+                      </div>
+                    }
                     data={[
                       ["Type", "Count"],
                       ["Open", stats.open_issue_count],
