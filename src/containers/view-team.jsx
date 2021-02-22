@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback } from "react";
 import { httpReq } from "../components/httpRequest";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
@@ -45,7 +45,6 @@ import {
 import { DEBUG_PRINT } from "../components/debugTools";
 import { randomColor } from "../components/random-color-generator";
 import config from "../components/config.json";
-import { Chart } from "react-google-charts";
 import { drawerOpenStatus } from "../reducers/drawerOpenTracker";
 import routes from "../routes/routes.json";
 import TeamStatistics from "./team-statistics";
@@ -53,6 +52,7 @@ import TeamDetails from "./team-details";
 import TeamEdit from "./team-edit";
 import MemberEdit from "./member-info";
 import NotFound from "./not-found";
+import LeaderPanel from "./leader-panel";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -424,6 +424,9 @@ const ViewTeam = (props) => {
   const [tlAlertOpen, setTlAlertOpen] = React.useState(false);
   const [meOpen, setMeOpen] = React.useState(false);
   const [selectedMemberInfo, setSelectedMemberInfo] = React.useState(null);
+  const [lpOpen, setLpOpen] = React.useState(false);
+
+  const [userMemberCheck, setUserMemberCheck] = React.useState(false);
 
   const handleOpenMemberEdit = (info) => {
     setSelectedMemberInfo(info);
@@ -450,7 +453,15 @@ const ViewTeam = (props) => {
             });
             DEBUG_PRINT(r);
             if (res.status === 200 && r.success === true) {
-              r.data !== null ? setMData(r.data) : setMData([]);
+              if (r.data !== null) {
+                setMData(r.data);
+                r.data.forEach((member) => {
+                  if (member.info.id === uid) {
+                    setUserMemberCheck(true);
+                    return;
+                  }
+                });
+              } else setMData([]);
             } else setError(r.msg);
             setIsMDLoaded(true);
           });
@@ -608,20 +619,33 @@ const ViewTeam = (props) => {
                       variant="outlined"
                       color="inherit"
                       fullWidth
+                      disabled={tData.leader_id === uid ? false : true}
                       onClick={() => setTeOpen(true)}
                     >
                       Edit Team
                     </Button>
                   </Grid>
                   <Grid item xs={6} md={12}>
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      className={classes.leaveBtn}
-                      onClick={() => setTlAlertOpen(true)}
-                    >
-                      Leave Team
-                    </Button>
+                    {tData.leader_id !== uid ? (
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        className={classes.leaveBtn}
+                        disabled={!userMemberCheck}
+                        onClick={() => setTlAlertOpen(true)}
+                      >
+                        Leave Team
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        className={classes.leaveBtn}
+                        onClick={() => setLpOpen(true)}
+                      >
+                        Leader Panel
+                      </Button>
+                    )}
                   </Grid>
                 </Grid>
               </div>
@@ -731,11 +755,20 @@ const ViewTeam = (props) => {
             setSelectedMemberInfo(null);
           }}
         />
+        <LeaderPanel
+          open={lpOpen}
+          tid={props.match.params.tid}
+          leaderId={tData.leader_id}
+          memberData={mData}
+          action={() => fetchTeamDataAndSet()}
+          setOpenBackdrop={_setOpenBackdrop}
+          handleClose={() => setLpOpen(false)}
+        />
         <AlertDialogConfirmation
           alertOpen={tlAlertOpen}
           title={`Leave Team?`}
           type="error"
-          msg={`You about to leave the team. 
+          msg={`You are about to leave the team. 
                 After leaving this team, you can't join again until leader add you as member. 
                 Also you will lost access to all the private projects this team has assigned.`}
           resolveCallback={() => {
