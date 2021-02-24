@@ -200,7 +200,7 @@ const Home = () => {
                     </div>
                   ) : (
                     stats.open_issues.map((project, index) => (
-                      <li key={"oi_" + index} style={{ listStyleType: "dot" }}>
+                      <li key={"oi_" + index}>
                         <div
                           style={{
                             display: "inline-flex",
