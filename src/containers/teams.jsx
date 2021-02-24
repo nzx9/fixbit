@@ -119,7 +119,7 @@ const Teams = () => {
           setAlertMsg("Unknown");
         }
         setAlertOpen(true);
-        setError(err);
+        setError(err.toString());
       });
     handleClose();
   };
@@ -131,7 +131,7 @@ const Teams = () => {
   if (error) {
     return (
       <div style={{ margin: "0 auto", width: "300px" }}>
-        <h1>Error: {error}</h1>
+        <h1>{error}</h1>
       </div>
     );
   } else if (!isLoaded)

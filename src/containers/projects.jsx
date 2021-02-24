@@ -112,7 +112,7 @@ const Projects = () => {
           setAlertMsg("Unknown");
         }
         setAlertOpen(true);
-        setError(err);
+        setError(err.toString());
         setIsLoadedT(true);
       });
   };
@@ -150,7 +150,7 @@ const Projects = () => {
           setAlertMsg("Unknown");
         }
         setAlertOpen(true);
-        setError(err);
+        setError(err.toString());
         setIsLoadedP(true);
       });
   };
@@ -163,7 +163,7 @@ const Projects = () => {
   if (error) {
     return (
       <div style={{ margin: "0 auto", width: "300px" }}>
-        <h1>Error: {error}</h1>
+        <h1>{error}</h1>
       </div>
     );
   } else if (!isLoadedP || !isLoadedT)

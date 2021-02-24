@@ -119,7 +119,10 @@ const TeamStatistics = (props) => {
           });
         });
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        setError(err.toString());
+        console.error(err);
+      });
   }, []);
 
   if (error) return <div>Error: {error}</div>;

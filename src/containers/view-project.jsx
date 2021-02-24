@@ -259,7 +259,7 @@ const ViewProject = (props) => {
           setAlertMsg("Unknown");
         }
         setAlertOpen(true);
-        setError(err);
+        setError(err.toString());
         setIsLoadedTI(true);
       });
   };
@@ -326,7 +326,7 @@ const ViewProject = (props) => {
         }
         setAlertOpen(true);
         setIsLoadedPI(true);
-        setError(err);
+        setError(err.toString());
       });
   };
 
@@ -459,7 +459,12 @@ const ViewProject = (props) => {
   }, []);
 
   if (notFoundError) return <NotFound />;
-  else if (error) return <div>Error: {error}</div>;
+  else if (error)
+    return (
+      <div style={{ margin: "0 auto", width: "300px" }}>
+        <h1>{error}</h1>
+      </div>
+    );
   else if (!isLoadedPI || !isLoadedII || !isLoadedTI)
     return (
       <div>

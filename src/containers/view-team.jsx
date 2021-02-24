@@ -482,7 +482,7 @@ const ViewTeam = (props) => {
           setAlertMsg("Unknown");
         }
         setAlertOpen(true);
-        setError(err.message);
+        setError(err.toString());
         setIsMDLoaded(true);
       });
   };
@@ -531,7 +531,7 @@ const ViewTeam = (props) => {
           setAlertMsg("Unknown");
         }
         setAlertOpen(true);
-        setError(err.message);
+        setError(err.toString());
         setIsTDLoaded(true);
       });
   };
@@ -542,7 +542,12 @@ const ViewTeam = (props) => {
   }, []);
 
   if (notFoundError) return <NotFound />;
-  else if (error) return <p>Error: {error}</p>;
+  else if (error)
+    return (
+      <div style={{ margin: "0 auto", width: "300px" }}>
+        <h1>{error}</h1>
+      </div>
+    );
   else if (!isMDLoaded || !isTDLoaded)
     return (
       <Backdrop className={classes.backdrop} open="true">

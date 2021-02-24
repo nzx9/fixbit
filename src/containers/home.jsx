@@ -145,10 +145,18 @@ const Home = () => {
           });
         });
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        setError(err.toString());
+        console.error(err);
+      });
   }, []);
 
-  if (error) return <div>Error: {error}</div>;
+  if (error)
+    return (
+      <div style={{ margin: "0 auto", width: "300px" }}>
+        <h1>{error}</h1>
+      </div>
+    );
   else if (!isLoaded)
     return (
       <div>

@@ -301,7 +301,7 @@ const ViewIssue = (props) => {
       })
       .catch((err) => {
         setOpenBackdrop(false);
-        setError(err.message);
+        setError(err.toString());
       });
   };
 
@@ -350,7 +350,12 @@ const ViewIssue = (props) => {
     })();
   }, [newCommentDetector, issueData]);
   if (notFoundError) return <NotFound />;
-  else if (error) return <div>Error: {error}</div>;
+  else if (error)
+    return (
+      <div style={{ margin: "0 auto", width: "300px" }}>
+        <h1>{error}</h1>
+      </div>
+    );
   else if (!isLoaded)
     return (
       <div>
