@@ -164,9 +164,8 @@ export default function SideDrawer(props) {
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
   const [currentRoute, setCurrentRoute] = React.useState(
-    window.location.hash.split("#")[1]
+    "/" + window.location.pathname.split("/")[1]
   );
-
   const topList = [
     { id: 1, title: "Dashboard", url: routes.HOME, icon: <Dashboard /> },
     { id: 2, title: "Projects", url: routes.PROJECTS, icon: <Apps /> },
@@ -201,6 +200,7 @@ export default function SideDrawer(props) {
         <MenuItem
           onClick={() => {
             goto(routes.PROFILE);
+            setCurrentRoute(routes.PROFILE);
             handleMenuClose();
           }}
         >
@@ -292,7 +292,10 @@ export default function SideDrawer(props) {
               <IconButton
                 aria-label="account of current user"
                 aria-haspopup="true"
-                onClick={() => goto(routes.PROFILE)}
+                onClick={() => {
+                  goto(routes.PROFILE);
+                  setCurrentRoute(routes.PROFILE);
+                }}
                 color="inherit"
               >
                 <Face />
@@ -351,7 +354,7 @@ export default function SideDrawer(props) {
                 key={value.id}
                 onClick={() => {
                   goto(value.url);
-                  setCurrentRoute(window.location.hash.split("#")[1]);
+                  setCurrentRoute(value.url);
                   handleDrawerClose();
                 }}
                 selected={currentRoute === value.url ? true : false}
@@ -379,7 +382,7 @@ export default function SideDrawer(props) {
                 key={value.id}
                 onClick={() => {
                   goto(value.url);
-                  setCurrentRoute(window.location.hash.split("#")[1]);
+                  setCurrentRoute(value.url);
                   handleDrawerClose();
                 }}
                 selected={currentRoute === value.url ? true : false}
