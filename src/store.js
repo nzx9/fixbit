@@ -1,11 +1,11 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import { createHashHistory } from "history";
+import { createBrowserHistory } from "history";
 import { routerMiddleware } from "connected-react-router";
 import { createLogger } from "redux-logger";
 
 import createRootReducer from "./rootReducer";
 
-export const history = createHashHistory();
+export const history = createBrowserHistory();
 const rootReducer = createRootReducer(history);
 
 const router = routerMiddleware(history);
