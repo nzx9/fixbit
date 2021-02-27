@@ -484,14 +484,14 @@ const ViewIssue = (props) => {
                           <Chip
                             size="small"
                             label={
-                              issueData.type === 0
+                              Number(issueData.type) === 0
                                 ? "NONE"
-                                : issueData.type === 1
+                                : Number(issueData.type) === 1
                                 ? "BUG"
-                                : issueData.type === 2
-                                ? "SECURITY"
-                                : issueData.type === 3
+                                : Number(issueData.type) === 2
                                 ? "TO TEST"
+                                : Number(issueData.type) === 3
+                                ? "SECURITY"
                                 : "OTHER"
                             }
                             variant="default"
