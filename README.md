@@ -3,19 +3,29 @@
 
 ## About Fixbit
 
-Fixbit is the official front end for Fixbit API that gives power to access Fixbit API with GUI. Web front end is written using React and Material UI. User Interfaces are very simple and easy to use. So, Feel free to use and give some valuble feedbacks.
+**Fixbit is a feature rich issue tracker**. That can manage your projects, teams and issues easily. It is the official front end for Fixbit-API that gives power to access Fixbit-API with GUI. Web front end is written using React and Material UI. User Interfaces are simple and easy to use. So, Feel free to use and give some valuble feedbacks.
 
 - [Fixbit](https://fixbit-app.herokuapp.com)
 - [Fixbit API](https://fixbit-api.herokuapp.com)
 - [Fixbit API(GitHub Repo)](https://github.com/krypto-i9/fixbit-API)
 - [API Docs](https://documenter.getpostman.com/view/13920141/TVsuETmA)
 
+## Features
+
+- [x] Support for Multiple Projects
+- [x] Support for Multiple Teams
+- [x] Infinite Number of Members per team
+- [x] Real Time Notifications
+- [x] Markdown Support (for both issue description and comments)
+- [x] Powerfull Dashboard (provide better understanding of issues)
+- [x] Customizable UI
+
 ## Fixbit Development Team
 
-- [Navindu Dananga](https://github.com/krypto-i9)
-- [Jennive Cole](https://github.com/cole-js)
-- [Sandul Jayakody](https://github.com/sa-ndman)
-- [Gowrisha](https://github.com/Krishnamaayah)
+- [Navindu Dananga](https://github.com/krypto-i9) as SE
+- [Jennive Cole](https://github.com/cole-js) as PM
+- [Sandul Jayakody](https://github.com/sa-ndman) as DBA
+- [Gowrisha](https://github.com/Krishnamaayah) as BA
 
 ## Fixbit Sponsors
 
@@ -25,7 +35,7 @@ Fixbit is the official front end for Fixbit API that gives power to access Fixbi
 
 ## Contributing
 
-If you discover a issue or need to request new features. File a issue at [GitHub](https://github.com/krypto-i9/fixbit/issues) or [Fixbit](https://fixbit-app.herokuapp.com/#/projects/1).
+If you discover a issue or need to request new features. File a issue at [GitHub](https://github.com/krypto-i9/fixbit/issues) or [Fixbit](https://fixbit-app.herokuapp.com/projects/1).
 
 ## Security Vulnerabilities
 
