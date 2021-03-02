@@ -169,7 +169,7 @@ const Home = () => {
     return (
       <div>
         <Container component="main" maxWidth="xl">
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <Grid container>
@@ -367,7 +367,7 @@ const Home = () => {
               </Paper>
             </Grid>
           </Grid>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <Grid container>
