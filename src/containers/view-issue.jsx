@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import {
   Backdrop,
   CircularProgress,
@@ -11,9 +11,11 @@ import {
   Chip,
   TextField,
   Button,
-  Link,
   Typography,
   Fab,
+  Hidden,
+  IconButton,
+  Tooltip,
   makeStyles,
 } from "@material-ui/core";
 import { httpReq, getSync } from "../components/httpRequest";
@@ -23,6 +25,7 @@ import {
   NOTIFY,
   snackPosition,
   AlertDialogConfirmation,
+  tipTitle,
 } from "../components/notify";
 import config from "../components/config.json";
 import { useSnackbar } from "notistack";
@@ -32,7 +35,7 @@ import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 import { Remarkable } from "remarkable";
 import { linkify } from "remarkable/linkify";
 import hljs from "highlight.js";
-import { Send, Add, Face, ArrowBackIos } from "@material-ui/icons";
+import { Send, Add, Face, ArrowBackIos, Cancel } from "@material-ui/icons";
 import {
   Timeline,
   TimelineItem,
@@ -42,7 +45,11 @@ import {
   TimelineConnector,
   TimelineContent,
 } from "@material-ui/lab";
-import { newCommentStatus, noNewComment } from "../reducers/newCommentTracker";
+import {
+  newCommentStatus,
+  noNewComment,
+  newComment,
+} from "../reducers/newCommentTracker";
 import routes from "../routes/routes.json";
 import IssueEditDialog from "./issue-edit";
 import NotFound from "./not-found";
@@ -197,6 +204,9 @@ const useStyles = makeStyles((theme) => ({
       transition: "0.3s",
     },
   },
+  closeBtn: {
+    color: theme.palette.error.main,
+  },
 }));
 
 const ViewIssue = (props) => {
@@ -303,6 +313,41 @@ const ViewIssue = (props) => {
         setOpenBackdrop(false);
         setError(err.toString());
       });
+  };
+
+  const deleteComment = (index) => {
+    setOpenBackdrop(true);
+    let _data = issueData;
+    if (_data.comments === null) {
+      _data.comments = [];
+    }
+
+    if (index < _data.comments.length) {
+      _data.comments.splice(index, 1);
+      setIssueData(_data);
+      httpReq(
+        `${config.URL}/api/projects/${props.match.params.pid}/issues/${props.match.params.iid}`,
+        "PUT",
+        { is_open: issueData.is_open, comments: _data.comments },
+        token
+      )
+        .then((res) => {
+          DEBUG_PRINT(res);
+          res.json().then((r) => {
+            NOTIFY(r.msg, (msg) => {
+              if (msg === null || msg === undefined) msg = r.message;
+              enqueueSnackbar(msg, {
+                variant: r.type,
+                anchorOrigin: snackPosition(),
+              });
+              dispatch(newComment());
+            });
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   };
 
   useEffect(() => {
@@ -638,12 +683,63 @@ const ViewIssue = (props) => {
                             <TimelineConnector />
                           </TimelineSeparator>
                           <TimelineContent style={{ width: 1 }}>
-                            <Paper className={classes.paperComment}>
+                            {adminData.id === uid ||
+                            Number(value.uId) === uid ? (
+                              <>
+                                <Hidden xsDown>
+                                  {/* for desktop displays */}
+                                  <Tooltip
+                                    title={tipTitle("delete comment")}
+                                    arrow
+                                  >
+                                    <IconButton
+                                      size="small"
+                                      style={{
+                                        zIndex: 2,
+                                        position: "absolute",
+                                        left: 0,
+                                        top: 15,
+                                      }}
+                                      onClick={() => deleteComment(index)}
+                                    >
+                                      <Cancel
+                                        className={classes.closeBtn}
+                                        fontSize="small"
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Hidden>
+                                <Hidden mdUp>
+                                  <Tooltip title={"delete comment"} arrow>
+                                    {/* for mobile displays */}
+                                    <IconButton
+                                      size="small"
+                                      style={{
+                                        zIndex: 2,
+                                        position: "absolute",
+                                        right: -15,
+                                        top: 20,
+                                      }}
+                                      onClick={() => deleteComment(index)}
+                                    >
+                                      <Cancel
+                                        className={classes.closeBtn}
+                                        fontSize="small"
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Hidden>
+                              </>
+                            ) : null}
+                            <Paper
+                              className={classes.paperComment}
+                              style={{ float: "left" }}
+                            >
                               <div
                                 dangerouslySetInnerHTML={getRawComment(
                                   value.comment
                                 )}
-                              ></div>
+                              />
                             </Paper>
                           </TimelineContent>
                         </TimelineItem>
