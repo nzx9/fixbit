@@ -22,6 +22,9 @@ import {
   setFullName,
   setEmail,
   setSocial,
+  setLastLogin,
+  setUpdatedAt,
+  setCreatedAt,
 } from "../reducers/userDataTracker";
 import { setToken } from "../reducers/tokenTracker";
 import { DEBUG_PRINT } from "../components/debugTools";
@@ -99,6 +102,9 @@ const Login = () => {
                   dispatch(setFullName(r.data.fullname));
                   dispatch(setEmail(r.data.email));
                   dispatch(setToken(r.token));
+                  dispatch(setLastLogin(r.data.last_login));
+                  dispatch(setCreatedAt(r.data.created_at));
+                  dispatch(setUpdatedAt(r.data.updated_at));
                   dispatch(login());
                   dispatch(
                     setSocial({

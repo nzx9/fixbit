@@ -14,6 +14,11 @@ import {
   OutlinedInput,
   FormHelperText,
   Link,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Divider,
 } from "@material-ui/core";
 import {
   getUserName,
@@ -22,8 +27,12 @@ import {
   getSocial,
   setUserName,
   setFullName,
+  getLastLogin,
   setEmail,
   setSocial,
+  getCreatedAt,
+  getUpdatedAt,
+  getUId,
 } from "../reducers/userDataTracker";
 import { getToken } from "../reducers/tokenTracker";
 import { useSelector, useDispatch } from "react-redux";
@@ -32,6 +41,7 @@ import { useSnackbar } from "notistack";
 import { Twitter, LinkedIn, GitHub } from "@material-ui/icons";
 import config from "../components/config.json";
 import { NOTIFY, snackPosition } from "../components/notify";
+import { convertToLocalTime } from "../components/debugTools";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,6 +69,25 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+  },
+  paperMore: {
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(0),
+    color: theme.palette.text.secondary,
+  },
+  paperMoreTitle: {
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(0),
+    color: theme.palette.text.secondary,
+  },
+  paperMoreDivider: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    color: theme.palette.text.secondary,
   },
   updateBtnDisbled: {
     backgroundColor: theme.palette.error.main,
@@ -515,6 +544,58 @@ const Profile = () => {
                 </FormHelperText>
               </FormControl>
             </form>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={12} md={6}>
+          <Paper classes={classes.paperMore}>
+            <div className={classes.paperMoreTitle}>
+              <Typography
+                key="profile-header"
+                variant="h6"
+                style={{ marginBottom: 10 }}
+              >
+                More
+              </Typography>
+              <hr />
+            </div>
+            <List style={{ marginTop: -20, paddingTop: -20 }}>
+              <ListItem>
+                <ListItemText
+                  primary="User ID"
+                  secondary="User Identity Number"
+                />
+                <ListItemSecondaryAction>
+                  #{useSelector(getUId)}
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider className={classes.paperMoreDivider} />
+              <ListItem>
+                <ListItemText
+                  primary="Last Login"
+                  secondary={convertToLocalTime(useSelector(getLastLogin))}
+                />
+              </ListItem>
+              <Divider className={classes.paperMoreDivider} />
+              <ListItem>
+                <ListItemText
+                  primary="Registerd to Fixbit"
+                  secondary={convertToLocalTime(
+                    useSelector(getCreatedAt),
+                    false
+                  )}
+                />
+              </ListItem>
+              <Divider className={classes.paperMoreDivider} />
+              <ListItem>
+                <ListItemText
+                  primary="Last Profile Update"
+                  secondary={convertToLocalTime(
+                    useSelector(getUpdatedAt),
+                    false
+                  )}
+                />
+              </ListItem>
+            </List>
           </Paper>
         </Grid>
       </Grid>

@@ -9,6 +9,9 @@ import {
   setEmail,
   setSocial,
   getUId,
+  setLastLogin,
+  setCreatedAt,
+  setUpdatedAt,
 } from "../reducers/userDataTracker";
 import { setToken } from "../reducers/tokenTracker";
 //Routes
@@ -206,6 +209,9 @@ export default function Router() {
               dispatch(setUserName(r.data.username));
               dispatch(setFullName(r.data.fullname));
               dispatch(setEmail(r.data.email));
+              dispatch(setLastLogin(r.data.last_login));
+              dispatch(setCreatedAt(r.data.created_at));
+              dispatch(setUpdatedAt(r.data.updated_at));
               dispatch(
                 setSocial({
                   twitter: r.data.twitter,
