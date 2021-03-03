@@ -135,7 +135,7 @@ function IssueCreateDialog(props) {
       <Dialog
         aria-labelledby="customized-dialog-title"
         open={open}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <form
@@ -238,6 +238,8 @@ function IssueCreateDialog(props) {
                     id="description-input"
                     label="Description"
                     multiline
+                    rows={4}
+                    rowsMax={10}
                     variant="outlined"
                     fullWidth
                     onChange={handleDescriptionChange}

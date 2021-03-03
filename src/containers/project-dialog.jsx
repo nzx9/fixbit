@@ -95,7 +95,7 @@ const ProjectDialog = (props) => {
     <Dialog
       // onClose={props.handleClose}
       open={props.open}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
     >
       <DialogTitle
@@ -196,6 +196,8 @@ const ProjectDialog = (props) => {
                 label="Description"
                 onChange={handleProjectDescription}
                 multiline
+                rows={4}
+                rowsMax={10}
                 variant="outlined"
                 fullWidth
                 required

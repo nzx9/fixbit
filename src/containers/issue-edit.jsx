@@ -147,7 +147,7 @@ function IssueEditDialog(props) {
       <Dialog
         aria-labelledby="customized-dialog-title"
         open={open}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <form
@@ -253,6 +253,8 @@ function IssueEditDialog(props) {
                     variant="outlined"
                     value={description}
                     fullWidth
+                    rows={4}
+                    rowsMax={10}
                     onChange={handleDescriptionChange}
                     required
                     aria-describedby="description-input-helper-text"

@@ -245,7 +245,7 @@ function EditProjectDialog(props) {
           </Grid>
         </Typography>
       </Popover>
-      <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
+      <Dialog onClose={handleClose} open={open} maxWidth="md" fullWidth>
         <DialogTitle
           disableTypography
           className={classes.root}
@@ -351,6 +351,8 @@ function EditProjectDialog(props) {
                     id="description-input"
                     label="Description"
                     multiline
+                    rows={4}
+                    rowsMax={10}
                     onChange={handleProjectDescriptionChange}
                     defaultValue={props.projectInfo.project.description}
                     value={projectDescription}

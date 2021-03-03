@@ -13,6 +13,7 @@ import {
   ListSubheader,
   ListItemIcon,
   Divider,
+  Hidden,
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 
@@ -89,7 +90,13 @@ const MemberEdit = (props) => {
       <DialogContent>
         <Grid container>
           <Grid item xs={12} md={6}>
-            <List subheader={<ListSubheader>Info</ListSubheader>}>
+            <List
+              subheader={
+                <Hidden xsDown>
+                  <ListSubheader>Personal Info</ListSubheader>
+                </Hidden>
+              }
+            >
               <ListItem>
                 <ListItemIcon>
                   <Fingerprint />
@@ -141,7 +148,14 @@ const MemberEdit = (props) => {
             </List>
           </Grid>
           <Grid item xs={12} md={6}>
-            <List subheader={<ListSubheader>Member Info</ListSubheader>}>
+            <List
+              subheader={
+                <ListSubheader>
+                  {" "}
+                  <Hidden xsDown>Member Info</Hidden>
+                </ListSubheader>
+              }
+            >
               {props.leaderId === props.memberData?.info?.id ? (
                 <ListItem>
                   <ListItemIcon>

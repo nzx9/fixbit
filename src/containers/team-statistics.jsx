@@ -152,7 +152,7 @@ const TeamStatistics = (props) => {
     );
   else
     return (
-      <Dialog open={props.open} maxWidth="sm" fullWidth>
+      <Dialog open={props.open} maxWidth="md" fullWidth>
         <DialogTitle
           disableTypography
           className={classes.root}
