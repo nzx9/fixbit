@@ -6,12 +6,28 @@ import { getToken } from "../reducers/tokenTracker";
 import { getUId } from "../reducers/userDataTracker";
 import ProjectCard from "./project-card";
 import noProjectsImage from "../images/no-projects.png";
-import { Backdrop, CircularProgress, Fab, makeStyles } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import {
+  Backdrop,
+  CircularProgress,
+  Fab,
+  Grid,
+  Button,
+  Paper,
+  Select,
+  makeStyles,
+  MenuItem,
+  TextField,
+  FormControl,
+  InputLabel,
+  Hidden,
+} from "@material-ui/core";
+import { Add, Search } from "@material-ui/icons";
 import ProjectDialog from "./project-dialog";
 import config from "../components/config.json";
 import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
+import { Pagination } from "@material-ui/lab";
+import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -80,6 +96,18 @@ const Projects = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  function useQuery() {
+    return new URLSearchParams(useLocation().search);
+  }
+  const query = useQuery();
+
+  const [filter, setFilter] = React.useState("all");
+  const [sort, setSort] = React.useState("pid");
+  const [searchInput, setSearchInput] = React.useState(null);
+  const [paginationData, setPaginationData] = React.useState({});
+  const [page, setPage] = React.useState(query.get("page"));
+  const [perPage, setPerPage] = React.useState(query.get("per_page"));
+
   const fetchTeamsInfo = () => {
     httpReq(`${config.URL}/api/teams`, "GET", null, token)
       .then((res) => {
@@ -117,22 +145,36 @@ const Projects = () => {
       });
   };
 
-  const fetchDataAndSet = () => {
-    httpReq(`${config.URL}/api/projects`, "GET", null, token)
+  const fetchDataAndSet = (
+    filter = "all",
+    sort = "pid_asc",
+    page = 1,
+    perPage = 20
+  ) => {
+    _setOpenBackdrop(true);
+    httpReq(
+      `${config.URL}/api/projects?filter=${filter}&sort=${sort}&per_page=${perPage}&page=${page}`,
+      "GET",
+      null,
+      token
+    )
       .then((res) => {
         setIsLoadedP(true);
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
-            _setOpenBackdrop(false);
             enqueueSnackbar(msg, {
               variant: r.type,
               anchorOrigin: snackPosition(),
             });
             DEBUG_PRINT(r);
-            if (res.status === 200 && r.success === true)
-              r.data !== null ? setData(r.data) : setData([]);
-            else setError(r.msg);
+            if (res.status === 200 && r.success === true) {
+              if (r.data !== null) {
+                setData(r.data.data);
+                setPaginationData(r.data.pagination);
+              }
+            } else setError(r.msg);
+            _setOpenBackdrop(false);
           });
         });
       })
@@ -152,13 +194,14 @@ const Projects = () => {
         setAlertOpen(true);
         setError(err.toString());
         setIsLoadedP(true);
+        _setOpenBackdrop(false);
       });
   };
 
   useEffect(() => {
-    fetchDataAndSet();
+    fetchDataAndSet(filter, sort, page, perPage);
     fetchTeamsInfo();
-  }, []);
+  }, [filter, sort, page, perPage]);
 
   if (error) {
     return (
@@ -213,30 +256,34 @@ const Projects = () => {
         handleCloseBackdrop={() => handleCloseBackdrop()}
         action={() => fetchDataAndSet()}
       />
-      <div
-        style={{
-          display: "auto",
-          marginLeft: "3%",
-        }}
-      >
-        {data.length === 0 ? (
-          <div style={{ textAlign: "center", maxWidth: "100%" }}>
-            <img
-              className={classes.noResultImage}
-              src={noProjectsImage}
-              alt="No Projects"
-            />
+      <div>
+        <div
+          style={{
+            display: "auto",
+            marginLeft: "3%",
+          }}
+        >
+          <div>
+            {data.length === 0 ? (
+              <div style={{ textAlign: "center", maxWidth: "100%" }}>
+                <img
+                  className={classes.noResultImage}
+                  src={noProjectsImage}
+                  alt="No Projects"
+                />
+              </div>
+            ) : (
+              data.map((value, index) => (
+                <ProjectCard
+                  key={index}
+                  data={value}
+                  token={token}
+                  refetchData={() => fetchDataAndSet()}
+                />
+              ))
+            )}
           </div>
-        ) : (
-          data.map((value, index) => (
-            <ProjectCard
-              key={index}
-              data={value}
-              token={token}
-              refetchData={() => fetchDataAndSet()}
-            />
-          ))
-        )}
+        </div>
       </div>
     </div>
   );
