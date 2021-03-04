@@ -136,7 +136,7 @@ const Projects = () => {
   const query = useQuery();
 
   const [filter, setFilter] = React.useState(
-    query.get("filter") === null ? "all" : query.get("filter")
+    query.get("filter") === null ? "my" : query.get("filter")
   );
   const [sort, setSort] = React.useState(
     query.get("sort") === null ? "latest" : query.get("sort")
