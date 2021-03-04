@@ -19,12 +19,20 @@ import {
   TextField,
   FormControl,
   InputLabel,
-  Hidden,
+  InputBase,
+  IconButton,
+  Divider,
+  Tooltip,
 } from "@material-ui/core";
-import { Add, Search } from "@material-ui/icons";
+import { Add, Menu, Search, Directions } from "@material-ui/icons";
 import ProjectDialog from "./project-dialog";
 import config from "../components/config.json";
-import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
+import {
+  NOTIFY,
+  AlertDialog,
+  snackPosition,
+  tipTitle,
+} from "../components/notify";
 import { useSnackbar } from "notistack";
 import { Pagination } from "@material-ui/lab";
 import { useLocation } from "react-router-dom";
@@ -58,6 +66,34 @@ const useStyles = makeStyles((theme) => ({
     width: "auto",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
+    },
+  },
+  formControl: {
+    marginRight: theme.spacing(1),
+    minWidth: 100,
+  },
+  formControlNumber: {
+    marginRight: theme.spacing(0),
+    minWidth: 75,
+  },
+  searchPaper: {
+    padding: "5px 4px",
+    display: "flex",
+    alignItems: "center",
+    border: `1px solid ${theme.palette.text.secondary}`,
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+    backgroundColor: theme.palette.primary.main,
+    color: "white",
+    "&:hover": {
+      color: theme.palette.text.primary,
     },
   },
 }));
@@ -101,12 +137,21 @@ const Projects = () => {
   }
   const query = useQuery();
 
-  const [filter, setFilter] = React.useState("all");
-  const [sort, setSort] = React.useState("pid");
-  const [searchInput, setSearchInput] = React.useState(null);
+  const [filter, setFilter] = React.useState(
+    query.get("filter") === null ? "all" : query.get("filter")
+  );
+  const [sort, setSort] = React.useState(
+    query.get("sort") === null ? "latest" : query.get("sort")
+  );
+  const [search, setSearch] = React.useState(query.get("search"));
   const [paginationData, setPaginationData] = React.useState({});
-  const [page, setPage] = React.useState(query.get("page"));
-  const [perPage, setPerPage] = React.useState(query.get("per_page"));
+  const [page, setPage] = React.useState(
+    query.get("page") === null ? 1 : query.get("page")
+  );
+  const [perPage, setPerPage] = React.useState(
+    query.get("per_page") === null ? 20 : query.get("per_page")
+  );
+  const [searchInput, setSearchInput] = React.useState("");
 
   const fetchTeamsInfo = () => {
     httpReq(`${config.URL}/api/teams`, "GET", null, token)
@@ -149,11 +194,16 @@ const Projects = () => {
     filter = "all",
     sort = "pid_asc",
     page = 1,
-    perPage = 20
+    perPage = 20,
+    search = null
   ) => {
     _setOpenBackdrop(true);
     httpReq(
-      `${config.URL}/api/projects?filter=${filter}&sort=${sort}&per_page=${perPage}&page=${page}`,
+      `${
+        config.URL
+      }/api/projects?filter=${filter}&sort=${sort}&per_page=${perPage}&page=${page}&search=${
+        search === null ? "" : search
+      }`,
       "GET",
       null,
       token
@@ -172,6 +222,7 @@ const Projects = () => {
               if (r.data !== null) {
                 setData(r.data.data);
                 setPaginationData(r.data.pagination);
+                setPage(r.data.pagination.page);
               }
             } else setError(r.msg);
             _setOpenBackdrop(false);
@@ -199,9 +250,9 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    fetchDataAndSet(filter, sort, page, perPage);
+    fetchDataAndSet(filter, sort, page, perPage, search);
     fetchTeamsInfo();
-  }, [filter, sort, page, perPage]);
+  }, [filter, sort, page, perPage, search]);
 
   if (error) {
     return (
@@ -263,6 +314,166 @@ const Projects = () => {
             marginLeft: "3%",
           }}
         >
+          <Paper
+            style={{
+              marginTop: 5,
+              marginBottom: 5,
+              marginLeft: "1%",
+              marginRight: "3.5%",
+              padding: 5,
+              zIndex: 2,
+            }}
+          >
+            <Grid container justify="space-evenly">
+              <Grid item xs={12} md={4}>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <FormControl
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <InputLabel id="team-select">Filter by:</InputLabel>
+                    <Select
+                      value={filter}
+                      variant="outlined"
+                      label="Filter by: "
+                      onChange={(e) => {
+                        setFilter(e.target.value);
+                        setPage(1);
+                      }}
+                    >
+                      {[
+                        { name: "All Projects", value: "all" },
+                        { name: "My Projects", value: "my" },
+                        { name: "Public only", value: "public" },
+                        { name: "Private Only", value: "private" },
+                      ].map((item) => (
+                        <MenuItem value={item.value}>{item.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <InputLabel id="team-select">Sort by: </InputLabel>
+                    <Select
+                      value={sort}
+                      variant="outlined"
+                      label="Sort by: "
+                      onChange={(e) => setSort(e.target.value)}
+                    >
+                      {[
+                        { name: "PID Asc", value: "pid_asc" },
+                        { name: "PID Desc", value: "pid_desc" },
+                        { name: "Name Asc", value: "name_asc" },
+                        { name: "Name Desc", value: "name_desc" },
+                        { name: "Oldest", value: "oldest" },
+                        { name: "Latest", value: "latest" },
+                      ].map((item) => (
+                        <MenuItem value={item.value}>{item.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl
+                    variant="outlined"
+                    className={classes.formControlNumber}
+                  >
+                    <InputLabel id="team-select">Per Page: </InputLabel>
+                    <Select
+                      value={perPage}
+                      variant="outlined"
+                      label="Per Page: "
+                      onChange={(e) => {
+                        setPerPage(e.target.value);
+                        setPage(1);
+                      }}
+                    >
+                      {[
+                        { name: "12", value: "12" },
+                        { name: "20", value: "20" },
+                        { name: "50", value: "50" },
+                      ].map((item) => (
+                        <MenuItem value={item.value}>{item.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+              </Grid>
+              <Grid item xs={12} md={4} justify="center">
+                <div
+                  style={{
+                    width: "100%",
+                    marginTop: 12,
+                    marginBottom: 12,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Pagination
+                    count={Number(
+                      Math.ceil(
+                        paginationData?.total / paginationData?.per_page
+                      )
+                    )}
+                    page={page}
+                    variant="outlined"
+                    onChange={(_e, pgNum) => setPage(pgNum)}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <Paper className={classes.searchPaper} elevation={0}>
+                    <Tooltip
+                      title={
+                        "Filter by can affect your search result. If you can't find project then set filter by to all projects"
+                      }
+                      arrow
+                    >
+                      <InputBase
+                        className={classes.input}
+                        placeholder="Search project by name..."
+                        onChange={(e) => {
+                          if (e.target.value === "" || e.target.value === null)
+                            setSearch("");
+                          setSearchInput(e.target.value);
+                        }}
+                        value={searchInput}
+                      />
+                    </Tooltip>
+                    <Tooltip title={tipTitle("Click to search")} arrow>
+                      <IconButton
+                        type="submit"
+                        className={classes.iconButton}
+                        aria-label="search"
+                        onClick={() => setSearch(searchInput)}
+                      >
+                        <Search />
+                      </IconButton>
+                    </Tooltip>
+                  </Paper>
+                </div>
+              </Grid>
+            </Grid>
+          </Paper>
           <div>
             {data.length === 0 ? (
               <div style={{ textAlign: "center", maxWidth: "100%" }}>
