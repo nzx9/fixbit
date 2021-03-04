@@ -260,15 +260,15 @@ const ProjectCard = (props) => {
                     </Tooltip>
                   </span>
                 </InfoTitle>
-                {props.data.project.updated_at !== null &&
-                props.data.project.updated_at !== undefined ? (
+                {props.data.project.created_at !== null &&
+                props.data.project.created_at !== undefined ? (
                   <InfoSubtitle>
                     {convertToLocalTime(
-                      props.data.project.updated_at,
+                      props.data.project.created_at,
                       false
                     ).substr(4, 11)}{" "}
                     {convertToLocalTime(
-                      props.data.project.updated_at,
+                      props.data.project.created_at,
                       false
                     ).substr(16, 5)}
                     <span> | admin: {props.data.admin.username}</span>
