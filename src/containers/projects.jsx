@@ -11,20 +11,17 @@ import {
   CircularProgress,
   Fab,
   Grid,
-  Button,
   Paper,
   Select,
   makeStyles,
   MenuItem,
-  TextField,
   FormControl,
   InputLabel,
   InputBase,
   IconButton,
-  Divider,
   Tooltip,
 } from "@material-ui/core";
-import { Add, Menu, Search, Directions } from "@material-ui/icons";
+import { Add, Search } from "@material-ui/icons";
 import ProjectDialog from "./project-dialog";
 import config from "../components/config.json";
 import {
@@ -81,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: `1px solid ${theme.palette.text.secondary}`,
+    width: "100%",
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -318,11 +316,11 @@ const Projects = () => {
             style={{
               marginTop: 5,
               marginBottom: 5,
-              marginLeft: "1%",
-              marginRight: "3.5%",
+              marginLeft: "0.5%",
+              marginRight: "3.0%",
               padding: 5,
-              zIndex: 2,
             }}
+            elevation={0}
           >
             <Grid container justify="space-evenly">
               <Grid item xs={12} md={4}>
@@ -335,76 +333,94 @@ const Projects = () => {
                     alignItems: "center",
                   }}
                 >
-                  <FormControl
-                    variant="outlined"
-                    className={classes.formControl}
+                  <Tooltip
+                    title={"Filter projects"}
+                    placement="right-start"
+                    arrow
                   >
-                    <InputLabel id="team-select">Filter by:</InputLabel>
-                    <Select
-                      value={filter}
+                    <FormControl
                       variant="outlined"
-                      label="Filter by: "
-                      onChange={(e) => {
-                        setFilter(e.target.value);
-                        setPage(1);
-                      }}
+                      className={classes.formControl}
                     >
-                      {[
-                        { name: "All Projects", value: "all" },
-                        { name: "My Projects", value: "my" },
-                        { name: "Public only", value: "public" },
-                        { name: "Private Only", value: "private" },
-                      ].map((item) => (
-                        <MenuItem value={item.value}>{item.name}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl
-                    variant="outlined"
-                    className={classes.formControl}
+                      <InputLabel id="team-select">Filter by:</InputLabel>
+                      <Select
+                        value={filter}
+                        variant="outlined"
+                        label="Filter by: "
+                        onChange={(e) => {
+                          setFilter(e.target.value);
+                          setPage(1);
+                        }}
+                      >
+                        {[
+                          { name: "All Projects", value: "all" },
+                          { name: "My Projects", value: "my" },
+                          { name: "Public only", value: "public" },
+                          { name: "Private Only", value: "private" },
+                        ].map((item) => (
+                          <MenuItem value={item.value}>{item.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Tooltip>
+                  <Tooltip
+                    title={"Order/Sort projects"}
+                    placement="right-start"
+                    arrow
                   >
-                    <InputLabel id="team-select">Sort by: </InputLabel>
-                    <Select
-                      value={sort}
+                    <FormControl
                       variant="outlined"
-                      label="Sort by: "
-                      onChange={(e) => setSort(e.target.value)}
+                      className={classes.formControl}
                     >
-                      {[
-                        { name: "PID Asc", value: "pid_asc" },
-                        { name: "PID Desc", value: "pid_desc" },
-                        { name: "Name Asc", value: "name_asc" },
-                        { name: "Name Desc", value: "name_desc" },
-                        { name: "Oldest", value: "oldest" },
-                        { name: "Latest", value: "latest" },
-                      ].map((item) => (
-                        <MenuItem value={item.value}>{item.name}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl
-                    variant="outlined"
-                    className={classes.formControlNumber}
+                      <InputLabel id="team-select">Sort by: </InputLabel>
+                      <Select
+                        value={sort}
+                        variant="outlined"
+                        label="Sort by: "
+                        onChange={(e) => setSort(e.target.value)}
+                      >
+                        {[
+                          { name: "Latest", value: "latest" },
+                          { name: "Oldest", value: "oldest" },
+                          { name: "PID Asc", value: "pid_asc" },
+                          { name: "PID Desc", value: "pid_desc" },
+                          { name: "Name Asc", value: "name_asc" },
+                          { name: "Name Desc", value: "name_desc" },
+                        ].map((item) => (
+                          <MenuItem value={item.value}>{item.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Tooltip>
+                  <Tooltip
+                    title={"Number of projects per page"}
+                    placement="right-start"
+                    arrow
                   >
-                    <InputLabel id="team-select">Per Page: </InputLabel>
-                    <Select
-                      value={perPage}
+                    <FormControl
                       variant="outlined"
-                      label="Per Page: "
-                      onChange={(e) => {
-                        setPerPage(e.target.value);
-                        setPage(1);
-                      }}
+                      className={classes.formControlNumber}
                     >
-                      {[
-                        { name: "12", value: "12" },
-                        { name: "20", value: "20" },
-                        { name: "50", value: "50" },
-                      ].map((item) => (
-                        <MenuItem value={item.value}>{item.name}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                      <InputLabel id="team-select">Per Page: </InputLabel>
+                      <Select
+                        value={perPage}
+                        variant="outlined"
+                        label="Per Page: "
+                        onChange={(e) => {
+                          setPerPage(e.target.value);
+                          setPage(1);
+                        }}
+                      >
+                        {[
+                          { name: "12", value: "12" },
+                          { name: "20", value: "20" },
+                          { name: "36", value: "36" },
+                        ].map((item) => (
+                          <MenuItem value={item.value}>{item.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Tooltip>
                 </div>
               </Grid>
               <Grid item xs={12} md={4} justify="center">
@@ -419,16 +435,19 @@ const Projects = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Pagination
-                    count={Number(
-                      Math.ceil(
-                        paginationData?.total / paginationData?.per_page
-                      )
-                    )}
-                    page={page}
-                    variant="outlined"
-                    onChange={(_e, pgNum) => setPage(pgNum)}
-                  />
+                  <Tooltip title={"Navigate between pages"} arrow>
+                    <Pagination
+                      count={Number(
+                        Math.ceil(
+                          paginationData?.total / paginationData?.per_page
+                        )
+                      )}
+                      page={page}
+                      variant="text"
+                      color="primary"
+                      onChange={(_e, pgNum) => setPage(pgNum)}
+                    />
+                  </Tooltip>
                 </div>
               </Grid>
               <Grid item xs={12} md={4}>
@@ -441,10 +460,18 @@ const Projects = () => {
                     alignItems: "flex-end",
                   }}
                 >
-                  <Paper className={classes.searchPaper} elevation={0}>
+                  <Paper
+                    className={classes.searchPaper}
+                    component="form"
+                    elevation={0}
+                    onSubmit={(e) => {
+                      setSearch(searchInput);
+                      e.preventDefault();
+                    }}
+                  >
                     <Tooltip
                       title={
-                        "Filter by can affect your search result. If you can't find project then set filter by to all projects"
+                        'Filter can affect your search result. If you can\'t find project then set "filter by" to "All Projects"'
                       }
                       arrow
                     >
@@ -459,12 +486,16 @@ const Projects = () => {
                         value={searchInput}
                       />
                     </Tooltip>
-                    <Tooltip title={tipTitle("Click to search")} arrow>
+                    <Tooltip
+                      title={"Click here or press Enter to search"}
+                      arrow
+                    >
                       <IconButton
                         type="submit"
                         className={classes.iconButton}
                         aria-label="search"
-                        onClick={() => setSearch(searchInput)}
+                        type="submit"
+                        autofocus
                       >
                         <Search />
                       </IconButton>
