@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   fab: {
     display: "flex",
     position: "fixed",
-    zIndex: 5,
+    zIndex: theme.zIndex.drawer - 1,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
     transition: "0.2s",
