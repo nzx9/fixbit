@@ -21,18 +21,15 @@ import {
   IconButton,
   Tooltip,
 } from "@material-ui/core";
-import { Add, Search } from "@material-ui/icons";
+import { Search, AddCircleRounded } from "@material-ui/icons";
 import ProjectDialog from "./project-dialog";
 import config from "../components/config.json";
-import {
-  NOTIFY,
-  AlertDialog,
-  snackPosition,
-  tipTitle,
-} from "../components/notify";
+import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
 import { Pagination } from "@material-ui/lab";
 import { useLocation } from "react-router-dom";
+import { Info, InfoSubtitle } from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -42,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   fab: {
     display: "flex",
     position: "fixed",
-    zIndex: 9999,
+    zIndex: theme.zIndex.drawer - 1,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
     transition: "0.2s",
@@ -93,6 +90,9 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       color: theme.palette.text.primary,
     },
+  },
+  textDesc: {
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -149,7 +149,9 @@ const Projects = () => {
   const [perPage, setPerPage] = React.useState(
     query.get("per_page") === null ? 20 : query.get("per_page")
   );
-  const [searchInput, setSearchInput] = React.useState("");
+  const [searchInput, setSearchInput] = React.useState(
+    query.get("search") === null ? "" : query.get("search")
+  );
 
   const fetchTeamsInfo = () => {
     httpReq(`${config.URL}/api/teams`, "GET", null, token)
@@ -286,7 +288,9 @@ const Projects = () => {
         onMouseEnter={extendFAB}
         onMouseLeave={roundFAB}
       >
-        <Add className={fabType === "extended" ? classes.extendedIcon : null} />
+        <AddCircleRounded
+          className={fabType === "extended" ? classes.extendedIcon : null}
+        />
         <div
           className={
             fabType === "extended" ? classes.fabText : classes.fabTextHidden
@@ -513,6 +517,16 @@ const Projects = () => {
                   src={noProjectsImage}
                   alt="No Projects"
                 />
+                <h3>NO PROJECTS YET</h3>
+                <Info useStyles={useApexInfoStyles}>
+                  <InfoSubtitle className={classes.textDesc}>
+                    click&ensp;
+                    <AddCircleRounded
+                      style={{ position: "relative", top: 7 }}
+                    />
+                    &ensp;to create your first project.
+                  </InfoSubtitle>
+                </Info>
               </div>
             ) : (
               data.map((value, index) => (

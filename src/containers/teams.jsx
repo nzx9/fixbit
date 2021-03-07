@@ -11,6 +11,8 @@ import TeamDialog from "./team-dialog";
 import config from "../components/config.json";
 import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
+import { Info, InfoSubtitle } from "@mui-treasury/components/info";
+import { useApexInfoStyles } from "@mui-treasury/styles/info/apex";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -20,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   fab: {
     display: "flex",
     position: "fixed",
-    zIndex: 9999,
+    zIndex: theme.zIndex.drawer - 1,
     bottom: theme.spacing(3),
     right: theme.spacing(2),
     transition: "0.2s",
@@ -192,6 +194,14 @@ const Teams = () => {
               src={noTeamsImage}
               alt="No Teams"
             />
+            <h3>NO Teams YET</h3>
+            <Info useStyles={useApexInfoStyles}>
+              <InfoSubtitle className={classes.textDesc}>
+                click&ensp;
+                <GroupWorkRounded style={{ position: "relative", top: 7 }} />
+                &ensp;to create your first team.
+              </InfoSubtitle>
+            </Info>
           </div>
         ) : (
           data.map((value, index) => (
