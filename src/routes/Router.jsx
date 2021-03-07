@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, Fragment } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getLoginStatus, login } from "../reducers/loginTracker";
@@ -81,7 +81,7 @@ export const MAIN_APP = () => {
         };
 
         const action = (key) => (
-          <Fragment>
+          <>
             <Button
               size="small"
               className={classes.green}
@@ -102,7 +102,7 @@ export const MAIN_APP = () => {
             <IconButton onClick={onClickDismiss(key)} size="small">
               <Cancel className={classes.red} fontSize="small" />
             </IconButton>
-          </Fragment>
+          </>
         );
         enqueueSnackbar(
           "@" +
@@ -192,7 +192,11 @@ export default function Router() {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
-  const goToLogin = useCallback(() => history.push(routes.LOGIN), [history]);
+  const goToLogin = useCallback(
+    (path) =>
+      history.push(`${routes.LOGIN}${path === null ? "" : "?to=" + path}`),
+    [history]
+  );
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -223,6 +227,13 @@ export default function Router() {
               setIsLoaded(true);
             } else {
               localStorage.setItem("token", null);
+              if (
+                window.location.pathname !== null &&
+                window.location.pathname !== routes.LOGIN &&
+                window.location.pathname !== routes.REGISTER &&
+                window.location.pathname !== routes.HOME
+              )
+                sessionStorage.setItem("to", window.location.pathname);
               setIsLoaded(true);
               setIsError(true);
             }
@@ -230,10 +241,24 @@ export default function Router() {
         })
         .catch((err) => {
           DEBUG_PRINT(err);
+          if (
+            window.location.pathname !== null &&
+            window.location.pathname !== routes.LOGIN &&
+            window.location.pathname !== routes.REGISTER &&
+            window.location.pathname !== routes.HOME
+          )
+            sessionStorage.setItem("to", window.location.pathname);
           setIsLoaded(true);
           setIsError(true);
         });
     } else {
+      if (
+        window.location.pathname !== null &&
+        window.location.pathname !== routes.LOGIN &&
+        window.location.pathname !== routes.REGISTER &&
+        window.location.pathname !== routes.HOME
+      )
+        sessionStorage.setItem("to", window.location.pathname);
       setIsLoaded(true);
       setIsError(true);
     }
@@ -242,12 +267,12 @@ export default function Router() {
   if (useSelector(getLoginStatus)) {
     return <MAIN_APP />;
   } else if (isError) {
-    goToLogin();
+    goToLogin(sessionStorage.getItem("to"));
     return <LOGIN_ACTIVITY />;
   } else if (!isLoaded) {
     return <ValidateUser />;
   } else {
-    goToLogin();
+    goToLogin(sessionStorage.getItem("to"));
     return <LOGIN_ACTIVITY />;
   }
 }

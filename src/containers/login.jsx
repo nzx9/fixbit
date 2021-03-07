@@ -11,7 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import routes from "../routes/routes.json";
 import { httpReq } from "../components/httpRequest";
 import { useDispatch } from "react-redux";
@@ -73,7 +73,12 @@ const Login = () => {
   const handleAlertClose = () => setAlertOpen(false);
 
   const history = useHistory();
-  const goToHome = useCallback(() => history.push(routes.HOME), [history]);
+  const goto = useCallback((path) => history.push(path), [history]);
+
+  function useQuery() {
+    return new URLSearchParams(useLocation().search);
+  }
+  const query = useQuery();
 
   return (
     <form
@@ -113,7 +118,8 @@ const Login = () => {
                       github: r.data.github,
                     })
                   );
-                  goToHome();
+                  goto(query.get("to") == null ? routes.HOME : query.get("to"));
+                  sessionStorage.removeItem("to");
                 }
               });
             });

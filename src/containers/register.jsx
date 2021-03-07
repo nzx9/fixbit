@@ -65,7 +65,11 @@ const Register = () => {
   const handleAlertClose = () => setAlertOpen(false);
 
   const history = useHistory();
-  const goToLogin = useCallback(() => history.push(routes.LOGIN), [history]);
+  const goToLogin = useCallback(
+    (path) =>
+      history.push(`${routes.LOGIN}${path === null ? "" : "?to=" + path}`),
+    [history]
+  );
 
   return (
     <form
@@ -92,7 +96,7 @@ const Register = () => {
                     anchorOrigin: snackPosition(),
                   });
                   if (res.status === 201 && r.success === true) {
-                    goToLogin();
+                    goToLogin(sessionStorage.getItem("to"));
                   }
                 });
               });
@@ -185,7 +189,15 @@ const Register = () => {
               </Button>
             </Grid>
           </Grid>
-          <Link to={routes.LOGIN}>Login</Link>
+          <Link
+            to={
+              sessionStorage.getItem("to") === null
+                ? routes.LOGIN
+                : routes.LOGIN + "?to=" + sessionStorage.getItem("to")
+            }
+          >
+            Login
+          </Link>
         </Paper>
       </Container>
     </form>
