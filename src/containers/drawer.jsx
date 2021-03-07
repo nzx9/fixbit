@@ -16,6 +16,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Hidden,
   makeStyles,
   useTheme,
 } from "@material-ui/core";
@@ -57,14 +58,6 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
     }),
   },
   menuButton: {
@@ -152,14 +145,9 @@ export default function SideDrawer(props) {
 
   const dispatch = useDispatch();
 
-  const handleDrawerOpen = () => {
-    dispatch(drawerOpen());
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    dispatch(drawerClose());
-    setOpen(false);
-  };
+  const handleDrawerOpen = () => setOpen(true);
+
+  const handleDrawerClose = () => setOpen(false);
 
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
@@ -229,12 +217,7 @@ export default function SideDrawer(props) {
     <div className={classes.root}>
       <CssBaseline />
 
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Tooltip title={tipTitle("Expand")} placement="bottom" arrow>
             <IconButton
@@ -323,85 +306,166 @@ export default function SideDrawer(props) {
         </Toolbar>
         {renderMenu}
       </AppBar>
-      <Drawer
-        variant="permanent"
-        anchor={"left"}
-        open={open}
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
+      <Hidden smDown>
+        <Drawer
+          variant="permanent"
+          anchor={"left"}
+          open={open}
+          className={clsx(classes.drawer, {
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
-          }),
-        }}
-      >
-        <div className={classes.toolbar} role="presentation">
-          <Tooltip title={tipTitle("Close")} placement="left" arrow>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
-            </IconButton>
-          </Tooltip>
-        </div>
-        <Divider />
-        <List>
-          {topList.map((value, index) => (
-            <Tooltip title={tipTitle(value.title)} placement="right" arrow>
-              <ListItem
-                button
-                key={value.id}
-                onClick={() => {
-                  goto(value.url);
-                  setCurrentRoute(value.url);
-                  handleDrawerClose();
-                }}
-                selected={currentRoute === value.url ? true : false}
-              >
-                <ListItemIcon
-                  className={
-                    currentRoute === value.url
-                      ? classes.selected
-                      : classes.unselected
-                  }
-                >
-                  {value.icon}
-                </ListItemIcon>
-                <ListItemText primary={value.title} />
-              </ListItem>
+          })}
+          classes={{
+            paper: clsx({
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            }),
+          }}
+        >
+          <div className={classes.toolbar} role="presentation">
+            <Tooltip title={tipTitle("Close")} placement="left" arrow>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
+              </IconButton>
             </Tooltip>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {bottomList.map((value, index) => (
-            <Tooltip title={tipTitle(value.title)} placement="right" arrow>
-              <ListItem
-                button
-                key={value.id}
-                onClick={() => {
-                  goto(value.url);
-                  setCurrentRoute(value.url);
-                  handleDrawerClose();
-                }}
-                selected={currentRoute === value.url ? true : false}
-              >
-                <ListItemIcon
-                  className={
-                    currentRoute === value.url
-                      ? classes.selected
-                      : classes.unselected
-                  }
+          </div>
+          <Divider />
+          <List>
+            {topList.map((value) => (
+              <Tooltip title={tipTitle(value.title)} placement="right" arrow>
+                <ListItem
+                  button
+                  key={value.id}
+                  onClick={() => {
+                    goto(value.url);
+                    setCurrentRoute(value.url);
+                    handleDrawerClose();
+                  }}
+                  selected={currentRoute === value.url ? true : false}
                 >
-                  {value.icon}
-                </ListItemIcon>
-                <ListItemText primary={value.title} />
-              </ListItem>
+                  <ListItemIcon
+                    className={
+                      currentRoute === value.url
+                        ? classes.selected
+                        : classes.unselected
+                    }
+                  >
+                    {value.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={value.title} />
+                </ListItem>
+              </Tooltip>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {bottomList.map((value) => (
+              <Tooltip title={tipTitle(value.title)} placement="right" arrow>
+                <ListItem
+                  button
+                  key={value.id}
+                  onClick={() => {
+                    goto(value.url);
+                    setCurrentRoute(value.url);
+                  }}
+                  selected={currentRoute === value.url ? true : false}
+                >
+                  <ListItemIcon
+                    className={
+                      currentRoute === value.url
+                        ? classes.selected
+                        : classes.unselected
+                    }
+                  >
+                    {value.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={value.title} />
+                </ListItem>
+              </Tooltip>
+            ))}
+          </List>
+        </Drawer>
+      </Hidden>
+      <Hidden mdUp>
+        <Drawer
+          anchor={"left"}
+          open={open}
+          onClose={handleDrawerClose}
+          className={clsx(classes.drawer, {
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          })}
+          classes={{
+            paper: clsx({
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            }),
+          }}
+        >
+          <div className={classes.toolbar} role="presentation">
+            <Tooltip title={tipTitle("Close")} placement="left" arrow>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
+              </IconButton>
             </Tooltip>
-          ))}
-        </List>
-      </Drawer>
+          </div>
+          <Divider />
+          <List>
+            {topList.map((value) => (
+              <Tooltip title={tipTitle(value.title)} placement="right" arrow>
+                <ListItem
+                  button
+                  key={value.id}
+                  onClick={() => {
+                    goto(value.url);
+                    setCurrentRoute(value.url);
+                    handleDrawerClose();
+                  }}
+                  selected={currentRoute === value.url ? true : false}
+                >
+                  <ListItemIcon
+                    className={
+                      currentRoute === value.url
+                        ? classes.selected
+                        : classes.unselected
+                    }
+                  >
+                    {value.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={value.title} />
+                </ListItem>
+              </Tooltip>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {bottomList.map((value) => (
+              <Tooltip title={tipTitle(value.title)} placement="right" arrow>
+                <ListItem
+                  button
+                  key={value.id}
+                  onClick={() => {
+                    goto(value.url);
+                    setCurrentRoute(value.url);
+                  }}
+                  selected={currentRoute === value.url ? true : false}
+                >
+                  <ListItemIcon
+                    className={
+                      currentRoute === value.url
+                        ? classes.selected
+                        : classes.unselected
+                    }
+                  >
+                    {value.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={value.title} />
+                </ListItem>
+              </Tooltip>
+            ))}
+          </List>
+        </Drawer>
+      </Hidden>
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {children}
