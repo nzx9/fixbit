@@ -89,7 +89,6 @@ const Teams = () => {
   const fetchDataAndSet = () => {
     httpReq(`${config.URL}/api/teams`, "GET", null, token)
       .then((res) => {
-        setIsLoaded(true);
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
@@ -103,11 +102,11 @@ const Teams = () => {
             if (res.status === 200 && r.success === true)
               r.data !== null ? setData(r.data) : setData([]);
             else setError(r.msg);
+            setIsLoaded(true);
           });
         });
       })
       .catch((err) => {
-        setIsLoaded(true);
         setAlertType("error");
         const parsedError = err.toString().split(":");
         if (parsedError.length >= 1) {
@@ -122,6 +121,7 @@ const Teams = () => {
         }
         setAlertOpen(true);
         setError(err.toString());
+        setIsLoaded(true);
       });
     handleClose();
   };

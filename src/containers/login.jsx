@@ -75,9 +75,8 @@ const Login = () => {
   const history = useHistory();
   const goto = useCallback((path) => history.push(path), [history]);
 
-  function useQuery() {
-    return new URLSearchParams(useLocation().search);
-  }
+  const useQuery = () => new URLSearchParams(useLocation().search);
+
   const query = useQuery();
 
   return (
@@ -118,7 +117,9 @@ const Login = () => {
                       github: r.data.github,
                     })
                   );
-                  goto(query.get("to") == null ? routes.HOME : query.get("to"));
+                  goto(
+                    query.get("to") === null ? routes.HOME : query.get("to")
+                  );
                   sessionStorage.removeItem("to");
                 }
               });

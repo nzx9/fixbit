@@ -130,9 +130,8 @@ const Projects = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  function useQuery() {
-    return new URLSearchParams(useLocation().search);
-  }
+  const useQuery = () => new URLSearchParams(useLocation().search);
+
   const query = useQuery();
 
   const [filter, setFilter] = React.useState(
@@ -209,7 +208,6 @@ const Projects = () => {
       token
     )
       .then((res) => {
-        setIsLoadedP(true);
         DEBUG_PRINT(res);
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
@@ -225,6 +223,7 @@ const Projects = () => {
                 setPage(r.data.pagination.page);
               }
             } else setError(r.msg);
+            setIsLoadedP(true);
             _setOpenBackdrop(false);
           });
         });
