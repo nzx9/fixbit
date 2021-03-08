@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: 0,
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       display: "none",
     },
   },
@@ -73,11 +73,12 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",
+    transition: "0.5s",
   },
   drawerOpen: {
     width: drawerWidth,
     transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
+      ease: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
@@ -367,6 +368,7 @@ export default function SideDrawer(props) {
                   onClick={() => {
                     goto(value.url);
                     setCurrentRoute(value.url);
+                    handleDrawerClose();
                   }}
                   selected={currentRoute === value.url ? true : false}
                 >
@@ -419,7 +421,7 @@ export default function SideDrawer(props) {
                   onClick={() => {
                     goto(value.url);
                     setCurrentRoute(value.url);
-                    handleDrawerClose();
+                    // handleDrawerClose();
                   }}
                   selected={currentRoute === value.url ? true : false}
                 >

@@ -94,6 +94,16 @@ const useStyles = makeStyles((theme) => ({
   textDesc: {
     color: theme.palette.text.secondary,
   },
+  selectorGridItem: {
+    width: "100%",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  },
 }));
 
 const Projects = () => {
@@ -327,15 +337,7 @@ const Projects = () => {
           >
             <Grid container justify="space-evenly">
               <Grid item xs={12} md={4}>
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
+                <div className={classes.selectorGridItem}>
                   <Tooltip
                     title={"Filter projects"}
                     placement="right-start"
