@@ -288,10 +288,14 @@ const ViewIssue = (props) => {
             if (msg === null || msg === undefined) msg = r.message;
             DEBUG_PRINT(r);
             setOpenBackdrop(false);
-            enqueueSnackbar(msg, {
-              variant: r.type,
-              anchorOrigin: snackPosition(),
-            });
+            if (
+              r.type !== "info" ||
+              localStorage.getItem("disp_info_snacks") === "true"
+            )
+              enqueueSnackbar(msg, {
+                variant: r.type,
+                anchorOrigin: snackPosition(),
+              });
             if (200 === res.status && true === r.success) {
               DEBUG_PRINT(r.data);
               setIssueData(r.data.issue);
@@ -336,10 +340,14 @@ const ViewIssue = (props) => {
           res.json().then((r) => {
             NOTIFY(r.msg, (msg) => {
               if (msg === null || msg === undefined) msg = r.message;
-              enqueueSnackbar(msg, {
-                variant: r.type,
-                anchorOrigin: snackPosition(),
-              });
+              if (
+                r.type !== "info" ||
+                localStorage.getItem("disp_info_snacks") === "true"
+              )
+                enqueueSnackbar(msg, {
+                  variant: r.type,
+                  anchorOrigin: snackPosition(),
+                });
               dispatch(newComment());
             });
           });

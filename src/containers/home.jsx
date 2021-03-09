@@ -131,10 +131,14 @@ const Home = () => {
         res.json().then((r) => {
           NOTIFY(r.msg, (msg) => {
             if (msg === null || msg === undefined) msg = r.message;
-            enqueueSnackbar(msg, {
-              variant: r.type === "success" ? "info" : r.type,
-              anchorOrigin: snackPosition(),
-            });
+            if (
+              r.type !== "info" ||
+              localStorage.getItem("disp_info_snacks") === "true"
+            )
+              enqueueSnackbar(msg, {
+                variant: r.type,
+                anchorOrigin: snackPosition(),
+              });
             if (res.status === 200 && r.success === true)
               r.data !== null
                 ? setStats(r.data)

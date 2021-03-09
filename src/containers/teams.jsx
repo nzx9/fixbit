@@ -94,10 +94,14 @@ const Teams = () => {
           NOTIFY(r.msg, (msg) => {
             _setOpenBackdrop(false);
             if (msg === null || msg === undefined) msg = r.message;
-            enqueueSnackbar(msg, {
-              variant: r.type,
-              anchorOrigin: snackPosition(),
-            });
+            if (
+              r.type !== "info" ||
+              localStorage.getItem("disp_info_snacks") === "true"
+            )
+              enqueueSnackbar(msg, {
+                variant: r.type,
+                anchorOrigin: snackPosition(),
+              });
             DEBUG_PRINT(r);
             if (res.status === 200 && r.success === true)
               r.data !== null ? setData(r.data) : setData([]);

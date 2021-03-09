@@ -234,10 +234,14 @@ const ViewProject = (props) => {
               msg = r.message;
               r.type = "error";
             }
-            enqueueSnackbar(msg, {
-              variant: r.type !== "error" ? "info" : "error",
-              anchorOrigin: snackPosition(),
-            });
+            if (
+              r.type !== "info" ||
+              localStorage.getItem("disp_info_snacks") === "true"
+            )
+              enqueueSnackbar(msg, {
+                variant: r.type !== "error" ? "info" : "error",
+                anchorOrigin: snackPosition(),
+              });
             if (res.status === 200 && r.success === true)
               r.data !== null ? setTeamsInfo(r.data) : setTeamsInfo([]);
             else setError(r.msg);
@@ -278,10 +282,14 @@ const ViewProject = (props) => {
               msg = r.message;
               r.type = "error";
             }
-            enqueueSnackbar(msg, {
-              variant: r.type !== "error" ? "info" : "error",
-              anchorOrigin: snackPosition(),
-            });
+            if (
+              r.type !== "info" ||
+              localStorage.getItem("disp_info_snacks") === "true"
+            )
+              enqueueSnackbar(msg, {
+                variant: r.type,
+                anchorOrigin: snackPosition(),
+              });
             if (res.status === 200 && r.success === true)
               r.data !== null
                 ? setProjectInfo(r.data)
@@ -342,10 +350,14 @@ const ViewProject = (props) => {
           NOTIFY(r.msg, (msg) => {
             if (msg === null || msg === undefined) msg = r.message;
             _setOpenBackdrop(false);
-            enqueueSnackbar(msg, {
-              variant: r.type,
-              anchorOrigin: snackPosition(),
-            });
+            if (
+              r.type !== "info" ||
+              localStorage.getItem("disp_info_snacks") === "true"
+            )
+              enqueueSnackbar(msg, {
+                variant: r.type,
+                anchorOrigin: snackPosition(),
+              });
             if (res.status === 200 && r.success === true) {
               setProjectDataAll(r.data);
               if (selectedTopAction !== null) {

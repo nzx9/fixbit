@@ -116,6 +116,9 @@ const Settings = () => {
       ? "BC"
       : "TC"
   );
+  const [infoSnacks, setInfoSnacks] = React.useState(
+    localStorage.getItem("disp_info_snacks") === "true" ? true : false
+  );
 
   const handleToggleDarkTheme = () => {
     if (darkTheme) localStorage.setItem("theme", "light");
@@ -133,6 +136,7 @@ const Settings = () => {
     if (notification) {
       localStorage.setItem("max_snacks", 0);
       setNotificationCount(0);
+      setInfoSnacks(false);
     } else {
       localStorage.setItem("max_snacks", 3);
       setNotificationCount(3);
@@ -173,6 +177,15 @@ const Settings = () => {
   const handleNotificationPositionChange = (e) => {
     localStorage.setItem("snack_pos", e.target.value);
     setNotificationPosition(e.target.value);
+  };
+
+  const handleToggleInfoSnacks = (e) => {
+    if (infoSnacks) {
+      localStorage.setItem("disp_info_snacks", "false");
+    } else {
+      localStorage.setItem("disp_info_snacks", "true");
+    }
+    setInfoSnacks(!infoSnacks);
   };
 
   return (
@@ -223,6 +236,23 @@ const Settings = () => {
               edge="end"
               onChange={handleToggleNotifications}
               checked={notification}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemIcon>
+            <Info />
+          </ListItemIcon>
+          <ListItemText
+            primary="Info Snacks"
+            secondary="Turn on/off info snacks"
+          />
+          <ListItemSecondaryAction>
+            <Switch
+              edge="end"
+              onChange={handleToggleInfoSnacks}
+              disabled={!notification}
+              checked={infoSnacks}
             />
           </ListItemSecondaryAction>
         </ListItem>
