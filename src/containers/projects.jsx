@@ -21,7 +21,7 @@ import {
   IconButton,
   Tooltip,
 } from "@material-ui/core";
-import { Search, AddCircleRounded } from "@material-ui/icons";
+import { Search, WorkRounded } from "@material-ui/icons";
 import ProjectDialog from "./project-dialog";
 import config from "../components/config.json";
 import { NOTIFY, AlertDialog, snackPosition } from "../components/notify";
@@ -305,7 +305,7 @@ const Projects = () => {
         onMouseEnter={extendFAB}
         onMouseLeave={roundFAB}
       >
-        <AddCircleRounded
+        <WorkRounded
           className={fabType === "extended" ? classes.extendedIcon : null}
         />
         <div
@@ -530,9 +530,7 @@ const Projects = () => {
                 <Info useStyles={useApexInfoStyles}>
                   <InfoSubtitle className={classes.textDesc}>
                     click&ensp;
-                    <AddCircleRounded
-                      style={{ position: "relative", top: 7 }}
-                    />
+                    <WorkRounded style={{ position: "relative", top: 7 }} />
                     &ensp;to create your first project.
                   </InfoSubtitle>
                 </Info>

@@ -31,7 +31,7 @@ import {
   BubbleChart,
   Settings,
   Face,
-  AccountTree,
+  WorkRounded,
 } from "@material-ui/icons";
 
 import { Link, useHistory } from "react-router-dom";
@@ -157,7 +157,7 @@ export default function SideDrawer(props) {
   );
   const topList = [
     { id: 1, title: "Dashboard", url: routes.HOME, icon: <Dashboard /> },
-    { id: 2, title: "Projects", url: routes.PROJECTS, icon: <AccountTree /> },
+    { id: 2, title: "Projects", url: routes.PROJECTS, icon: <WorkRounded /> },
     { id: 3, title: "Teams", url: routes.TEAMS, icon: <GroupWork /> },
   ];
   const bottomList = [
@@ -421,7 +421,7 @@ export default function SideDrawer(props) {
                   onClick={() => {
                     goto(value.url);
                     setCurrentRoute(value.url);
-                    // handleDrawerClose();
+                    handleDrawerClose();
                   }}
                   selected={currentRoute === value.url ? true : false}
                 >

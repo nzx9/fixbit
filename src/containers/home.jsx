@@ -390,8 +390,9 @@ const Home = () => {
                   stats.teams_in.length === 0 ? (
                     <div
                       style={{
+                        width: "100%",
                         marginLeft: 0,
-                        marginRight: 40,
+                        marginRight: 0,
                         alignItems: "center",
                         textAlign: "center",
                         marginTop: 40,

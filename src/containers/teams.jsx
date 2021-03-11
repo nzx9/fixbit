@@ -198,7 +198,7 @@ const Teams = () => {
               src={noTeamsImage}
               alt="No Teams"
             />
-            <h3>NO Teams YET</h3>
+            <h3>NO TEAMS YET</h3>
             <Info useStyles={useApexInfoStyles}>
               <InfoSubtitle className={classes.textDesc}>
                 click&ensp;
