@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,9 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import { Cancel } from "@material-ui/icons";
 
 import { convertToLocalTime } from "../components/debugTools";
+import config from "../components/config.json";
+import { getSync } from "../components/httpRequest";
+// import {} from "";
 
 const styles = (theme) => ({
   root: {
@@ -63,6 +66,23 @@ const DialogTitle = withStyles(styles)((props) => {
 
 const TeamDetails = (props) => {
   const classes = useStyles();
+  const [leaderData, setLeaderData] = React.useState(null);
+
+  useEffect(() => {
+    (async function () {
+      const leader = await getSync(
+        `${config.URL}/api/users/user/${props?.teamData?.leader_id}`,
+        props?.token
+      );
+      if (leader?.data !== undefined) {
+        leader.data.username =
+          Number(props?.teamData?.leader_id) === props?.uid
+            ? leader?.data?.username + " (Me)"
+            : leader?.data?.username;
+        setLeaderData(leader?.data);
+      }
+    })();
+  }, []);
 
   return (
     <Dialog open={props.open} maxWidth="sm" fullWidth>
@@ -80,8 +100,8 @@ const TeamDetails = (props) => {
             <List subheader={<ListSubheader></ListSubheader>}>
               <ListItem>
                 <ListItemText
-                  primary={"TeamId"}
-                  secondary="Unique identity number"
+                  primary={"Team ID"}
+                  // secondary="Unique identity number"
                 />
                 <ListItemSecondaryAction>
                   {"#" + props.teamData?.id}
@@ -89,10 +109,17 @@ const TeamDetails = (props) => {
               </ListItem>
               <Divider />
               <ListItem>
-                <ListItemText
-                  primary={"Name"}
-                  secondary={props.teamData?.name}
-                />
+                <ListItemText primary={"Name"} />
+                <ListItemSecondaryAction>
+                  {props.teamData?.name}
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemText primary={"Leader"} />
+                <ListItemSecondaryAction>
+                  {leaderData?.username}
+                </ListItemSecondaryAction>
               </ListItem>
               <Divider />
               <ListItem>
@@ -100,11 +127,10 @@ const TeamDetails = (props) => {
                   primary={"Description"}
                   secondary={props.teamData?.description}
                 />
-                <ListItemSecondaryAction></ListItemSecondaryAction>
               </ListItem>
               <Divider />
               <ListItem>
-                <ListItemText primary={"Status"} secondary="Active status" />
+                <ListItemText primary={"Status"} />
                 <ListItemSecondaryAction>
                   {Boolean(props.teamData?.is_active) === true
                     ? "Active"
@@ -113,7 +139,7 @@ const TeamDetails = (props) => {
               </ListItem>
               <Divider />
               <ListItem>
-                <ListItemText primary={"Count"} secondary="Number of members" />
+                <ListItemText primary={"Member Count"} />
                 <ListItemSecondaryAction>
                   {props.memberCount}
                 </ListItemSecondaryAction>

@@ -14,6 +14,7 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Hidden,
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import { Cancel } from "@material-ui/icons";
@@ -105,10 +106,15 @@ const LeaderPanel = (props) => {
         <DialogContent dividers>
           <List>
             <ListItem>
-              <ListItemText
-                primary="Transfer Leadership"
-                secondary="Assign someone else as the team leader"
-              />
+              <Hidden xsDown>
+                <ListItemText
+                  primary="Transfer Leadership to"
+                  secondary="Assign someone else as the team leader"
+                />
+              </Hidden>
+              <Hidden smUp>
+                <ListItemText style={{ marginLeft: -5 }} primary="New Leader" />
+              </Hidden>
               <ListItemSecondaryAction>
                 <Select
                   labelId="leader-select"

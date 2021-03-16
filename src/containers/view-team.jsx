@@ -741,6 +741,8 @@ const ViewTeam = (props) => {
           open={tdOpen}
           memberCount={mData.length}
           teamData={tData}
+          uid={uid}
+          token={token}
           handleClose={() => setTdOpen(false)}
         />
         <TeamStatistics
