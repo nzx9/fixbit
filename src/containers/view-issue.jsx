@@ -332,7 +332,7 @@ const ViewIssue = (props) => {
       httpReq(
         `${config.URL}/api/projects/${props.match.params.pid}/issues/${props.match.params.iid}`,
         "PUT",
-        { is_open: issueData.is_open, comments: _data.comments },
+        { comments: _data.comments, commentAction: true },
         token
       )
         .then((res) => {
@@ -830,7 +830,7 @@ const ViewIssue = (props) => {
                                 required
                               />
                             </Grid>
-                            <Grid item xs={6} style={{ paddingTop: 5 }}>
+                            <Grid item style={{ paddingTop: 5 }}>
                               <Info useStyles={useApexInfoStyles}>
                                 <InfoSubtitle className={classes.info}>
                                   <Link
