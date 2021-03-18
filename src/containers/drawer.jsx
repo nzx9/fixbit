@@ -40,7 +40,6 @@ import { logout } from "../reducers/loginTracker";
 import { useDispatch } from "react-redux";
 import { tipTitle, snackPosition } from "../components/notify";
 import { useSnackbar } from "notistack";
-import { drawerOpen, drawerClose } from "../reducers/drawerOpenTracker";
 import favicon from "../images/favicon-32x32.png";
 
 const drawerWidth = 220;
