@@ -42,12 +42,13 @@ import {
   Box,
   Button,
   IconButton,
+  Tooltip,
   makeStyles,
 } from "@material-ui/core";
 
-import { Cancel, Visibility } from "@material-ui/icons";
+import { Cancel, FiberManualRecord, Visibility } from "@material-ui/icons";
 import { newComment } from "../reducers/newCommentTracker";
-import { snackPosition } from "../components/notify";
+import { snackPosition, tipTitle } from "../components/notify";
 
 const useColors = makeStyles((theme) => ({
   green: {
@@ -55,6 +56,36 @@ const useColors = makeStyles((theme) => ({
   },
   red: {
     color: "#f44336",
+  },
+  black: {
+    backgroundColor: theme.palette.background.default,
+  },
+  // p_none: {
+  //   color: theme.palette.
+  // }
+  tag_critical: {
+    color: theme.palette.error.dark,
+    borderColor: theme.palette.error.dark,
+    fontSize: 15,
+  },
+  tag_high: {
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    fontSize: 15,
+  },
+  tag_normal: {
+    color: theme.palette.warning.main,
+    borderColor: theme.palette.warning.main,
+    fontSize: 15,
+  },
+  tag_low: {
+    color: theme.palette.success.main,
+    borderColor: theme.palette.success.main,
+    fontSize: 15,
+  },
+  tag_no: {
+    color: theme.palette.text.primary,
+    fontSize: 15,
   },
 }));
 
@@ -67,8 +98,8 @@ export const MAIN_APP = () => {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   React.useEffect(() => {
-    let channel = window.Echo.channel("comment." + uid);
-    channel.listen(".comment-created", function (data) {
+    const channelComment = window.Echo.channel("comment." + uid);
+    channelComment.listen(".comment.created", function (data) {
       if (
         data?.assigneeId === uid &&
         data?.comment?.uId !== undefined &&
@@ -84,7 +115,9 @@ export const MAIN_APP = () => {
           <>
             <Button
               size="small"
-              className={classes.green}
+              // className={classes.green}
+              variant="outlined"
+              color="primary"
               style={{ marginRight: 5 }}
               onClick={() => {
                 goto(
@@ -96,7 +129,7 @@ export const MAIN_APP = () => {
                 closeSnackbar(key);
               }}
             >
-              <Visibility fontSize="small" style={{ marginRight: 5 }} />
+              {/* <Visibility fontSize="small" style={{ marginRight: 5 }} /> */}
               View
             </Button>
             <IconButton onClick={onClickDismiss(key)} size="small">
@@ -117,6 +150,78 @@ export const MAIN_APP = () => {
             action,
           }
         );
+      }
+    });
+
+    const channelIssueAssign = window.Echo.channel("isu-assign." + uid);
+    channelIssueAssign.listen(".isu-assign.ed", function (data) {
+      if (data?.assigneeId === uid) {
+        const onClickDismiss = (key) => () => {
+          closeSnackbar(key);
+        };
+
+        const action = (key) => (
+          <>
+            <Button
+              size="small"
+              variant="outlined"
+              color="primary"
+              style={{ marginRight: 5 }}
+              onClick={() => {
+                goto(
+                  routes.PROJECTS_VIEW_X +
+                    data?.pid +
+                    routes.ISSUE_VIEW_X +
+                    data?.iid
+                );
+                closeSnackbar(key);
+              }}
+            >
+              View
+              <Tooltip
+                title={tipTitle(
+                  "priority: " +
+                    (data?.priority === 0
+                      ? "none"
+                      : data?.priority === 1
+                      ? "low"
+                      : data?.priority === 2
+                      ? "normal"
+                      : data?.priority === 3
+                      ? "high"
+                      : "critical")
+                )}
+                arrow
+              >
+                <IconButton size="small">
+                  <FiberManualRecord
+                    fontSize="small"
+                    className={
+                      data?.priority === 0
+                        ? classes.tag_no
+                        : data?.priority === 1
+                        ? classes.tag_low
+                        : data?.priority === 2
+                        ? classes.tag_normal
+                        : data?.priority === 3
+                        ? classes.tag_high
+                        : classes.tag_critical
+                    }
+                  />
+                </IconButton>
+              </Tooltip>
+            </Button>
+            <IconButton onClick={onClickDismiss(key)} size="small">
+              <Cancel className={classes.red} fontSize="small" />
+            </IconButton>
+          </>
+        );
+        enqueueSnackbar("@" + data?.username + " assigned you to an issue", {
+          preventDuplicate: true,
+          persist: true,
+          anchorOrigin: snackPosition(),
+          action,
+        });
       }
     });
   }, []);
