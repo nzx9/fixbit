@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Box,
   Card,
@@ -23,7 +23,7 @@ import {
   NOTIFY,
   snackPosition,
 } from "../components/notify";
-import { httpReq } from "../components/httpRequest";
+import { httpReq, getSync } from "../components/httpRequest";
 import config from "../components/config.json";
 import { useSnackbar } from "notistack";
 
@@ -45,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
       zIndex: 0,
       bottom: 0,
     },
-
     [theme.breakpoints.down("sm")]: {
       width: "93%",
     },
@@ -101,19 +100,19 @@ const TeamCard = (props) => {
   const handleAlertClose = () => setAlertOpen(false);
 
   const goto = useCallback((path) => history.push(path), [history]);
+  const [leaderName, setLeaderName] = React.useState("...");
 
-  const getLeaderName = () => {
-    let leader = props.data.info.leader_id;
-    if (props.data.members !== null) {
-      props.data.members.forEach((value) => {
-        if (value.uid === props.data.info.leader_id) {
-          leader = value.name;
-          return;
-        }
-      });
-    }
-    return leader;
-  };
+  useEffect(() => {
+    (async function () {
+      if (props?.data?.info?.leader_id !== undefined) {
+        const leader = await getSync(
+          `${config.URL}/api/users/user/${props.data.info.leader_id}`,
+          token
+        );
+        if (leader?.data !== undefined) setLeaderName(leader?.data?.username);
+      }
+    })();
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -172,7 +171,7 @@ const TeamCard = (props) => {
                 <InfoTitle>{props.data.info.name}</InfoTitle>
               </Row>
               <InfoSubtitle>
-                <b>Leader: </b> {getLeaderName()}
+                <b>Leader: </b> {leaderName}
               </InfoSubtitle>
             </Info>
             <div className={classes.grow} />
