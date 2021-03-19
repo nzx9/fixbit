@@ -360,17 +360,20 @@ const ViewProject = (props) => {
               });
             if (res.status === 200 && r.success === true) {
               setProjectDataAll(r.data);
-              if (selectedTopAction !== null) {
-                if (selectedTopAction === 1) {
-                  setProjectData(r.data);
-                }
-              } else if (selectedPriority !== null) {
-                filterPriority(r.data, "priority", selectedPriority);
-              } else if (selectedBottomAction !== null) {
-                filterBottomAction(r.data, selectedBottomAction);
-              } else {
-                setProjectData(r.data);
-              }
+              setProjectData(r.data);
+              setSelectedPriority(null);
+              setSelectedBottomAction(null);
+              setSelectedTopAction(1);
+              // if (selectedTopAction !== null) {
+              //   if (selectedTopAction === 1) {
+              //   }
+              // } else if (selectedPriority !== null) {
+              //   filterPriority(r.data, "priority", selectedPriority);
+              // } else if (selectedBottomAction !== null) {
+              //   filterBottomAction(r.data, selectedBottomAction);
+              // } else {
+              //   setProjectData(r.data);
+              // }
               let tmpCounts = {
                 all: r.data.length,
                 critical: 0,
