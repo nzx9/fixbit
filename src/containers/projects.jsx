@@ -324,7 +324,13 @@ const Projects = () => {
         token={token}
         handleOpenBackdrop={() => handleOpenBackdrop()}
         handleCloseBackdrop={() => handleCloseBackdrop()}
-        action={() => fetchDataAndSet()}
+        action={() => {
+          setSearch(null);
+          setSort("latest");
+          setPage(1);
+          setFilter("my");
+          // fetchDataAndSet(filter, sort, page, perPage, search);
+        }}
       />
       <div>
         <div
@@ -541,7 +547,9 @@ const Projects = () => {
                   key={index}
                   data={value}
                   token={token}
-                  refetchData={() => fetchDataAndSet()}
+                  refetchData={() =>
+                    fetchDataAndSet(filter, sort, page, perPage, search)
+                  }
                 />
               ))
             )}
