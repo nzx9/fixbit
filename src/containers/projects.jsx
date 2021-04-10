@@ -329,7 +329,7 @@ const Projects = () => {
           setSort("latest");
           setPage(1);
           setFilter("my");
-          // fetchDataAndSet(filter, sort, page, perPage, search);
+          fetchDataAndSet(filter, sort, page, perPage, search);
         }}
       />
       <div>
